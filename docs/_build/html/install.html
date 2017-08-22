@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Installation &mdash; sentinel 0.1 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="sentinel 0.1 documentation" href="index.html"/>
+        <link rel="prev" title="Welcome to sentinel’s documentation!" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> sentinel
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#download-sentinel">Download sentinel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-docker-compose">Using docker-compose</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">sentinel</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Installation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/install.md.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="installation">
+<span id="installation"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<p>Sentinel can be easily installed using docker. The docker compose file is provided for convenience.</p>
+<div class="section" id="download-sentinel">
+<span id="download-sentinel"></span><h2>Download sentinel<a class="headerlink" href="#download-sentinel" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">elastest</span><span class="o">/</span><span class="n">elastest</span><span class="o">-</span><span class="n">platform</span><span class="o">-</span><span class="n">monitoring</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>Now that you have the source code, you can either use docker to start sentinel, or you can build and package from source.</p>
+</div>
+<div class="section" id="using-docker-compose">
+<span id="using-docker-compose"></span><h2>Using docker-compose<a class="headerlink" href="#using-docker-compose" title="Permalink to this headline">¶</a></h2>
+<p>Change into 'docker-support' subfolder under the root folder of the git repo clone. Then execute docker-compose as shown below:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">docker</span><span class="o">-</span><span class="n">compose</span> <span class="n">up</span>
+</pre></div>
+</div>
+<p>This command brings all the dependencies needed for sentinel:</p>
+<ul class="simple">
+<li>Grafana - grafana/grafana:4.3.2</li>
+<li>InfluxDB - influxdb:1.2.4-alpine</li>
+<li>Java8 - rolvlad/alpine-oraclejdk8</li>
+<li>Kafka - spotify/kafka:latest</li>
+</ul>
+<p>The sentinel framework allows certain parameters to be set via environment variables. An example environment block is shown next:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>      <span class="o">-</span> <span class="n">STREAM_ADMINUSER</span><span class="o">=</span><span class="n">root</span>
+      <span class="o">-</span> <span class="n">STREAM_ADMINPASS</span><span class="o">=</span><span class="n">pass1234</span>
+      <span class="o">-</span> <span class="n">STREAM_DBENDPOINT</span><span class="o">=</span><span class="n">influxdb</span><span class="p">:</span><span class="mi">8086</span>
+      <span class="o">-</span> <span class="n">STREAM_ACCESSURL</span><span class="o">=</span><span class="n">localhost</span><span class="p">:</span><span class="mi">8083</span>
+      <span class="o">-</span> <span class="n">STREAM_DBTYPE</span><span class="o">=</span><span class="n">influxdb</span>
+      <span class="o">-</span> <span class="n">ZOOKEEPER_ENDPOINT</span><span class="o">=</span><span class="n">kafka</span><span class="p">:</span><span class="mi">2181</span>
+      <span class="o">-</span> <span class="n">KAFKA_ENDPOINT</span><span class="o">=</span><span class="n">kafka</span><span class="p">:</span><span class="mi">9092</span>
+      <span class="o">-</span> <span class="n">TOPIC_CHECK_INTERVAL</span><span class="o">=</span><span class="mi">30000</span>
+</pre></div>
+</div>
+<p>Currently, sentinel works only with InfluxDB time-series backend. Support for emerging alternatives such as Timescaledb is planned and will be added very soon.</p>
+<ul class="simple">
+<li>STREAM_ADMINUSER - the admin user for InfluxDB</li>
+<li>STREAM_ADMINPASS - choose a secure password for the just declared admin user</li>
+<li>STREAM_DBENDPOINT - the API endpoint of InfluxDB service, typically it is at port 8086</li>
+<li>STREAM_ACCESSURL - the InfluxDB UI URL that sentinel will return back to users, if your service is running on an externally accessible node, change localhost with the FQDN or the IP of the node.</li>
+<li>ZOOKEEPER_ENDPOINT - the endpoint of the Zookeeper service</li>
+<li>KAFKA_ENDPOINT - the endpoint where Kafka cluster is reachable by sentinel</li>
+<li>TOPIC_CHECK_INTERVAL - defined in milliseconds, denotes the time interval between Kafka Topic query by topic manager in Sentinel.</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Welcome to sentinel’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Piyush Harsh.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

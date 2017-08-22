@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  sentinel:
+    build: sentinel/
+    ports:
+      - 9000:9000
+    environment:
+      - STREAM_ADMINUSER=root
+      - STREAM_ADMINPASS=pass1234
+      - STREAM_DBENDPOINT=:8086
+      - STREAM_ACCESSURL=localhost:8083
+      - STREAM_DBTYPE=influxdb
+      - ZOOKEEPER_ENDPOINT=localhost:2181
+      - KAFKA_ENDPOINT=localhost:9092
+      - TOPIC_CHECK_INTERVAL=30000
+    volumes:
+      - sentinel:/data
+
+volumes:
+  sentinel:
