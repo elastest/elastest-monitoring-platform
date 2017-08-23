@@ -25,4 +25,5 @@
   138  sudo add-apt-repository ppa:webupd8team/java
   139  sudo apt update; sudo apt install oracle-java8-installer
   141  keytool -importkeystore -deststorepass changeme -destkeypass changeme -destkeystore keystore.jks -srckeystore pkcs.p12 -srcstoretype PKCS12 -srcstorepass changeme -alias sentinel
+
 ```
