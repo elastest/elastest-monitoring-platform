@@ -2,20 +2,28 @@ version: '3'
 
 services:
   sentinel:
-    build: sentinel/
+    image: elastest/emp:latest
     ports:
       - 9000:9000
     environment:
       - STREAM_ADMINUSER=root
       - STREAM_ADMINPASS=pass1234
-      - STREAM_DBENDPOINT=:8086
+      - STREAM_DBENDPOINT=influxdb:8086
       - STREAM_ACCESSURL=localhost:8083
       - STREAM_DBTYPE=influxdb
-      - ZOOKEEPER_ENDPOINT=localhost:2181
-      - KAFKA_ENDPOINT=localhost:9092
+      - ZOOKEEPER_ENDPOINT=kafka:2181
+      - KAFKA_ENDPOINT=kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
+      - SENTINEL_DB_TYPE=sqlite
+      - SENTINEL_DB_ENDPOINT=/data/sentinel.db
+      - ADMIN_TOKEN=sometoken
     volumes:
-      - sentinel:/data
+      - emp:/data
 
 volumes:
-  sentinel:
+  emp:
+
+networks:
+  default:
+    external:
+      name: dockersupport_frontend
