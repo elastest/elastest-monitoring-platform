@@ -44,6 +44,7 @@ public class InfluxDBClientTest {
     {
         InfluxDBClient.init();
         Assert.assertFalse("adding a dockerstat message", InfluxDBClient.addPoint("user-1-testspace", "testseries", "{\"agent\": \"sentinel-docker-agent\", \"host\": \"clt-mob-t-6285\", \"unixtime\": \"1503582686.029212\", \"values\": [{\"id\": \"f7052201beb871318e2aa979f2d834244b96a7499f564f132c5dcf0dcfa7df64\", \"metrics\": [{\"py/object\": \"__main__.SentinelElement\", \"key\": \"networks_eth0_rx_bytes\", \"type\": \"long\", \"value\": 0}, {\"py/object\": \"__main__.SentinelElement\", \"key\": \"networks_eth0_tx_bytes\", \"type\": \"long\", \"value\": 0}, {\"py/object\": \"__main__.SentinelElement\", \"key\": \"memory_stats_usage\", \"type\": \"long\", \"value\": 301469696}, {\"py/object\": \"__main__.SentinelElement\", \"key\": \"cpu_usage_total\", \"type\": \"long\", \"value\": 0}], \"name\": \"dockersupport_sentinel_1\"}]}"));
+        Assert.assertFalse("adding a zane-sensor message", InfluxDBClient.addPoint("zane-sensor-data", "id-00001", "1503227532.99 CO=0.0049632693076 LPG=0.00765900724799 SMOKE=0.0204345961303"));
     }
 
     @Test

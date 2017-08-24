@@ -186,8 +186,13 @@ public class InfluxDBClient
                         .addField("LPG", Float.parseFloat(msgParts[2].split("=")[1]))
                         .addField("SMOKE", Float.parseFloat(msgParts[3].split("=")[1]))
                         .build();
-
-                influxDB.write(topic, "autogen", point1);
+                try {
+                    influxDB.write(topic, "autogen", point1);
+                }
+                catch(Exception ex)
+                {
+                    return false;
+                }
             }
             else
             {

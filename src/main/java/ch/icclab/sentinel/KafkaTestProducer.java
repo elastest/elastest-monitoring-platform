@@ -44,8 +44,8 @@ public class KafkaTestProducer {
 
         Producer<String, String> producer = new KafkaProducer<>(props);
         TestCallback callback = new TestCallback();
-        for(int i = 0; i < 100; i++)
-            producer.send(new ProducerRecord<String, String>("testing2", "udr", Integer.toString(i)), callback);
+        for(int i = 0; i < 1; i++)
+            producer.send(new ProducerRecord<String, String>("zane-sensor-data", "id-00001", ""), callback);
 
         producer.close();
         return true;

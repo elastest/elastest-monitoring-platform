@@ -26,9 +26,17 @@ import org.junit.Test;
  *     URL: piyush-harsh.info
  */
 public class PersistentWorkerTest {
+
+    public void setUp()
+    {
+        Initialize.prepareDbInitScripts();
+        Initialize.initializeTestDb();
+    }
+
     @Test
     public void testrun()
     {
+        setUp();
         PersistenceWorker test = new PersistenceWorker("testtopic", "somekey", 0L, "some value");
         test.run();
     }
