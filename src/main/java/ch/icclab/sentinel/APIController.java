@@ -52,24 +52,49 @@ public class APIController {
     ResponseEntity getApis()
     {
         LinkedList<APIEndpoints> value = new LinkedList<>();
-        APIEndpoints value1 = new APIEndpoints();
-        value1.endpoint = "/api/space/"; //each space corresponds to an individual db and vectors in a space make for tables in a db
-        value1.method = "GET";
-        value1.description = "list of monitored spaces";
-        value1.contentType = "application/json";
-        value.add(value1);
-        APIEndpoints value2 = new APIEndpoints();
-        value2.endpoint = "/api/space/";
-        value2.method = "POST";
-        value2.description = "register / create a new monitored space";
-        value2.contentType = "application/json";
-        value.add(value2);
         APIEndpoints value3 = new APIEndpoints();
-        value3.endpoint = "/api/";
+        value3.endpoint = "/v1/api/";
         value3.method = "GET";
         value3.description = "get list of all supported APIs";
         value3.contentType = "application/json";
         value.add(value3);
+        APIEndpoints value1 = new APIEndpoints();
+        value1.endpoint = "/v1/api/user/"; //each space corresponds to an individual db and vectors in a space make for tables in a db
+        value1.method = "POST";
+        value1.description = "add a new user ";
+        value1.contentType = "application/json";
+        value.add(value1);
+        APIEndpoints value2 = new APIEndpoints();
+        value2.endpoint = "/v1/api/user/{id}";
+        value2.method = "GET";
+        value2.description = "retrieve info about existing user";
+        value2.contentType = "application/json";
+        value.add(value2);
+        APIEndpoints value4 = new APIEndpoints();
+        value4.endpoint = "/v1/api/space/";
+        value4.method = "POST";
+        value4.description = "register a new monitored space";
+        value4.contentType = "application/json";
+        value.add(value4);
+        APIEndpoints value5 = new APIEndpoints();
+        value5.endpoint = "/v1/api/series/";
+        value5.method = "POST";
+        value5.description = "register a new series within a space";
+        value5.contentType = "application/json";
+        value.add(value5);
+        APIEndpoints value6 = new APIEndpoints();
+        value6.endpoint = "/v1/api/key/{id}";
+        value6.method = "GET";
+        value6.description = "retrieve the api-key for an user";
+        value6.contentType = "application/json";
+        value.add(value6);
+        APIEndpoints value7 = new APIEndpoints();
+        value7.endpoint = "/v1/api/endpoint";
+        value7.method = "GET";
+        value7.description = "retrieve the agent's connection endpoint parameters";
+        value7.contentType = "application/json";
+        value.add(value7);
+
         Gson gson = new Gson();
         String jsonInString = gson.toJson(value);
         return ResponseEntity.status(HttpStatus.OK).body(jsonInString);
