@@ -253,7 +253,7 @@ If the call is successful, a *series id* is returned. An example response block 
 ::
 
   {
-    "id": 1,
+    "id": 2,
     "accessUrl": "/api/series/2",
     "name": "some-app-logs"
   }
