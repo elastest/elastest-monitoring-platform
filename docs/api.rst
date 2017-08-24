@@ -251,8 +251,19 @@ If the call is successful, the API-key is returned. A sample response is shown n
 
 /v1/api/endpoint GET
 --------------------
+This API call can be used to retrieve the connection parameters for the sentinel agents to send data streams to. The call is available only to registered accounts, therefore a valid *username* and *api-key* needs to be supplied as header fields.
+
 ::
 
   curl -X GET https://localhost:9000/v1/api/endpoint --header "Content-Type: application/json"
   --header "x-auth-login: username" --header "x-auth-apikey: some-api-key"
 
+If the call succeeds, the parameter block is returned that can be used to properly configure the sentinel agents. A sample response is shown next.
+
+::
+
+  {
+    "endpoint": "kafka:9092",
+    "keySerializer": "StringSerializer",
+    "valueSerializer": "StringSerializer"
+  }
