@@ -312,7 +312,7 @@ public class APIController {
         if(seriesId != -1)
         {
             SeriesOutput outputData = new SeriesOutput();
-            outputData.id = spaceId;
+            outputData.id = seriesId;
             outputData.accessUrl = "/api/series/" + seriesId;
             outputData.name = incomingData.name;
             return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(outputData));
