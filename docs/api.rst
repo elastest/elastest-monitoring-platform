@@ -149,6 +149,15 @@ If the user already exists, you will get a *409 Conflict* status response back. 
 
 The *apiKey* and *id* values should be saved as they are needed in some of the management API requests as you will see later.
 
+/v1/api/user/{id} GET
+---------------------
+Use this API to retrieve the complete information about an user account, the monitoring spaces and series info included. A valid *api-key* needs to be provided as a header field while making this call.
+
+::
+
+  curl -X GET https://localhost:9000/v1/api/user/{id} --header "Content-Type: application/json"
+  --header "x-auth-apikey: valid-api-key"
+
 /v1/api/space/ POST
 -------------------
 ::
@@ -156,7 +165,6 @@ The *apiKey* and *id* values should be saved as they are needed in some of the m
   curl -X POST https://localhost:9000/v1/api/space/ --header "Content-Type: application/json"
   --header "x-auth-login: username" --header "x-auth-apikey: some-api-key"
   -d '{"name":"space-name"}'
-
 
 /v1/api/series/ POST
 --------------------
