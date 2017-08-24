@@ -106,25 +106,50 @@ The response is similar to one shown below -
 ::
 
   [
-    {
-        "endpoint": "/api/space/",
-        "method": "GET",
-        "description": "list of monitored spaces",
-        "contentType": "application/json"
-    },
-    {
-        "endpoint": "/api/space/",
-        "method": "POST",
-        "description": "register / create a new monitored space",
-        "contentType": "application/json"
-    },
-    {
-        "endpoint": "/api/",
-        "method": "GET",
-        "description": "get list of all supported APIs",
-        "contentType": "application/json"
-    }
+   {
+     "endpoint": "/v1/api/",
+     "method": "GET",
+     "description": "get list of all supported APIs",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/user/",
+     "method": "POST",
+     "description": "add a new user ",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/user/{id}",
+     "method": "GET",
+     "description": "retrieve info about existing user",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/space/",
+     "method": "POST",
+     "description": "register a new monitored space",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/series/",
+     "method": "POST",
+     "description": "register a new series within a space",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/key/{id}",
+     "method": "GET",
+     "description": "retrieve the api-key for an user",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/endpoint",
+     "method": "GET",
+     "description": "retrieve the agent's connection endpoint parameters",
+     "contentType": "application/json"
+   }
   ]
+
 The output above is representative, and the actual API supported by sentinel varied during the time of writing of this document.
 
 /v1/api/user/ POST
@@ -157,6 +182,35 @@ Use this API to retrieve the complete information about an user account, the mon
 
   curl -X GET https://localhost:9000/v1/api/user/{id} --header "Content-Type: application/json"
   --header "x-auth-apikey: valid-api-key"
+
+If the call succeeds then the complete details of the account is returned back. A sample value returned is shown next.
+
+::
+
+  {
+    "apiKey": "f3549958-8884-4649-9661-8ca338dfe141",
+    "id": 1,
+    "accessUrl": "/api/user/1",
+    "spaces": [
+        {
+            "id": 1,
+            "accessUrl": "/api/space/1",
+            "topicName": "user-1-cyclops",
+            "name": "cyclops",
+            "seriesList": [
+                {
+                    "id": 1,
+                    "accessUrl": "/api/series/1",
+                    "name": "app-logs",
+                    "msgFormat": "unixtime:s msgtype:json"
+                }
+            ],
+            "dataDashboardUrl": "http://localhost:8083/",
+            "dataDashboardUser": "user1cyclops",
+            "dataDashboardPassword": "qkDaFQ8gJEokApS6"
+        }
+    ]
+  }
 
 /v1/api/space/ POST
 -------------------
