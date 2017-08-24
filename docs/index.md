@@ -23,16 +23,19 @@ the SuT is running. EMP is for platform metrics and EMS is for SuT metrics.
 ## How to run
 
 ### Installation
-Sentinel can be easily installed using docker. The docker compose file is provided for convenience.
+Sentinel can be easily installed using docker. The docker compose file is provided for 
+convenience.
 
 #### Download sentinel
 ```
 git clone https://github.com/elastest/elastest-platform-monitoring.git
 ```
-Now that you have the source code, you can either use docker to start sentinel, or you can build and package from source.
+Now that you have the source code, you can either use docker to start sentinel, or 
+you can build and package from source.
 
 ## Using docker-compose
-Change into 'docker-support' subfolder under the root folder of the git repo clone. Then execute docker-compose as shown below:
+Change into 'docker-support' subfolder under the root folder of the git repo 
+clone. Then execute docker-compose as shown below:
 
 ```
 docker-compose up
@@ -43,7 +46,8 @@ This command brings all the dependencies needed for sentinel:
 * Java8 - rolvlad/alpine-oraclejdk8
 * Kafka - spotify/kafka:latest
 
-The sentinel framework allows certain parameters to be set via environment variables. An example environment block is shown next:
+The sentinel framework allows certain parameters to be set via environment 
+variables. An example environment block is shown next:
 ```
       - STREAM_ADMINUSER=root
       - STREAM_ADMINPASS=pass1234
@@ -54,7 +58,8 @@ The sentinel framework allows certain parameters to be set via environment varia
       - KAFKA_ENDPOINT=kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
 ```
-Currently, sentinel works only with InfluxDB time-series backend. Support for emerging alternatives such as Timescaledb is planned and will be added very soon.
+Currently, sentinel works only with InfluxDB time-series backend. Support 
+for emerging alternatives such as Timescaledb is planned and will be added very soon.
 
 * STREAM_ADMINUSER - the admin user for InfluxDB
 * STREAM_ADMINPASS - choose a secure password for the just declared admin user
@@ -70,12 +75,19 @@ The kafka container allows certain parameters to be set via environment block.
       - ADVERTISED_PORT=9092
       - ADVERTISED_HOST=kafka
 ```
-Care must be taken in defining **ADVERTISED_HOST** value. The best solution is to provide a FQDN or a public IP if Kafka is to be accessed by external processes which will be the most common use-case of sentinel. Setting an incorrect value of this parameter may leave your kafka cluster unreachable for external services, or even sentinel process running in a container.
+Care must be taken in defining **ADVERTISED_HOST** value. The best solution 
+is to provide a FQDN or a public IP if Kafka is to be accessed by external 
+processes which will be the most common use-case of sentinel. Setting an 
+incorrect value of this parameter may leave your kafka cluster unreachable 
+for external services, or even sentinel process running in a container.
 
-Our recommendation is to setup kafka cluster is a separate node entirely, and configure **KAFKA_ENDPOINT** parameter for sentinel as a FQDN string.
+Our recommendation is to setup kafka cluster is a separate node entirely, 
+and configure **KAFKA_ENDPOINT** parameter for sentinel as a FQDN string.
 
 #### Install from source
-Sentinel framework is written in Java and requires Oracle Java 8 for proper working. OpenJDK 8 should also work but the codebase has not been tested with openJDK 8.
+Sentinel framework is written in Java and requires Oracle Java 8 for proper 
+working. OpenJDK 8 should also work but the codebase has not been tested with 
+openJDK 8.
 
 ##### Requirements
 * Maven 3.0.5 and higher
@@ -97,7 +109,9 @@ $ java -jar /path/to/jar/sentinel-0.1.jar --spring.config.location=/path/to/conf
 ```
 
 ##### Configuration options
-All application configuration is provided via **application.properties** file. A sample file content is listed below.
+All application configuration is provided via **application.properties** file. 
+A sample file content is listed below.
+
 ```
 spring.thymeleaf.mode=LEGACYHTML5
 logging.level.org.springframework.web=WARN
@@ -134,7 +148,9 @@ admin.token=eedsR2v5n4uh7Gjy
 series.format.cache.size=100
 published.api.version=v1
 ```
-Many of the entries in the **application.properties** file are self-explanatory. A few non-obvious ones are explained next -
+Many of the entries in the **application.properties** file are self-explanatory. 
+A few non-obvious ones are explained next -
+
 * server.port - on what port number sentinel APIs are accessible
 * displayexceptions - set this to **true** if you want to include exceptions full trace in the log outputs
 * sentinel.db.type - currently only *sqlite* is supported
