@@ -214,20 +214,49 @@ If the call succeeds then the complete details of the account is returned back. 
 
 /v1/api/space/ POST
 -------------------
+Use this API to create a new monitored space for a given user account in sentinel. A matching *username* and the *api-key* needs to be provided as header fields. The body just contains the *name* of the space that one wishes to create.
+
 ::
 
   curl -X POST https://localhost:9000/v1/api/space/ --header "Content-Type: application/json"
   --header "x-auth-login: username" --header "x-auth-apikey: some-api-key"
   -d '{"name":"space-name"}'
 
+If the call is successful, the *space id* is returned back as confirmation. A sample response is shown next.
+
+::
+
+  {
+    "id": 3,
+    "accessUrl": "/api/space/3",
+    "topicName": "user-1-new-space",
+    "name": "new-space",
+    "dataDashboardUrl": "http://localhost:8083/",
+    "dataDashboardUser": "user1new-space",
+    "dataDashboardPassword": "GeMHPDUwKc5621ZI"
+  }
+
 /v1/api/series/ POST
 --------------------
+A space by itself does not handle data streams, it is a container and needs a series to be defined before the metrics sent to it can be persisted and analyzed later. This API allows creation of a *series* within an existing *space*. The *msgSignature* allows sentinel to parse the incoming messages properly. 
+
+If the message being sent into sentinel is a single level JSON string, the *unixtime:s msgtype:json* value is sufficient.
+
 ::
 
   curl -X POST https://localhost:9000/v1/api/series/ --header "Content-Type: application/json"
   --header "x-auth-login: username" --header "x-auth-apikey: some-api-key"
   -d '{"name":"series-name", "spaceName":"parent-space-name", "msgSignature":"msg-signature"}'
 
+If the call is successful, a *series id* is returned. An example response block is shown for completeness.
+
+::
+
+  {
+    "id": 1,
+    "accessUrl": "/api/series/2",
+    "name": "some-app-logs"
+  }
 
 /v1/api/key/{id} GET
 --------------------
