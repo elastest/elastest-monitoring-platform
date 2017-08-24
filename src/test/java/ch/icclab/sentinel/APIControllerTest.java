@@ -120,4 +120,12 @@ public class APIControllerTest
         ;
     }
 
+    @Test
+    public void getNotImplementedAPI() throws Exception {
+        mockMvc.perform(get("/v1/api/unknown/").accept(MediaType.IMAGE_GIF))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+        ;
+    }
+
 }

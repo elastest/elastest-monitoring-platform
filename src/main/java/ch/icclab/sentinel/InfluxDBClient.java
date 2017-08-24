@@ -48,12 +48,16 @@ public class InfluxDBClient
 
     static boolean init()
     {
-        if(AppConfiguration.getStreamDBType().equalsIgnoreCase("influxdb")) {
-            try {
+        if(AppConfiguration.getStreamDBType().equalsIgnoreCase("influxdb"))
+        {
+            try
+            {
                 createAdminUser();
                 influxDB = InfluxDBFactory.connect("http://" + AppConfiguration.getStreamDBURL(), AppConfiguration.getStreamDBUser(), AppConfiguration.getStreamDBPass());
                 //influxDB.enableBatch(100, 100, TimeUnit.MILLISECONDS);
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 influxDB = null;
                 logger.warn("Exception caught in InfluxDBClient init method: " + ex.getLocalizedMessage());
                 return false;
