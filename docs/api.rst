@@ -231,11 +231,23 @@ If the call succeeds then the complete details of the account is returned back. 
 
 /v1/api/key/{id} GET
 --------------------
+One can use this API if there is a need to retrieve the user api-key. The *username* should be a registered account and the *some-password* header field should be the matching password for this account.
+
 ::
 
   curl -X GET https://localhost:9000/v1/api/key/{username} 
   --header "Content-Type: application/json"
   --header "x-auth-password: some-password"
+
+If the call is successful, the API-key is returned. A sample response is shown next.
+
+::
+
+  {
+    "apiKey": "f3549958-8884-4649-9661-8ca338dfe141",
+    "id": 1,
+    "accessUrl": "/api/user/1"
+  }
 
 /v1/api/endpoint GET
 --------------------
