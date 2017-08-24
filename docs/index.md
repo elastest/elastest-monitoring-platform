@@ -161,7 +161,15 @@ A few non-obvious ones are explained next -
 * stream.adminuser - the name of the admin account in the stream DB (here influxdb), this value is meaningful only when *authentication* and *authorization* is enabled in InfluxDB, otherwise the values are not enforced by the DB
 * admin.token - this is the master token using which a new user account can be created within sentinel, this value should be accessible only to the administrators of the system, or within the API engine in case you wish to support self registration by general public.
 
+## Basic usage
 
+## Development documentation
+
+### Architecture
+
+### Prepare development environment
+
+### Development procedure
 
 [Apache 2.0 License]: http://www.apache.org/licenses/LICENSE-2.0
 [ElasTest]: http://elastest.io/
