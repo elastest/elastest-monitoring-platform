@@ -29,10 +29,6 @@ public class PersistentWorkerTest {
     @Test
     public void testrun()
     {
-        SentinelDockerStatsAgent testAgent = new SentinelDockerStatsAgent();
-        SentinelDockerStatsAgentMetric testMetric = new SentinelDockerStatsAgentMetric();
-        SentinelDockerStatsAgentValue testValue = new SentinelDockerStatsAgentValue();
-
         PersistenceWorker test = new PersistenceWorker("testtopic", "somekey", 0L, "some value");
         test.run();
     }

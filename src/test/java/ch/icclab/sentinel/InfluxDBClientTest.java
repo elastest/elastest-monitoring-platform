@@ -43,7 +43,7 @@ public class InfluxDBClientTest {
     public void testaddPoint()
     {
         InfluxDBClient.init();
-        Assert.assertFalse("adding a dockerstat message", InfluxDBClient.addPoint("some-topic", "docker-stats", "{\"agent\": \"sentinel-docker-agent\", \"host\": \"clt-mob-t-6285\", \"unixtime\": \"1503578338.443743\", \"values\": []}"));
+        Assert.assertFalse("adding a dockerstat message", InfluxDBClient.addPoint("user-1-testspace", "testseries", "{\"agent\": \"sentinel-docker-agent\", \"host\": \"clt-mob-t-6285\", \"unixtime\": \"1503582686.029212\", \"values\": [{\"id\": \"f7052201beb871318e2aa979f2d834244b96a7499f564f132c5dcf0dcfa7df64\", \"metrics\": [{\"py/object\": \"__main__.SentinelElement\", \"key\": \"networks_eth0_rx_bytes\", \"type\": \"long\", \"value\": 0}, {\"py/object\": \"__main__.SentinelElement\", \"key\": \"networks_eth0_tx_bytes\", \"type\": \"long\", \"value\": 0}, {\"py/object\": \"__main__.SentinelElement\", \"key\": \"memory_stats_usage\", \"type\": \"long\", \"value\": 301469696}, {\"py/object\": \"__main__.SentinelElement\", \"key\": \"cpu_usage_total\", \"type\": \"long\", \"value\": 0}], \"name\": \"dockersupport_sentinel_1\"}]}"));
     }
 
     @Test
