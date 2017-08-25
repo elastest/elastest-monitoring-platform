@@ -500,7 +500,7 @@ send the application logs to EMP.
 Through the use of the APIs listed above, any user or process has all releveant 
 information necessary to properly configure the agents for sending appropriate 
 metrics and logs into EMP. *Look for steps to run EMP agents inside respective agent
-folders.
+folders*.
 
 ## Development documentation
 
