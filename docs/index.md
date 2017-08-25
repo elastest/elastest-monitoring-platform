@@ -323,6 +323,32 @@ The response is similar to one shown below -
 The output above is representative, and the actual API supported by sentinel varied 
 during the time of writing of this document.
 
+##### /v1/api/user/ POST
+Use this API to create a new user of sentinel. User account creation is an admin 
+priviledged operation and the *admin-token* is required as header for the call to 
+be executed successfully.
+
+```
+  curl -X POST https://localhost:9000/v1/api/user/ 
+  --header "Content-Type: application/json" 
+  --header "x-auth-token: <admin-token>" 
+  -d '{"login":"username", "password":"some-password"}'
+```
+If the user already exists, you will get a *409 Conflict* status response back. An 
+example response upon successful creation of an account looks as shown below, the 
+actual value is for representation purposes only -
+```
+  {
+    "login": "username",
+    "apiKey": "b6af63b9-f699-4259-8548-2a60e0d88661",
+    "id": 2,
+    "accessUrl": "/api/user/2"
+  }
+```
+The *apiKey* and *id* values should be saved as they are needed in some of the 
+management API requests as you will see later.
+
+
 ## Development documentation
 
 ### Architecture
