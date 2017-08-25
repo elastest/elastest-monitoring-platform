@@ -528,6 +528,21 @@ is shown here.
 ![Sample Visualization](https://raw.githubusercontent.com/elastest/elastest-monitoring-platform/master/docs/img/grafana.png "Sample Visualization")
 
 ### Prepare development environment
+We recommend use of IntelliJ IDE CE as development environment for EMP. Since the 
+project uses Maven as build environmetn, any supporting IDE will do. 
+
+- download the code base using git
+```
+git clone https://github.com/elastest/elastest-monitoring-platform.git
+```
+- change directory
+```
+cd elastest-monitoring-platform
+```
+- clean and compile the source code
+```
+mvn clean compile
+```
 
 ### Development procedure
 
