@@ -244,6 +244,85 @@ allocated to metrics of smaller services making up a larger application or servi
 +-------------------+-------+---------------+--------------------------------+
 ```
 
+#### Header fields at a glance
+```
++-----------------+--------------------------------+
+| field key       | value / interpretations        |
++=================+================================+
+| Content-Type    | application/json is typical    |
++-----------------+--------------------------------+
+| x-auth-token    | admin user master token        |
++-----------------+--------------------------------+
+| x-auth-password | password associated with user  |
++-----------------+--------------------------------+
+| x-auth-login    | username or userid             |
++-----------------+--------------------------------+
+| x-auth-apikey   | api key associated with user   |
++-----------------+--------------------------------+
+```
+
+#### APIs in details
+Now that we have all the basic building buildings in place, lets explore each API 
+endpoint in more details. In the following subsections lets assume that the 
+sentinel API service is available at https://localhost:9000/. Also API example will 
+be provided as a valid cURL command.
+
+##### /v1/api/ GET
+This API allows a quick check on the health status, if the service is alive a 200 
+status code is returned along with a list of supported API endpoints.
+```
+curl -X GET https://localhost:9000/v1/api/
+```
+The response is similar to one shown below -
+```
+  [
+   {
+     "endpoint": "/v1/api/",
+     "method": "GET",
+     "description": "get list of all supported APIs",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/user/",
+     "method": "POST",
+     "description": "add a new user ",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/user/{id}",
+     "method": "GET",
+     "description": "retrieve info about existing user",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/space/",
+     "method": "POST",
+     "description": "register a new monitored space",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/series/",
+     "method": "POST",
+     "description": "register a new series within a space",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/key/{id}",
+     "method": "GET",
+     "description": "retrieve the api-key for an user",
+     "contentType": "application/json"
+   },
+   {
+     "endpoint": "/v1/api/endpoint",
+     "method": "GET",
+     "description": "retrieve the agent's connection endpoint parameters",
+     "contentType": "application/json"
+   }
+  ]
+```
+The output above is representative, and the actual API supported by sentinel varied 
+during the time of writing of this document.
+
 ## Development documentation
 
 ### Architecture
