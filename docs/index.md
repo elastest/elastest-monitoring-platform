@@ -505,7 +505,7 @@ folders*.
 ## Development documentation
 
 ### Architecture
-![alt text](https://github.com/elastest/elastest-monitoring-platform/tree/master/docs/img/emp-arch.png "EMP Architecture")
+![EMP Architecture](https://raw.githubusercontent.com/elastest/elastest-monitoring-platform/master/docs/img/emp-arch.png "EMP Architecture")
 
 ### Prepare development environment
 
