@@ -484,6 +484,24 @@ configure the sentinel agents. A sample response is shown next.
   }
 ```
 
+### Running agents
+Currently three sentinel agents are available and more are being planned and will 
+be released in the near future.
+
+* docker stats agent
+* system stats agent
+* logfile agent
+
+Apart from these a python library enables Python application developers to directly 
+send the application logs to EMP.
+
+* inline logging guidelines for Python
+
+Through the use of the APIs listed above, any user or process has all releveant 
+information necessary to properly configure the agents for sending appropriate 
+metrics and logs into EMP. *Look for steps to run EMP agents inside respective agent
+folders.
+
 ## Development documentation
 
 ### Architecture
