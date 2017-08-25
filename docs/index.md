@@ -415,7 +415,74 @@ sample response is shown next.
   }
 ```
 
+##### /v1/api/series/ POST
+A space by itself does not handle data streams, it is a container and needs a 
+series to be defined before the metrics sent to it can be persisted and analyzed 
+later. This API allows creation of a *series* within an existing *space*. The 
+*msgSignature* allows sentinel to parse the incoming messages properly. 
 
+If the message being sent into sentinel is a single level JSON string, the 
+*unixtime:s msgtype:json* value is sufficient.
+
+```
+curl -X POST https://localhost:9000/v1/api/series/ 
+--header "Content-Type: application/json"
+--header "x-auth-login: username" 
+--header "x-auth-apikey: some-api-key"
+-d '{"name":"series-name", "spaceName":"parent-space-name", "msgSignature":"msg-signature"}'
+```
+If the call is successful, a *series id* is returned. An example response block is 
+shown for completeness.
+
+```
+  {
+    "id": 2,
+    "accessUrl": "/api/series/2",
+    "name": "some-app-logs"
+  }
+```
+
+##### /v1/api/key/{id} GET
+One can use this API if there is a need to retrieve the user api-key. The *username*
+should be a registered account and the *some-password* header field should be the 
+matching password for this account.
+
+```
+  curl -X GET https://localhost:9000/v1/api/key/{username} 
+  --header "Content-Type: application/json"
+  --header "x-auth-password: some-password"
+```
+If the call is successful, the API-key is returned. A sample response is shown next.
+
+```
+  {
+    "apiKey": "f3549958-8884-4649-9661-8ca338dfe141",
+    "id": 1,
+    "accessUrl": "/api/user/1"
+  }
+```
+
+##### /v1/api/endpoint GET
+This API call can be used to retrieve the connection parameters for the sentinel 
+agents to send data streams to. The call is available only to registered accounts, 
+therefore a valid *username* and *api-key* needs to be supplied as header fields.
+
+```
+  curl -X GET https://localhost:9000/v1/api/endpoint 
+  --header "Content-Type: application/json"
+  --header "x-auth-login: username" 
+  --header "x-auth-apikey: some-api-key"
+```
+If the call succeeds, the parameter block is returned that can be used to properly 
+configure the sentinel agents. A sample response is shown next.
+
+```
+  {
+    "endpoint": "kafka:9092",
+    "keySerializer": "StringSerializer",
+    "valueSerializer": "StringSerializer"
+  }
+```
 
 ## Development documentation
 
