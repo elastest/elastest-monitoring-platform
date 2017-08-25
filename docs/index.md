@@ -545,6 +545,10 @@ mvn clean compile
 ```
 
 ### Development procedure
+Simply load the downloaded codebase folder into any IDE - eclipse or IntelliJ Idea 
+CE and choose **import maven project** as your option. You are ready to contribute 
+to the EMP codebase. Please do not forget to send us a pull request if you add a 
+new feature or find and have fixed a bug.
 
 [Apache 2.0 License]: http://www.apache.org/licenses/LICENSE-2.0
 [ElasTest]: http://elastest.io/
