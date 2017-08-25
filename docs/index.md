@@ -188,6 +188,7 @@ allocated to metrics of smaller services making up a larger application or servi
 **Series**: A series in Sentinel is a stream of metrics coming from the same source.
 
 #### API return codes at a glance
+```
 +-------------------+-------+---------------+--------------------------------+
 | API endpoint      | Verb  | Return codes  | Comments                       |
 +===================+=======+===============+================================+
@@ -241,7 +242,7 @@ allocated to metrics of smaller services making up a larger application or servi
 +-------------------+-------+---------------+--------------------------------+
 |                   |       | 401           | invalid api key                |
 +-------------------+-------+---------------+--------------------------------+
-
+```
 
 ## Development documentation
 
