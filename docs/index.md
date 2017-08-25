@@ -523,6 +523,10 @@ Currently (release 0.1) the query interface is the native query APIs as well as
 admin dashboard exposed by InfluxDB. EMP's own query interface allowing online 
 queries, correlated analysis and much more will be made available soon.
 
+Stream visualization in this release is supported via Grafana dashboards. An example
+is shown here.
+![Sample Visualization](https://raw.githubusercontent.com/elastest/elastest-monitoring-platform/master/docs/img/grafana.png "Sample Visualization")
+
 ### Prepare development environment
 
 ### Development procedure
