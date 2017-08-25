@@ -506,6 +506,22 @@ folders*.
 
 ### Architecture
 ![EMP Architecture](https://raw.githubusercontent.com/elastest/elastest-monitoring-platform/master/docs/img/emp-arch.png "EMP Architecture")
+The proposed architecture of EMP is shown above. In this release, the basic 
+functionalities are ready including capability of configuring the spaces and series 
+by framework users, and via available agents as well as inline instrumentation, the 
+ability to send in metrics and log streams into EMP.
+
+The technologies used in release 1.0 are -
+- Apache Kafka
+- InfluxDB 1.2.4
+- Grafana 4.3.2
+- Oracle Java 8
+- Maven 3.0.5 or higher
+- Python 3.0 (for agents implementation)
+
+Currently (release 0.1) the query interface is the native query APIs as well as 
+admin dashboard exposed by InfluxDB. EMP's own query interface allowing online 
+queries, correlated analysis and much more will be made available soon.
 
 ### Prepare development environment
 
