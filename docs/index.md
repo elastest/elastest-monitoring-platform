@@ -348,6 +348,74 @@ actual value is for representation purposes only -
 The *apiKey* and *id* values should be saved as they are needed in some of the 
 management API requests as you will see later.
 
+##### /v1/api/user/{id} GET
+Use this API to retrieve the complete information about an user account, the 
+monitoring spaces and series info included. A valid *api-key* needs to be provided 
+as a header field while making this call.
+
+```
+  curl -X GET https://localhost:9000/v1/api/user/{id} 
+  --header "Content-Type: application/json"
+  --header "x-auth-apikey: valid-api-key"
+```
+If the call succeeds then the complete details of the account is returned back. A 
+sample value returned is shown next.
+
+```
+  {
+    "apiKey": "f3549958-8884-4649-9661-8ca338dfe141",
+    "id": 1,
+    "accessUrl": "/api/user/1",
+    "spaces": [
+        {
+            "id": 1,
+            "accessUrl": "/api/space/1",
+            "topicName": "user-1-cyclops",
+            "name": "cyclops",
+            "seriesList": [
+                {
+                    "id": 1,
+                    "accessUrl": "/api/series/1",
+                    "name": "app-logs",
+                    "msgFormat": "unixtime:s msgtype:json"
+                }
+            ],
+            "dataDashboardUrl": "http://localhost:8083/",
+            "dataDashboardUser": "user1cyclops",
+            "dataDashboardPassword": "qkDaFQ8gJEokApS6"
+        }
+    ]
+  }
+```
+
+##### /v1/api/space/ POST
+Use this API to create a new monitored space for a given user account in sentinel. 
+A matching *username* and the *api-key* needs to be provided as header fields. The 
+body just contains the *name* of the space that one wishes to create.
+
+```
+  curl -X POST https://localhost:9000/v1/api/space/ 
+  --header "Content-Type: application/json"
+  --header "x-auth-login: username" 
+  --header "x-auth-apikey: some-api-key"
+  -d '{"name":"space-name"}'
+```
+If the call is successful, the *space id* is returned back as confirmation. A 
+sample response is shown next.
+
+```
+  {
+    "id": 3,
+    "accessUrl": "/api/space/3",
+    "topicName": "user-1-new-space",
+    "name": "new-space",
+    "dataDashboardUrl": "http://localhost:8083/",
+    "dataDashboardUser": "user1new-space",
+    "dataDashboardPassword": "GeMHPDUwKc5621ZI"
+  }
+```
+
+
 
 ## Development documentation
 
