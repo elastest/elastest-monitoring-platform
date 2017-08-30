@@ -34,6 +34,23 @@ another example:
 }
 ```
 
+## Extending the logging for other languages
+The included python file implements a logging class called *SentinelLogger* 
+that enables rest of the software to simple instatiate an object of this class 
+and simple send log messages the most natural way.
+```
+logger = SentinelLogger()
+logger.warn("some warning worthy message")
+logger.error("some error worthy message")
+logger.debug("some debug worthy message")
+logger.info("some info worthy message")
+logger.trace("some trace worthy message")
+```
+
+Similar libraries can be developed for popular languages such as Java, Go, etc. 
+The future release of EMP will include more language adapters enabling inline 
+logging.
+
   Copyright (c) 2017. Zuercher Hochschule fuer Angewandte Wissenschaften
    All Rights Reserved.
  
