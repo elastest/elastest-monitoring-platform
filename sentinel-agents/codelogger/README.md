@@ -36,7 +36,7 @@ another example:
 
 ## Extending the logging for other languages
 The included python file implements a logging class called *SentinelLogger* 
-that enables rest of the software to simple instatiate an object of this class 
+that enables rest of the software to simply instatiate an object of this class 
 and simple send log messages the most natural way.
 ```
 logger = SentinelLogger()
