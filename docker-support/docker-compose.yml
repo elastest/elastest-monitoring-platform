@@ -26,7 +26,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
   sentinel:
-    build: sentinel/
+    image: elastest/emp:latest
     links:
       - influxdb
       - kafka
