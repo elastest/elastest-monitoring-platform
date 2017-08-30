@@ -3,7 +3,7 @@ swagger: '2.0'
 info:
   description: Monitor anything anytime.
   version: '1'
-  title: Sentinel monitoring APIs
+  title: Elastest EMP APIs
   termsOfService: Terms of service
   contact:
     name: harh@zhaw.ch
@@ -13,8 +13,8 @@ info:
 host: sentinel.demonstrator.info:9000
 basePath: "/"
 tags:
-- name: Sentinel
-  description: Sentinel monitoring framework APIs
+- name: EMP
+  description: ElasTest monitoring platform APIs
 - name: api-controller
   description: API Controller
 - name: basic-error-controller
