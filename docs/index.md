@@ -11,27 +11,29 @@ The version 0.1 of EMP provides the following featues:
 - Management APIs to control space and series creation
 - Ability to send system metrics through systemstats agent
 - Ability to send docker stats through dockerstats agent
-- Ability to send Java application log messages from a log file through logparsing agent
+- Ability to send Java application log messages from a log file through 
+logparsing agent
 - Capability to directly send application logs to emp
 - Metrics visualization through Grafana dashboards
 
-EMP is designed to gather metrics as well as logs specifically from the ElasTest platform 
-components. In contrast the system under test (SuT) sends their metrics and logs to EMS
-which gets created on demand and performs online  metric analysis for the duration
-the SuT is running. EMP is for platform metrics and EMS is for SuT metrics.
+EMP is designed to gather metrics as well as logs specifically from the 
+ElasTest platform components. In contrast the system under test (SuT) sends 
+their metrics and logs to EMS which gets created on demand and performs 
+online  metric analysis for the duration the SuT is running. EMP is for 
+platform metrics and EMS is for SuT metrics.
 
 ## How to run
 
 ### Installation
-Sentinel can be easily installed using docker. The docker compose file is provided for 
-convenience.
+Sentinel can be easily installed using docker. The docker compose file is 
+provided for convenience.
 
 #### Download sentinel
 ```
 git clone https://github.com/elastest/elastest-platform-monitoring.git
 ```
-Now that you have the source code, you can either use docker to start sentinel, or 
-you can build and package from source.
+Now that you have the source code, you can either use docker to start 
+sentinel, or you can build and package from source.
 
 ## Using docker-compose
 Change into 'docker-support' subfolder under the root folder of the git repo 
@@ -59,15 +61,20 @@ variables. An example environment block is shown next:
       - TOPIC_CHECK_INTERVAL=30000
 ```
 Currently, sentinel works only with InfluxDB time-series backend. Support 
-for emerging alternatives such as Timescaledb is planned and will be added very soon.
+for emerging alternatives such as Timescaledb is planned and will be added 
+very soon.
 
 * STREAM_ADMINUSER - the admin user for InfluxDB
 * STREAM_ADMINPASS - choose a secure password for the just declared admin user
-* STREAM_DBENDPOINT - the API endpoint of InfluxDB service, typically it is at port 8086
-* STREAM_ACCESSURL - the InfluxDB UI URL that sentinel will return back to users, if your service is running on an externally accessible node, change localhost with the FQDN or the IP of the node.
+* STREAM_DBENDPOINT - the API endpoint of InfluxDB service, typically it is at 
+port 8086
+* STREAM_ACCESSURL - the InfluxDB UI URL that sentinel will return back to 
+users, if your service is running on an externally accessible node, change 
+localhost with the FQDN or the IP of the node.
 * ZOOKEEPER_ENDPOINT - the endpoint of the Zookeeper service
 * KAFKA_ENDPOINT - the endpoint where Kafka cluster is reachable by sentinel
-* TOPIC_CHECK_INTERVAL - defined in milliseconds, denotes the time interval between Kafka Topic query by topic manager in Sentinel.
+* TOPIC_CHECK_INTERVAL - defined in milliseconds, denotes the time interval 
+between Kafka Topic query by topic manager in Sentinel.
 
 ### Configuring Kafka container
 The kafka container allows certain parameters to be set via environment block.
@@ -97,13 +104,17 @@ openJDK 8.
 ```
 mvn clean package
 ```
-The self-contained jar file is created under ./target/ folder. Unless the pom file was changed, the self contained jar file is named **sentinel-0.1.jar**
+The self-contained jar file is created under ./target/ folder. Unless the pom 
+file was changed, the self contained jar file is named **sentinel-0.1.jar**
 
 To execute, simply run the jar as follows -
 ```
 $ java -jar /path/to/jar/sentinel-0.1.jar
 ```
-The above assumes that the **application.properties** file is in the classpath, or in the same folder as the jar file. In case the **application.properties** file is kept some other location, please use the following command instead -
+The above assumes that the **application.properties** file is in the 
+classpath, or in the same folder as the jar file. In case the 
+**application.properties** file is kept some other location, please use the 
+following command instead -
 ```
 $ java -jar /path/to/jar/sentinel-0.1.jar --spring.config.location=/path/to/config/application.properties
 ```
@@ -148,30 +159,41 @@ admin.token=eedsR2v5n4uh7Gjy
 series.format.cache.size=100
 published.api.version=v1
 ```
-Many of the entries in the **application.properties** file are self-explanatory. 
+Many of the entries in the **application.properties** file are 
+self-explanatory. 
 A few non-obvious ones are explained next -
 
 * server.port - on what port number sentinel APIs are accessible
-* displayexceptions - set this to **true** if you want to include exceptions full trace in the log outputs
+* displayexceptions - set this to **true** if you want to include exceptions 
+full trace in the log outputs
 * sentinel.db.type - currently only *sqlite* is supported
 * sentinel.db.endpoint - relative or absolute path of the DB file
-* topic.check.interval - value in milliseconds indicating the gap between checking list of monitoring spaces for subscription
-* stream.dbtype - the time series DB where the monitor stream will be stored, currently only *influxdb* is supported
-* stream.accessurl - the url /IP where the InfluxDB admin UI is accessible to the user (if enabled), this should be an externally accessible FQDN ideally
-* stream.adminuser - the name of the admin account in the stream DB (here influxdb), this value is meaningful only when *authentication* and *authorization* is enabled in InfluxDB, otherwise the values are not enforced by the DB
-* admin.token - this is the master token using which a new user account can be created within sentinel, this value should be accessible only to the administrators of the system, or within the API engine in case you wish to support self registration by general public.
+* topic.check.interval - value in milliseconds indicating the gap between 
+checking list of monitoring spaces for subscription
+* stream.dbtype - the time series DB where the monitor stream will be stored, 
+currently only *influxdb* is supported
+* stream.accessurl - the url /IP where the InfluxDB admin UI is accessible to 
+the user (if enabled), this should be an externally accessible FQDN ideally
+* stream.adminuser - the name of the admin account in the stream DB (here 
+influxdb), this value is meaningful only when *authentication* and 
+*authorization* is enabled in InfluxDB, otherwise the values are not enforced 
+by the DB
+* admin.token - this is the master token using which a new user account can be 
+created within sentinel, this value should be accessible only to the 
+administrators of the system, or within the API engine in case you wish to 
+support self registration by general public.
 
 ## Basic usage
 Sentinel framework has an extensive management and a planned query interface.
-Before it can be used for monitoring a service, appropriate user account, monitoring
-spaces and series must be created. The management API allows account management and
-setup.
+Before it can be used for monitoring a service, appropriate user account, 
+monitoring spaces and series must be created. The management API allows 
+account management and setup.
 
 ### Using EMP APIs
-Sentinel monitoring exposes a rich set of APIs for user and space management. The 
-current release of sentinel has APIs supporting bare-minimal features and as the 
-features set get richer, so will be the APIs. Below are the list of APIs currently 
-offered by the framework -
+Sentinel monitoring exposes a rich set of APIs for user and space management. 
+The current release of sentinel has APIs supporting bare-minimal features and 
+as the features set get richer, so will be the APIs. Below are the list of 
+APIs currently offered by the framework -
 
 * /v1/api/ - shows list of supported APIs
 * /v1/api/user/ - everything to do with user management
@@ -181,11 +203,13 @@ offered by the framework -
 * /v1/api/endpoint - API to retrieve Sentinel's data interface parameters
 
 #### Key concepts
-**Space**: Think of it as a collection of metrics belonging to different streams 
-but somehow belonging to the same scope, application or service. A space could be 
-allocated to metrics of smaller services making up a larger application or service.
+**Space**: Think of it as a collection of metrics belonging to different 
+streams but somehow belonging to the same scope, application or service. A 
+space could be allocated to metrics of smaller services making up a larger 
+application or service.
 
-**Series**: A series in Sentinel is a stream of metrics coming from the same source.
+**Series**: A series in Sentinel is a stream of metrics coming from the same 
+source.
 
 #### API return codes at a glance
 ```
@@ -262,14 +286,14 @@ allocated to metrics of smaller services making up a larger application or servi
 ```
 
 #### APIs in details
-Now that we have all the basic building buildings in place, lets explore each API 
-endpoint in more details. In the following subsections lets assume that the 
-sentinel API service is available at https://localhost:9000/. Also API example will 
-be provided as a valid cURL command.
+Now that we have all the basic building buildings in place, lets explore each 
+API endpoint in more details. In the following subsections lets assume that 
+the sentinel API service is available at https://localhost:9000/. Also API 
+example will be provided as a valid cURL command.
 
 ##### /v1/api/ GET
-This API allows a quick check on the health status, if the service is alive a 200 
-status code is returned along with a list of supported API endpoints.
+This API allows a quick check on the health status, if the service is alive a 
+200 status code is returned along with a list of supported API endpoints.
 ```
 curl -X GET https://localhost:9000/v1/api/
 ```
@@ -320,13 +344,13 @@ The response is similar to one shown below -
    }
   ]
 ```
-The output above is representative, and the actual API supported by sentinel varied 
-during the time of writing of this document.
+The output above is representative, and the actual API supported by sentinel 
+varied during the time of writing of this document.
 
 ##### /v1/api/user/ POST
-Use this API to create a new user of sentinel. User account creation is an admin 
-priviledged operation and the *admin-token* is required as header for the call to 
-be executed successfully.
+Use this API to create a new user of sentinel. User account creation is an 
+admin priviledged operation and the *admin-token* is required as header for 
+the call to be executed successfully.
 
 ```
   curl -X POST https://localhost:9000/v1/api/user/ 
@@ -334,9 +358,9 @@ be executed successfully.
   --header "x-auth-token: <admin-token>" 
   -d '{"login":"username", "password":"some-password"}'
 ```
-If the user already exists, you will get a *409 Conflict* status response back. An 
-example response upon successful creation of an account looks as shown below, the 
-actual value is for representation purposes only -
+If the user already exists, you will get a *409 Conflict* status response 
+back. An example response upon successful creation of an account looks as 
+shown below, the actual value is for representation purposes only -
 ```
   {
     "login": "username",
@@ -350,16 +374,16 @@ management API requests as you will see later.
 
 ##### /v1/api/user/{id} GET
 Use this API to retrieve the complete information about an user account, the 
-monitoring spaces and series info included. A valid *api-key* needs to be provided 
-as a header field while making this call.
+monitoring spaces and series info included. A valid *api-key* needs to be 
+provided as a header field while making this call.
 
 ```
   curl -X GET https://localhost:9000/v1/api/user/{id} 
   --header "Content-Type: application/json"
   --header "x-auth-apikey: valid-api-key"
 ```
-If the call succeeds then the complete details of the account is returned back. A 
-sample value returned is shown next.
+If the call succeeds then the complete details of the account is returned 
+back. A sample value returned is shown next.
 
 ```
   {
@@ -389,9 +413,10 @@ sample value returned is shown next.
 ```
 
 ##### /v1/api/space/ POST
-Use this API to create a new monitored space for a given user account in sentinel. 
-A matching *username* and the *api-key* needs to be provided as header fields. The 
-body just contains the *name* of the space that one wishes to create.
+Use this API to create a new monitored space for a given user account in 
+sentinel. A matching *username* and the *api-key* needs to be provided as 
+header fields. The body just contains the *name* of the space that one wishes 
+to create.
 
 ```
   curl -X POST https://localhost:9000/v1/api/space/ 
@@ -417,9 +442,13 @@ sample response is shown next.
 
 ##### /v1/api/series/ POST
 A space by itself does not handle data streams, it is a container and needs a 
-series to be defined before the metrics sent to it can be persisted and analyzed 
-later. This API allows creation of a *series* within an existing *space*. The 
-*msgSignature* allows sentinel to parse the incoming messages properly. 
+series to be defined before the metrics sent to it can be persisted and 
+analyzed later. This API allows creation of a *series* within an existing 
+*space*. The *msgSignature* allows sentinel to parse the incoming messages 
+properly. 
+
+**IMP**: please consult the agents guide on how to define the *msgSignature* 
+field if the series is being created for a particular agent's metric stream.
 
 If the message being sent into sentinel is a single level JSON string, the 
 *unixtime:s msgtype:json* value is sufficient.
@@ -431,8 +460,8 @@ curl -X POST https://localhost:9000/v1/api/series/
 --header "x-auth-apikey: some-api-key"
 -d '{"name":"series-name", "spaceName":"parent-space-name", "msgSignature":"msg-signature"}'
 ```
-If the call is successful, a *series id* is returned. An example response block is 
-shown for completeness.
+If the call is successful, a *series id* is returned. An example response 
+block is shown for completeness.
 
 ```
   {
@@ -443,16 +472,17 @@ shown for completeness.
 ```
 
 ##### /v1/api/key/{id} GET
-One can use this API if there is a need to retrieve the user api-key. The *username*
-should be a registered account and the *some-password* header field should be the 
-matching password for this account.
+One can use this API if there is a need to retrieve the user api-key. The 
+*username* should be a registered account and the *some-password* header field 
+should be the matching password for this account.
 
 ```
   curl -X GET https://localhost:9000/v1/api/key/{username} 
   --header "Content-Type: application/json"
   --header "x-auth-password: some-password"
 ```
-If the call is successful, the API-key is returned. A sample response is shown next.
+If the call is successful, the API-key is returned. A sample response is shown 
+next.
 
 ```
   {
@@ -463,9 +493,10 @@ If the call is successful, the API-key is returned. A sample response is shown n
 ```
 
 ##### /v1/api/endpoint GET
-This API call can be used to retrieve the connection parameters for the sentinel 
-agents to send data streams to. The call is available only to registered accounts, 
-therefore a valid *username* and *api-key* needs to be supplied as header fields.
+This API call can be used to retrieve the connection parameters for the 
+sentinel agents to send data streams to. The call is available only to 
+registered accounts, therefore a valid *username* and *api-key* needs to be 
+supplied as header fields.
 
 ```
   curl -X GET https://localhost:9000/v1/api/endpoint 
@@ -473,8 +504,8 @@ therefore a valid *username* and *api-key* needs to be supplied as header fields
   --header "x-auth-login: username" 
   --header "x-auth-apikey: some-api-key"
 ```
-If the call succeeds, the parameter block is returned that can be used to properly 
-configure the sentinel agents. A sample response is shown next.
+If the call succeeds, the parameter block is returned that can be used to 
+properly configure the sentinel agents. A sample response is shown next.
 
 ```
   {
@@ -485,31 +516,31 @@ configure the sentinel agents. A sample response is shown next.
 ```
 
 ### Running agents
-Currently three sentinel agents are available and more are being planned and will 
-be released in the near future.
+Currently three sentinel agents are available and more are being planned and 
+will be released in the near future.
 
 * docker stats agent
 * system stats agent
 * logfile agent
 
-Apart from these a python library enables Python application developers to directly 
-send the application logs to EMP.
+Apart from these a python library enables Python application developers to 
+directly send the application logs to EMP.
 
 * inline logging guidelines for Python
 
-Through the use of the APIs listed above, any user or process has all releveant 
-information necessary to properly configure the agents for sending appropriate 
-metrics and logs into EMP. *Look for steps to run EMP agents inside respective agent
-folders*.
+Through the use of the APIs listed above, any user or process has all 
+releveant information necessary to properly configure the agents for sending 
+appropriate metrics and logs into EMP. *Look for steps to run EMP agents 
+inside respective agent folders*.
 
 ## Development documentation
 
 ### Architecture
 ![EMP Architecture](https://raw.githubusercontent.com/elastest/elastest-monitoring-platform/master/docs/img/emp-arch.png "EMP Architecture")
 The proposed architecture of EMP is shown above. In this release, the basic 
-functionalities are ready including capability of configuring the spaces and series 
-by framework users, and via available agents as well as inline instrumentation, the 
-ability to send in metrics and log streams into EMP.
+functionalities are ready including capability of configuring the spaces and 
+series by framework users, and via available agents as well as inline 
+instrumentation, the ability to send in metrics and log streams into EMP.
 
 The technologies used in release 1.0 are -
 - Apache Kafka
@@ -519,17 +550,17 @@ The technologies used in release 1.0 are -
 - Maven 3.0.5 or higher
 - Python 3.0 (for agents implementation)
 
-Currently (release 0.1) the query interface is the native query APIs as well as 
-admin dashboard exposed by InfluxDB. EMP's own query interface allowing online 
-queries, correlated analysis and much more will be made available soon.
+Currently (release 0.1) the query interface is the native query APIs as well 
+as admin dashboard exposed by InfluxDB. EMP's own query interface allowing 
+online queries, correlated analysis and much more will be made available soon.
 
-Stream visualization in this release is supported via Grafana dashboards. An example
-is shown here.
+Stream visualization in this release is supported via Grafana dashboards. An 
+example is shown here.
 ![Sample Visualization](https://raw.githubusercontent.com/elastest/elastest-monitoring-platform/master/docs/img/grafana.png "Sample Visualization")
 
 ### Prepare development environment
-We recommend use of IntelliJ IDE CE as development environment for EMP. Since the 
-project uses Maven as build environmetn, any supporting IDE will do. 
+We recommend use of IntelliJ IDE CE as development environment for EMP. Since 
+the project uses Maven as build environmetn, any supporting IDE will do. 
 
 - download the code base using git
 ```
@@ -545,10 +576,10 @@ mvn clean compile
 ```
 
 ### Development procedure
-Simply load the downloaded codebase folder into any IDE - eclipse or IntelliJ Idea 
-CE and choose **import maven project** as your option. You are ready to contribute 
-to the EMP codebase. Please do not forget to send us a pull request if you add a 
-new feature or find and have fixed a bug.
+Simply load the downloaded codebase folder into any IDE - eclipse or IntelliJ 
+Idea CE and choose **import maven project** as your option. You are ready to 
+contribute to the EMP codebase. Please do not forget to send us a pull request
+if you add a new feature or find and have fixed a bug.
 
   Copyright (c) 2017. Zuercher Hochschule fuer Angewandte Wissenschaften
    All Rights Reserved.
