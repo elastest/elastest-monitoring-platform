@@ -1,10 +1,10 @@
 # Log parsing agent
-This agent continually monitors a log file and sends all logs sent to it to EMP 
-framework in a realtime manner.
+This agent continually monitors a log file and sends all logs sent to it to 
+EMP framework in a realtime manner.
 
 ## Installing dependencies
-The agent dependencies are listed in *requirements.txt* file. With **pip3** the 
-requirements can be easily installed on the node to be monitored.
+The agent dependencies are listed in *requirements.txt* file. With **pip3** 
+the requirements can be easily installed on the node to be monitored.
 
 ```
 $ sudo pip3 install -f requirements.txt
@@ -49,11 +49,11 @@ via one of the management APIs of emp framework
 - topic: change this with correct monitoring-space topic name that was created
 - seriesName: update this with the series name within the topic (space) that 
 was created using the management APIs
-- seriesPattern: update this with the pattern that was defined in emp while the 
-target series was created using the management API, the format of the pattern 
-is **unixtime:timeunit [fieldname:fieldtype] [fieldname:fieldtype] ...** where 
-**fieldname** is something meaningful and **fieldtype** can be one of the 
-following parameters:
+- seriesPattern: update this with the pattern that was defined in emp while 
+the target series was created using the management API, the format of the 
+pattern is **unixtime:timeunit [fieldname:fieldtype] [fieldname:fieldtype] ...
+**where **fieldname** is something meaningful and **fieldtype** can be one of 
+the following parameters:
 	- string
 	- int
 	- long
@@ -66,8 +66,8 @@ following parameters:
 		- ns: nanoseconds
 		- us: microseconds 
 - filePath: the full path of the targetted log file which needs to tracked
-- logPattern: actual log4j logging pattern used in the code which generates the 
-logs in the targeted file
+- logPattern: actual log4j logging pattern used in the code which generates 
+the logs in the targeted file
 - [mapping] block: it defines the mapping between the logpattern elements and 
 the elements defined in the **seriesPattern**
 
