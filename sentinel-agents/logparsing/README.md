@@ -59,9 +59,8 @@ following parameters:
 	- long
 	- float
 	- double
-
-The **timeunit** defining the **unixtime** value can be one of the following 
-values:
+	The **timeunit** defining the **unixtime** value can be one of the 
+	following values:
 	- s: second
 	- ms: milliseconds
 	- ns: nanoseconds
