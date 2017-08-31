@@ -59,12 +59,13 @@ the following parameters:
 	- long
 	- float
 	- double
-	- The **timeunit** defining the **unixtime** value can be one of the 
+
+	The **timeunit** defining the **unixtime** value can be one of the 
 	following values:
-		- s: second
-		- ms: milliseconds
-		- ns: nanoseconds
-		- us: microseconds 
+	- s: second
+	- ms: milliseconds
+	- ns: nanoseconds
+	- us: microseconds 
 - filePath: the full path of the targetted log file which needs to tracked
 - logPattern: actual log4j logging pattern used in the code which generates 
 the logs in the targeted file
