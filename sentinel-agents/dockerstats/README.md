@@ -34,7 +34,8 @@ socket = unix://var/run/docker.sock
 [agent]
 period = 15
 ```
-**IMP**: Make sure that the series signature matches in the EMP setup to the one mentioned above to where this agent sends to.
+**IMP**: Make sure that the series signature matches in the EMP setup to the 
+one mentioned above to where this agent sends to.
 
 Please update these fields with correct values (remaining values can be left 
 unchanged):
