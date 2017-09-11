@@ -1,0 +1,19 @@
+version: '2.1'
+
+services:
+  emp:
+    image: elastest/elastest-platform-monitoring
+    ports:
+      - 9001:9000
+    environment:
+      - KAFKA_ENDPOINT=some-url:port
+      - STREAM_DBENDPOINT=some-url:port
+      - STREAM_ACCESSURL=some-fqdn:port
+      - ZOOKEEPER_ENDPOINT=some-endpoint:port
+      - STREAM_ADMINPASS=some-pass
+      - STREAM_ADMINUSER=some-user
+    networks:
+      - elastest
+networks:
+    elastest:
+        driver: bridge
