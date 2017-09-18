@@ -1,19 +1,65 @@
-version: '2.1'
+version: '3'
 
 services:
-  emp:
-    image: elastest/elastest-platform-monitoring
+  emp-kafka:
+    image: spotify/kafka
     ports:
-      - 9001:9000
+      - 2181:2181
+      - 9092:9092
     environment:
-      - KAFKA_ENDPOINT=some-url:port
-      - STREAM_DBENDPOINT=some-url:port
-      - STREAM_ACCESSURL=some-fqdn:port
-      - ZOOKEEPER_ENDPOINT=some-endpoint:port
-      - STREAM_ADMINPASS=some-pass
-      - STREAM_ADMINUSER=some-user
-    networks:
-      - elastest
-networks:
-    elastest:
-        driver: bridge
+      - ADVERTISED_PORT=9092
+      - ADVERTISED_HOST=emp-kafka
+  emp-influxdb:
+    image: influxdb:1.2.4-alpine
+    ports:
+      - 8083:8083
+      - 8086:8086
+      - 2003:2003
+    environment:
+      - INFLUXDB_ADMIN_ENABLED=true
+      - INFLUXDB_GRAPHITE_ENABLED=true
+      - INFLUXDB_HTTP_AUTH_ENABLED=true
+  emp-grafana:
+    image: grafana/grafana:4.3.2
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
+  emp:
+    image: elastest/emp:latest
+    links:
+      - emp-influxdb
+      - emp-kafka
+    ports:
+      - 9000:9000
+    environment:
+      - STREAM_ADMINUSER=root
+      - STREAM_ADMINPASS=pass1234
+      - STREAM_DBENDPOINT=emp-influxdb:8086
+      - STREAM_ACCESSURL=localhost:8083
+      - STREAM_DBTYPE=emp-influxdb
+      - ZOOKEEPER_ENDPOINT=emp-kafka:2181
+      - KAFKA_ENDPOINT=emp-kafka:9092
+      - TOPIC_CHECK_INTERVAL=30000
+      - ET_EDM_ALLUXIO_API=http://edm-alluxio-master:19999/
+      - ET_EDM_MYSQL_HOST=edm-mysql
+      - ET_EDM_MYSQL_PORT=3306
+      - ET_EDM_ELASTICSEARCH_API=http://edm-elasticsearch:9200/
+      - ET_EDM_API=http://edm:37003/
+      - ET_EPM_API=http://epm:37002/
+      - ET_ETM_API=http://etm:37006/
+      - ET_ESM_API=http://esm:37005/
+      - ET_EIM_API=http://eim:37004/
+      - ET_ETM_LSBEATS_HOST=etm-beats
+      - ET_ETM_LSBEATS_PORT=5044
+      - ET_ETM_LSHTTP_API=http://etm-logstash:5002/
+      - ET_ETM_RABBIT_HOST=etm-rabbitmq
+      - ET_ETM_RABBIT_PORT=5672
+      - ET_EMP_API=http://eim:37001/
+      - ET_EMP_INFLUXDB_API=http://emp-influxdb:8086/
+      - ET_EMP_INFLUXDB_HOST=emp-influxdb
+      - ET_EMP_INFLUXDB_GRAPHITE_PORT=2003
+    volumes:
+      - emp:/data
+volumes:
+  emp:
