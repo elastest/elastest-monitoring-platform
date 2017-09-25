@@ -9,6 +9,8 @@ services:
     environment:
       - ADVERTISED_PORT=9092
       - ADVERTISED_HOST=kafka
+      - KAFKA_DELETE_TOPIC_ENABLE=true
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
   influxdb:
     image: influxdb:1.2.4-alpine
     ports:
