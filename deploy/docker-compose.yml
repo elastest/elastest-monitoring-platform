@@ -26,7 +26,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
   emp:
-    image: elastest/emp:latest
+    image: elastest/emp:0.5.0-alpha1
     links:
       - emp-influxdb
       - emp-kafka
