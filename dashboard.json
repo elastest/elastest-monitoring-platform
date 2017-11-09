@@ -231,7 +231,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
@@ -349,7 +349,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
@@ -393,7 +393,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
@@ -437,7 +437,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
@@ -561,7 +561,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
@@ -605,7 +605,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
@@ -649,7 +649,7 @@
               "groupBy": [
                 {
                   "params": [
-                    "1m"
+                    "80s"
                   ],
                   "type": "time"
                 },
