@@ -18,11 +18,15 @@
 #
 # Thanks to: https://hub.docker.com/r/frolvlad/alpine-oraclejdk8/
 FROM frolvlad/alpine-oraclejdk8
+
+LABEL maintainer="elastest-users@googlegroups.com"
+LABEL version="0.1"
+LABEL description="Builds the emp docker image."
+
 EXPOSE 9000
 RUN apk --update add sqlite curl
-ADD application.properties application.properties
-ADD sentinel-0.1.jar sentinel-0.1.jar
-ADD keystore.p12 keystore.p12
+COPY target/sentinel-0.1.jar /emp.jar
+COPY application.properties /application.properties
 ADD init-dashboard.sh init-dashboard.sh
 ADD dashboard.json dashboard.json
 ADD start.sh start.sh
