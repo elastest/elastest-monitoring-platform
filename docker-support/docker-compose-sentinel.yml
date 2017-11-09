@@ -14,6 +14,13 @@ services:
       - ZOOKEEPER_ENDPOINT=kafka:2181
       - KAFKA_ENDPOINT=kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
+      - INFLUX_URL=http://influxdb:8086
+      - INFLUX_URL_GRAFANA=http://localhost:8086
+      - GRAFANA_URL=http://grafana:3000
+      - GRAFANA_ADMIN=admin
+      - GRAFANA_PASSWORD=1ccl@b2017
+      - INFLUX_USER=root
+      - INFLUX_PASSWORD=pass1234
       - SENTINEL_DB_TYPE=sqlite
       - SENTINEL_DB_ENDPOINT=/data/sentinel.db
       - ADMIN_TOKEN=sometoken

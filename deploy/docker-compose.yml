@@ -26,7 +26,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
   emp:
-    image: elastest/emp:0.5.0-alpha1
+    image: elastest/emp:0.5.0-alpha2
     links:
       - emp-influxdb
       - emp-kafka
@@ -41,6 +41,15 @@ services:
       - ZOOKEEPER_ENDPOINT=emp-kafka:2181
       - KAFKA_ENDPOINT=emp-kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
+      - INFLUX_URL=http://emp-influxdb:8086
+      - INFLUX_URL_GRAFANA=http://localhost:8086
+      - GRAFANA_URL=http://emp-grafana:3000
+      - GRAFANA_ADMIN=admin
+      - GRAFANA_PASSWORD=1ccl@b2017
+      - INFLUX_USER=root
+      - INFLUX_PASSWORD=pass1234
+      - SENTINEL_DB_ENDPOINT=/data/sentinel.db
+      - ADMIN_TOKEN=somevalue
       - ET_EDM_ALLUXIO_API=http://edm-alluxio-master:19999/
       - ET_EDM_MYSQL_HOST=edm-mysql
       - ET_EDM_MYSQL_PORT=3306

@@ -178,15 +178,15 @@ public class InfluxDBClient
         {
             if(topic.equalsIgnoreCase("zane-sensor-data") && key.equalsIgnoreCase("id-00001"))
             {
-                String[] msgParts = msg.split(" ");
-                Double sourceTime = new Double(Double.parseDouble(msgParts[0]));
-                Point point1 = Point.measurement(key)
+                try {
+                    String[] msgParts = msg.split(" ");
+                    Double sourceTime = new Double(Double.parseDouble(msgParts[0]));
+                    Point point1 = Point.measurement(key)
                         .time(sourceTime.longValue(), TimeUnit.SECONDS)
                         .addField("CO", Float.parseFloat(msgParts[1].split("=")[1]))
                         .addField("LPG", Float.parseFloat(msgParts[2].split("=")[1]))
                         .addField("SMOKE", Float.parseFloat(msgParts[3].split("=")[1]))
                         .build();
-                try {
                     influxDB.write(topic, "autogen", point1);
                 }
                 catch(Exception ex)
@@ -264,59 +264,53 @@ public class InfluxDBClient
                 }
                 else
                 {
-                    String[] msgParts = msg.split(" ");
-                    if(formatElements.get(0).name.equalsIgnoreCase("unixtime"))
-                    {
-                        Double sourceTime = new Double(Double.parseDouble(msgParts[0].split(":")[1]));
-                        if(formatElements.get(0).type.equalsIgnoreCase("s"))
-                        {
-                            builder.time(sourceTime.longValue(), TimeUnit.SECONDS);
+                    try {
+                        String[] msgParts = msg.split(" ");
+                        if (formatElements.get(0).name.equalsIgnoreCase("unixtime")) {
+                            Double sourceTime = new Double(Double.parseDouble(msgParts[0].split(":")[1]));
+                            if (formatElements.get(0).type.equalsIgnoreCase("s")) {
+                                builder.time(sourceTime.longValue(), TimeUnit.SECONDS);
+                            } else if (formatElements.get(0).type.equalsIgnoreCase("ms")) {
+                                builder.time(sourceTime.longValue(), TimeUnit.MILLISECONDS);
+                            } else if (formatElements.get(0).type.equalsIgnoreCase("ns")) {
+                                builder.time(sourceTime.longValue(), TimeUnit.NANOSECONDS);
+                            } else if (formatElements.get(0).type.equalsIgnoreCase("us")) {
+                                builder.time(sourceTime.longValue(), TimeUnit.MICROSECONDS);
+                            }
+                        } else {
+                            //assume time unit is missing
+                            builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
                         }
-                        else if(formatElements.get(0).type.equalsIgnoreCase("ms"))
-                        {
-                            builder.time(sourceTime.longValue(), TimeUnit.MILLISECONDS);
-                        }
-                        else if(formatElements.get(0).type.equalsIgnoreCase("ns"))
-                        {
-                            builder.time(sourceTime.longValue(), TimeUnit.NANOSECONDS);
-                        }
-                        else if(formatElements.get(0).type.equalsIgnoreCase("us"))
-                        {
-                            builder.time(sourceTime.longValue(), TimeUnit.MICROSECONDS);
-                        }
-                    }
-                    else
-                    {
-                        //assume time unit is missing
-                        builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-                    }
 
-                    int elementPlace = 0;
-                    for(ListElement ele:formatElements)
-                    {
-                        elementPlace++;
-                        if(ele.name.equalsIgnoreCase("unixtime") && elementPlace == 1) continue;
-                        String[] msgSubparts = msgParts[elementPlace-1].split(":");
-                        switch(ele.type)
-                        {
-                            case "bool":
-                                break;
-                            case "string":
-                            case "json":
-                                String toStore = msgSubparts[1];
-                                toStore = toStore.replaceAll("_", " ");
-                                toStore = toStore.replaceAll("@", ":");
-                                builder.addField(msgSubparts[0], toStore);
-                                break;
-                            case "int":
-                            case "long":
-                                builder.addField(msgSubparts[0], Long.parseLong(msgSubparts[1]));
-                                break;
-                            case "float":
-                            case "double":
-                                builder.addField(msgSubparts[0], Float.parseFloat(msgSubparts[1]));
-                                break;
+                        int elementPlace = 0;
+                        for (ListElement ele : formatElements) {
+                            elementPlace++;
+                            if (ele.name.equalsIgnoreCase("unixtime") && elementPlace == 1) continue;
+                            String[] msgSubparts = msgParts[elementPlace - 1].split(":");
+                            switch (ele.type) {
+                                case "bool":
+                                    break;
+                                case "string":
+                                case "json":
+                                    String toStore = msgSubparts[1];
+                                    toStore = toStore.replaceAll("_", " ");
+                                    toStore = toStore.replaceAll("@", ":");
+                                    builder.addField(msgSubparts[0], toStore);
+                                    break;
+                                case "int":
+                                case "long":
+                                    builder.addField(msgSubparts[0], Long.parseLong(msgSubparts[1]));
+                                    break;
+                                case "float":
+                                case "double":
+                                    builder.addField(msgSubparts[0], Float.parseFloat(msgSubparts[1]));
+                                    break;
+                            }
                         }
+                    }
+                    catch (Exception ex)
+                    {
+                        return false;
                     }
                 }
 

@@ -29,6 +29,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.apache.log4j.Logger;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,6 +99,28 @@ public class APIController {
         Gson gson = new Gson();
         String jsonInString = gson.toJson(value);
         return ResponseEntity.status(HttpStatus.OK).body(jsonInString);
+    }
+
+    @RequestMapping(value = {"/dashboard/"}, method = RequestMethod.GET, produces = {"application/json"})
+    @ApiOperation(value = "showDashboard", notes = "Displays statically displayed dashboard")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ok")
+    })
+    public @ResponseBody
+    ResponseEntity showDashboard()
+    {
+        String src = "http://localhost:3000/dashboard/db/elastest?refresh=30s&orgId=1&theme=light";
+        String returnVal = "<html><head></head><body style=\"background-color:black;\">";
+        returnVal += "<script>\n" +
+                "  function resizeIframe(obj) {\n" +
+                "    obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';\n" +
+                "  }\n" +
+                "</script>";
+        returnVal += "<div style=\"width:100%; background-color:black;\"><img src=\"http://elastest.io/images/intense/elastest-logo-dark.png\" align=\"left\"></div>";
+        returnVal += "<br><br><br><br>";
+        returnVal += "<iframe onload=\"resizeIframe(this)\" width=\"99%\" height=\"90%\" style=\"border:none; display:block;\" src=\"" + src + "\">";
+        returnVal += "</iframe></body></html>";
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_HTML).body(returnVal);
     }
 
     @RequestMapping(value = {"/error"}, method = RequestMethod.GET, produces = {"application/json"})
