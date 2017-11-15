@@ -1331,6 +1331,818 @@
         "showTitle": false,
         "title": "Dashboard Row",
         "titleSize": "h6"
+      },
+      {
+        "collapse": false,
+        "height": 249,
+        "panels": [
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": null,
+            "fill": 1,
+            "id": 8,
+            "legend": {
+              "avg": false,
+              "current": false,
+              "max": false,
+              "min": false,
+              "show": true,
+              "total": false,
+              "values": false
+            },
+            "lines": true,
+            "linewidth": 1,
+            "links": [],
+            "nullPointMode": "null",
+            "percentage": false,
+            "pointradius": 5,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "span": 3,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "alias": "tx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "A",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_tx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm_*/"
+                  }
+                ]
+              },
+              {
+                "alias": "rx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "B",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_rx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm_*/"
+                  }
+                ]
+              },
+              {
+                "alias": "cpu",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "C",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "cpu_usage_total"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm_*/"
+                  }
+                ]
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "etm",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ]
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": null,
+            "fill": 1,
+            "id": 10,
+            "legend": {
+              "avg": false,
+              "current": false,
+              "max": false,
+              "min": false,
+              "show": true,
+              "total": false,
+              "values": false
+            },
+            "lines": true,
+            "linewidth": 1,
+            "links": [],
+            "nullPointMode": "null",
+            "percentage": false,
+            "pointradius": 5,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "span": 3,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "alias": "tx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "A",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_tx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-logstash*/"
+                  }
+                ]
+              },
+              {
+                "alias": "rx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "B",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_rx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-logstash*/"
+                  }
+                ]
+              },
+              {
+                "alias": "cpu",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "C",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "cpu_usage_total"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-logstash*/"
+                  }
+                ]
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "etm-logstash",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ]
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": null,
+            "fill": 1,
+            "id": 9,
+            "legend": {
+              "avg": false,
+              "current": false,
+              "max": false,
+              "min": false,
+              "show": true,
+              "total": false,
+              "values": false
+            },
+            "lines": true,
+            "linewidth": 1,
+            "links": [],
+            "nullPointMode": "null",
+            "percentage": false,
+            "pointradius": 5,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "span": 3,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "alias": "tx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "A",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_tx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-beats*/"
+                  }
+                ]
+              },
+              {
+                "alias": "rx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "B",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_rx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-beats*/"
+                  }
+                ]
+              },
+              {
+                "alias": "cpu",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "C",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "cpu_usage_total"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-beats*/"
+                  }
+                ]
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "etm-beats",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ]
+          },
+          {
+            "aliasColors": {},
+            "bars": false,
+            "dashLength": 10,
+            "dashes": false,
+            "datasource": null,
+            "fill": 1,
+            "id": 11,
+            "legend": {
+              "avg": false,
+              "current": false,
+              "max": false,
+              "min": false,
+              "show": true,
+              "total": false,
+              "values": false
+            },
+            "lines": true,
+            "linewidth": 1,
+            "links": [],
+            "nullPointMode": "null",
+            "percentage": false,
+            "pointradius": 5,
+            "points": false,
+            "renderer": "flot",
+            "seriesOverrides": [],
+            "spaceLength": 10,
+            "span": 3,
+            "stack": false,
+            "steppedLine": false,
+            "targets": [
+              {
+                "alias": "tx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "A",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_tx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-rabbitmq*/"
+                  }
+                ]
+              },
+              {
+                "alias": "rx_bytes",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "B",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "networks_eth0_rx_bytes"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-rabbitmq*/"
+                  }
+                ]
+              },
+              {
+                "alias": "cpu",
+                "dsType": "influxdb",
+                "groupBy": [
+                  {
+                    "params": [
+                      "80s"
+                    ],
+                    "type": "time"
+                  },
+                  {
+                    "params": [
+                      "0"
+                    ],
+                    "type": "fill"
+                  }
+                ],
+                "measurement": "docker-stats",
+                "orderByTime": "ASC",
+                "policy": "default",
+                "refId": "C",
+                "resultFormat": "time_series",
+                "select": [
+                  [
+                    {
+                      "params": [
+                        "cpu_usage_total"
+                      ],
+                      "type": "field"
+                    },
+                    {
+                      "params": [],
+                      "type": "mean"
+                    }
+                  ]
+                ],
+                "tags": [
+                  {
+                    "key": "container-name",
+                    "operator": "=~",
+                    "value": "/elastest_etm-rabbitmq*/"
+                  }
+                ]
+              }
+            ],
+            "thresholds": [],
+            "timeFrom": null,
+            "timeShift": null,
+            "title": "etm-rabbitmq",
+            "tooltip": {
+              "shared": true,
+              "sort": 0,
+              "value_type": "individual"
+            },
+            "type": "graph",
+            "xaxis": {
+              "buckets": null,
+              "mode": "time",
+              "name": null,
+              "show": true,
+              "values": []
+            },
+            "yaxes": [
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              },
+              {
+                "format": "short",
+                "label": null,
+                "logBase": 1,
+                "max": null,
+                "min": null,
+                "show": true
+              }
+            ]
+          }
+        ],
+        "repeat": null,
+        "repeatIteration": null,
+        "repeatRowId": null,
+        "showTitle": false,
+        "title": "Dashboard Row",
+        "titleSize": "h6"
       }
     ],
     "schemaVersion": 14,
