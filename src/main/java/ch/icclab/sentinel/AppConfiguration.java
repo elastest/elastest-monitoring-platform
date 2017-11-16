@@ -76,6 +76,12 @@ public class AppConfiguration {
     @Value("${kafka.value.serializer}")
     String kafkavalueserializer;
 
+    @Value("${dashboard.title}")
+    String dashboardtitle;
+
+    @Value("${dashboard.endpoint}")
+    String dashboardendpoint;
+
 
     private static String streamDBUser;
     private static String streamDBPass;
@@ -92,7 +98,27 @@ public class AppConfiguration {
     private static String kafkaKeySerializer;
     private static String kafkaValueSerializer;
     private static String streamAccessUrl;
+    private static String dashboardTitle;
+    private static String dashboardEndpoint;
 
+
+    public static String getDashboardTitle()
+    {
+        Map<String, String> env = System.getenv();
+        if(env.containsKey("DASHBOARD_TITLE"))
+            dashboardTitle = env.get("DASHBOARD_TITLE");
+
+        return dashboardTitle;
+    }
+
+    public static String getDashboardEndpoint()
+    {
+        Map<String, String> env = System.getenv();
+        if(env.containsKey("DASHBOARD_ENDPOINT"))
+            dashboardEndpoint = env.get("DASHBOARD_ENDPOINT");
+
+        return dashboardEndpoint;
+    }
 
     public static String getStreamDBUser()
     {
@@ -256,7 +282,8 @@ public class AppConfiguration {
         publishedApiVersion = apiV;
         kafkaKeySerializer = kafkakeyserializer;
         kafkaValueSerializer = kafkavalueserializer;
-
+        dashboardTitle = dashboardtitle;
+        dashboardEndpoint = dashboardendpoint;
     }
 
 }

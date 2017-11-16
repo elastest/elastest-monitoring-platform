@@ -51,6 +51,8 @@ services:
       - INFLUX_PASSWORD=pass1234
       - SENTINEL_DB_ENDPOINT=/data/sentinel.db
       - ADMIN_TOKEN=somevalue
+      - DASHBOARD_TITLE=elastest
+      - DASHBOARD_ENDPOINT=localhost:3000
     volumes:
       - sentinel:/data
 volumes:

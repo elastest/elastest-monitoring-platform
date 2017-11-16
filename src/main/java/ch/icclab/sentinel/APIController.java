@@ -109,7 +109,8 @@ public class APIController {
     public @ResponseBody
     ResponseEntity showDashboard()
     {
-        String src = "http://localhost:3000/dashboard/db/elastest?refresh=30s&orgId=1&theme=light";
+        String src = "http://" + AppConfiguration.getDashboardEndpoint() + "/dashboard/db/" +
+                AppConfiguration.getDashboardTitle() + "?refresh=30s&orgId=1&theme=light";
         String returnVal = "<html><head></head><body style=\"background-color:black;\">";
         returnVal += "<script>\n" +
                 "  function resizeIframe(obj) {\n" +
