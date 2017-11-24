@@ -25,8 +25,8 @@ services:
       - 3000:3000
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
-  sentinel:
-    image: elastest/emp:0.5.0-alpha2
+  emp:
+    image: elastest/emp:0.5.0-beta1
     links:
       - influxdb
       - kafka
