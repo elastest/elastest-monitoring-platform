@@ -43,7 +43,7 @@ public class SqlDriverTest
     public void testgetDbTablesList()
     {
         setUp();
-        assertEquals("list of tables", 4, SqlDriver.getDbTablesList().size());
+        assertEquals("list of tables", 5, SqlDriver.getDbTablesList().size());
     }
 
     @Test
