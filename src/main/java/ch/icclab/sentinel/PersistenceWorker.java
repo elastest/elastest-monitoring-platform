@@ -1,4 +1,5 @@
 package ch.icclab.sentinel;
+
 /*
  * Copyright (c) 2017. ZHAW - ICCLab
  *  All Rights Reserved.
@@ -16,12 +17,13 @@ package ch.icclab.sentinel;
  *     under the License.
  */
 
-import org.apache.log4j.Logger;
-
 /*
  *     Author: Piyush Harsh,
  *     URL: piyush-harsh.info
  */
+
+import org.apache.log4j.Logger;
+
 public class PersistenceWorker implements Runnable
 {
     final static Logger logger = Logger.getLogger(PersistenceWorker.class);

@@ -26,7 +26,7 @@ import java.util.LinkedList;
  */
 public class KafkaThreadManager {
     final static Logger logger = Logger.getLogger(KafkaThreadManager.class);
-    private static int cores = (int)(Math.floor((Runtime.getRuntime().availableProcessors() * 0.7)));
+    private static int cores = (int)(Math.max(Math.floor((Runtime.getRuntime().availableProcessors() * 0.5)), 1.0)); //ensuring at least 1 thread exists
     private WorkerMetaInformation[] workerPool;
     private int nextPointer = 0;
 

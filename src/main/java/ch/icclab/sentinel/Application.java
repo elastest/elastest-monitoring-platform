@@ -42,6 +42,9 @@ public class Application {
     public static KafkaThreadManager threadpool = new KafkaThreadManager();
     public static SeriesStructureCache msgFormatCache;
     public static ExecutorService PersistenceWorkerPool = Executors.newFixedThreadPool((int)(Math.max(Math.ceil((Runtime.getRuntime().availableProcessors() * 0.3)) - 1.0, 1.0)));
+    public static ExecutorService PingWorkerPool = Executors.newFixedThreadPool((int)(Math.max(Math.ceil((Runtime.getRuntime().availableProcessors() * 0.2)), 1.0)));
+    public static HealthEventsCache eventsCache;
+    public static HealthCheckManager healthManager = new HealthCheckManager();
 
     public static void main (String[] args)
     {
@@ -61,10 +64,13 @@ public class Application {
             Initialize.initializeDb();
         }
         msgFormatCache = new SeriesStructureCache(AppConfiguration.getSeriesFormatCacheSize());
+        eventsCache = new HealthEventsCache(100); //allowing upto 100 ping traces to be maintained
+
         if(AppConfiguration.getStreamDBType().equalsIgnoreCase("influxdb")) InfluxDBClient.init();
         //SqlDriver.isDuplicateUser("piyush@zhaw.ch");
         TopicsManager topicSyncProcess = new TopicsManager();
         topicSyncProcess.start(); //this consumes 1 processor core
+        healthManager.start(); //this consumes 1 processor core if available
     }
 
 }

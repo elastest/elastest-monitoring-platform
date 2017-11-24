@@ -31,6 +31,8 @@ public class TopicsManager extends Thread {
         logger.info("Starting topics manager thread.");
         while(true)
         {
+            //syncing the ping list too -
+            Application.healthManager.updatePingList(SqlDriver.getGlobalPingList());
             String[] topics = KafkaClient.listTopics();
             //for( String topic: topics) System.out.println(topic + " ");
             LinkedList<String> registeredTopics = SqlDriver.getGlobalTopicsList();
@@ -43,7 +45,8 @@ public class TopicsManager extends Thread {
                 if (!topic.startsWith("__")) {
                     if (registeredTopics.contains(topic))
                         Application.threadpool.addTopic(topic);
-                    else {
+                    else
+                    {
                         if (!topic.equalsIgnoreCase("zane-sensor-data"))
                         {
                             boolean status = KafkaClient.deleteTopic(topic);
@@ -86,6 +89,7 @@ public class TopicsManager extends Thread {
             {
                 e.printStackTrace();
             }
+            logger.info("Topics manager starting another check and update run.");
         }
     }
 }

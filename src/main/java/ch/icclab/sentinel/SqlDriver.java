@@ -22,9 +22,7 @@ package ch.icclab.sentinel;
  *     URL: piyush-harsh.info
  */
 
-import ch.icclab.sentinel.dao.SeriesInput;
-import ch.icclab.sentinel.dao.SeriesOutput;
-import ch.icclab.sentinel.dao.SpaceOutput;
+import ch.icclab.sentinel.dao.*;
 import org.apache.log4j.Logger;
 import org.jooq.*;
 import org.jooq.impl.DSL;
@@ -36,6 +34,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.log;
 import static org.jooq.impl.DSL.table;
 
 
@@ -354,6 +353,128 @@ public class SqlDriver
         return id;
     }
 
+    static int addPingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String login)
+    {
+        if(isDuplicatePing(login, pingURL, reportURL))
+        {
+            return updatePingEntry(pingURL, reportURL, periodicity, tolerance, getPingId(pingURL, reportURL, getUserId(login)));
+        }
+
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+        String sql = create.insertInto(table("healthcheck"), field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("userid")).
+                values("?", "?", "?", "?", "?").getSQL();
+        int id = -1;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, pingURL);
+            stmt.setString(2, reportURL);
+            stmt.setLong(3, periodicity);
+            stmt.setInt(4, tolerance);
+            stmt.setInt(5, getUserId(login));
+            stmt.executeUpdate();
+            stmt.close();
+            conn.close();
+            id = getPingId(pingURL, reportURL, getUserId(login));
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in adding a new series: " + sqex.getMessage());
+        }
+        return id;
+    }
+
+    static int updatePingEntry(String pingURL, String reportURL, long periodicity, int tolerance, int pingId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+
+        String sql = create.update(table("healthcheck")).set(field("pingurl"), "?").set(field("reporturl"), "?").set(field("periodicity"), "?")
+                .set(field("tolerance"), "?").where("id = ?").getSQL();
+        int id = -1;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, pingURL);
+            stmt.setString(2, reportURL);
+            stmt.setLong(3, periodicity);
+            stmt.setInt(4, tolerance);
+            stmt.setInt(5, pingId);
+            stmt.executeUpdate();
+            stmt.close();
+            conn.close();
+            id = pingId;
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in updating an existing ping entry: " + sqex.getMessage());
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return id;
+    }
+
+    static HealthCheckOutput getPingData(int pingId, int userId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"))
+                .from("healthcheck").where("id = ?").and("userid = ?").getSQL();
+        HealthCheckOutput data = null;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, pingId);
+            stmt.setInt(2, userId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                data = new HealthCheckOutput();
+                data.pingURL = rs.getString(1);
+                data.reportURL = rs.getString(2);
+                data.periodicity = rs.getLong(3);
+                data.toleranceFactor = rs.getInt(4);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in locating ping record: " + sqex.getMessage());
+        }
+        return data;
+    }
+
+    static boolean isDuplicatePing(String login, String pingURL, String reportURL)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(DSL.count()).from("healthcheck").where("pingurl = ?").and("reporturl = ?").and("userid = ?").getSQL();
+        int userId = getUserId(login);
+
+        int count = 0;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, pingURL);
+            stmt.setString(2, reportURL);
+            stmt.setInt(3, userId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                count = rs.getInt(1);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in duplicate pingback object test: " + sqex.getMessage());
+        }
+        if(count > 0) return true;
+        return false;
+    }
+
     static int addUser(String login, String password, String apiKey)
     {
         Connection conn = getDBConnection();
@@ -479,6 +600,32 @@ public class SqlDriver
         return id;
     }
 
+    static int getPingId(String pingURL, String reportURL, int userId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("id")).from("healthcheck").where("pingurl = ?").and("reporturl = ?").and("userid = ?").getSQL();
+        int id = -1;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, pingURL);
+            stmt.setString(2, reportURL);
+            stmt.setInt(3, userId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                id = rs.getInt(1);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in locating ping id for url: " + sqex.getMessage());
+        }
+        return id;
+    }
+
     static String getSeriesMsgFormat(String seriesName, int spaceId)
     {
         Connection conn = getDBConnection();
@@ -551,5 +698,35 @@ public class SqlDriver
             logger.warn("Caught exception in retrieving list of registered spaces: " + sqex.getMessage());
         }
         return topics;
+    }
+
+    static LinkedList<HealthCheckInput> getGlobalPingList()
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance")).from("healthcheck").getSQL();
+        LinkedList<HealthCheckInput> pingList =  new LinkedList<>();
+        try
+        {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next())
+            {
+                HealthCheckInput temp = new HealthCheckInput();
+                temp.pingURL = rs.getString(1);
+                temp.reportURL = rs.getString(2);
+                temp.periodicity = rs.getLong(3);
+                temp.toleranceFactor = rs.getInt(4);
+                pingList.add(temp);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in retrieving list of registered heartbeat endpoints: " + sqex.getMessage());
+        }
+        logger.info("Returning list of registered health check endpoints: " + pingList.size());
+        return pingList;
     }
 }

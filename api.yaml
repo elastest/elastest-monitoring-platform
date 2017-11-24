@@ -1,4 +1,3 @@
----
 swagger: '2.0'
 info:
   description: Monitor anything anytime.
@@ -9,229 +8,203 @@ info:
     name: harh@zhaw.ch
   license:
     name: ASL 2.0
-    url: https://www.apache.org/licenses/LICENSE-2.0
-host: sentinel.demonstrator.info:9000
-basePath: "/"
+    url: 'https://www.apache.org/licenses/LICENSE-2.0'
+host: 'localhost:9000'
+basePath: /
 tags:
-- name: EMP
-  description: ElasTest monitoring platform APIs
-- name: api-controller
-  description: API Controller
-- name: basic-error-controller
-  description: Basic Error Controller
+  - name: EMP
+    description: ElasTest monitoring framework APIs
 paths:
-  "/error":
+  /v1/api/:
     get:
       tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingGET
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-    head:
-      tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingHEAD
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-    post:
-      tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingPOST
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-    put:
-      tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingPUT
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-    delete:
-      tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingDELETE
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-    options:
-      tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingOPTIONS
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-    patch:
-      tags:
-      - basic-error-controller
-      summary: errorHtml
-      operationId: errorHtmlUsingPATCH
-      consumes:
-      - application/json
-      produces:
-      - text/html
-      responses:
-        '200':
-          description: OK
-          schema:
-            "$ref": "#/definitions/ModelAndView"
-  "/v1/api/":
-    get:
-      tags:
-      - api-controller
+        - EMP
       summary: getApis
       description: List of all supported API calls
       operationId: getApisUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       responses:
         '200':
           description: ok
           schema:
-            "$ref": "#/definitions/ResponseEntity"
-  "/v1/api/endpoint":
+            $ref: '#/definitions/ResponseEntity'
+  /v1/api/endpoint:
     get:
       tags:
-      - api-controller
+        - EMP
       summary: getEndpointInfo
       description: Get the endpoint to send data
       operationId: getEndpointInfoUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - name: x-auth-login
-        in: header
-        description: x-auth-login
-        required: true
-        type: string
-      - name: x-auth-apikey
-        in: header
-        description: x-auth-apikey
-        required: true
-        type: string
+        - name: x-auth-login
+          in: header
+          description: x-auth-login
+          required: true
+          type: string
+        - name: x-auth-apikey
+          in: header
+          description: x-auth-apikey
+          required: true
+          type: string
       responses:
         '200':
           description: ok
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '401':
           description: invalid api key
-  "/v1/api/key/{userid}":
+  '/v1/api/key/{userid}':
     get:
       tags:
-      - api-controller
+        - EMP
       summary: locateUserKey
       description: Allows retrieval of api-key of a particular user
       operationId: locateUserKeyUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - name: x-auth-password
-        in: header
-        description: x-auth-password
-        required: true
-        type: string
-      - name: userid
-        in: path
-        description: userid
-        required: true
-        type: string
+        - name: x-auth-password
+          in: header
+          description: x-auth-password
+          required: true
+          type: string
+        - name: userid
+          in: path
+          description: userid
+          required: true
+          type: string
       responses:
         '200':
           description: ok
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '400':
           description: no such user exists
         '401':
           description: invalid password
-  "/v1/api/series/":
+  /v1/api/pingback/:
     post:
       tags:
-      - api-controller
-      summary: createSeries
-      description: Creates a new monitoring series inside an existing space
-      operationId: createSeriesUsingPOST
+        - EMP
+      summary: createPingBack
+      description: Creates a new health check run for a service by a user
+      operationId: createPingBackUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: reqBody
-        description: reqBody
-        required: true
-        schema:
+        - in: body
+          name: reqBody
+          description: reqBody
+          required: true
+          schema:
+            type: string
+        - name: x-auth-login
+          in: header
+          description: x-auth-login
+          required: true
           type: string
-      - name: x-auth-login
-        in: header
-        description: x-auth-login
-        required: true
-        type: string
-      - name: x-auth-apikey
-        in: header
-        description: x-auth-apikey
-        required: true
-        type: string
+        - name: x-auth-apikey
+          in: header
+          description: x-auth-apikey
+          required: true
+          type: string
       responses:
         '200':
           description: OK
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '201':
           description: created
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
+        '400':
+          description: check data
+        '401':
+          description: invalid api key
+        '500':
+          description: error in creating series object. please contact system admin
+  '/v1/api/pingback/{pingid}':
+    get:
+      tags:
+        - EMP
+      summary: locatePingData
+      description: Retrieve ping history
+      operationId: locatePingDataUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - name: x-auth-apikey
+          in: header
+          description: x-auth-apikey
+          required: true
+          type: string
+        - name: x-auth-login
+          in: header
+          description: x-auth-login
+          required: true
+          type: string
+        - name: pingid
+          in: path
+          description: pingid
+          required: true
+          type: string
+      responses:
+        '200':
+          description: ok
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '401':
+          description: invalid api key
+  /v1/api/series/:
+    post:
+      tags:
+        - EMP
+      summary: createSeries
+      description: Creates a new monitoring series inside an existing space
+      operationId: createSeriesUsingPOST
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: reqBody
+          description: reqBody
+          required: true
+          schema:
+            type: string
+        - name: x-auth-login
+          in: header
+          description: x-auth-login
+          required: true
+          type: string
+        - name: x-auth-apikey
+          in: header
+          description: x-auth-apikey
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+        '201':
+          description: created
+          schema:
+            $ref: '#/definitions/ResponseEntity'
         '400':
           description: check data
         '401':
@@ -240,43 +213,43 @@ paths:
           description: this series already exists within the space
         '500':
           description: error in creating series object. please contact system admin
-  "/v1/api/space/":
+  /v1/api/space/:
     post:
       tags:
-      - api-controller
+        - EMP
       summary: createSpace
       description: Creates a new monitoring space for an user
       operationId: createSpaceUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: reqBody
-        description: reqBody
-        required: true
-        schema:
+        - in: body
+          name: reqBody
+          description: reqBody
+          required: true
+          schema:
+            type: string
+        - name: x-auth-login
+          in: header
+          description: x-auth-login
+          required: true
           type: string
-      - name: x-auth-login
-        in: header
-        description: x-auth-login
-        required: true
-        type: string
-      - name: x-auth-apikey
-        in: header
-        description: x-auth-apikey
-        required: true
-        type: string
+        - name: x-auth-apikey
+          in: header
+          description: x-auth-apikey
+          required: true
+          type: string
       responses:
         '200':
           description: OK
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '201':
           description: created
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '400':
           description: check data
         '401':
@@ -285,38 +258,38 @@ paths:
           description: this space already exists for this user
         '500':
           description: error in creating space object. please contact system admin
-  "/v1/api/user/":
+  /v1/api/user/:
     post:
       tags:
-      - api-controller
+        - EMP
       summary: createUser
       description: Create new user account
       operationId: createUserUsingPOST
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - in: body
-        name: reqBody
-        description: reqBody
-        required: true
-        schema:
+        - in: body
+          name: reqBody
+          description: reqBody
+          required: true
+          schema:
+            type: string
+        - name: x-auth-token
+          in: header
+          description: x-auth-token
+          required: true
           type: string
-      - name: x-auth-token
-        in: header
-        description: x-auth-token
-        required: true
-        type: string
       responses:
         '200':
           description: OK
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '201':
           description: created
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '400':
           description: check data
         '401':
@@ -324,52 +297,68 @@ paths:
         '409':
           description: user account already exists
         '500':
-          description: error in persisting user data, please contact system admin
-  "/v1/api/user/{userid}":
+          description: 'error in persisting user data, please contact system admin'
+  '/v1/api/user/{userid}':
     get:
       tags:
-      - api-controller
+        - EMP
       summary: locateUserData
       description: Retrieve user account information
       operationId: locateUserDataUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       parameters:
-      - name: x-auth-apikey
-        in: header
-        description: x-auth-apikey
-        required: true
-        type: string
-      - name: userid
-        in: path
-        description: userid
-        required: true
-        type: string
+        - name: x-auth-apikey
+          in: header
+          description: x-auth-apikey
+          required: true
+          type: string
+        - name: userid
+          in: path
+          description: userid
+          required: true
+          type: string
       responses:
         '200':
           description: ok
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '401':
           description: invalid api key
-  "/v1/error":
+  /v1/dashboard/:
     get:
       tags:
-      - api-controller
+        - EMP
+      summary: showDashboard
+      description: Displays statically displayed dashboard
+      operationId: showDashboardUsingGET
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: ok
+          schema:
+            $ref: '#/definitions/ResponseEntity'
+  /v1/error:
+    get:
+      tags:
+        - EMP
       summary: returnError
       description: In case an api is not yet implemented
       operationId: returnErrorUsingGET
       consumes:
-      - application/json
+        - application/json
       produces:
-      - application/json
+        - application/json
       responses:
         '200':
           description: OK
           schema:
-            "$ref": "#/definitions/ResponseEntity"
+            $ref: '#/definitions/ResponseEntity'
         '501':
           description: this call is not supported
 definitions:
@@ -386,8 +375,75 @@ definitions:
           type: object
       reference:
         type: boolean
+      status:
+        type: string
+        enum:
+          - '100'
+          - '101'
+          - '102'
+          - '103'
+          - '200'
+          - '201'
+          - '202'
+          - '203'
+          - '204'
+          - '205'
+          - '206'
+          - '207'
+          - '208'
+          - '226'
+          - '300'
+          - '301'
+          - '302'
+          - '303'
+          - '304'
+          - '305'
+          - '307'
+          - '308'
+          - '400'
+          - '401'
+          - '402'
+          - '403'
+          - '404'
+          - '405'
+          - '406'
+          - '407'
+          - '408'
+          - '409'
+          - '410'
+          - '411'
+          - '412'
+          - '413'
+          - '414'
+          - '415'
+          - '416'
+          - '417'
+          - '418'
+          - '419'
+          - '420'
+          - '421'
+          - '422'
+          - '423'
+          - '424'
+          - '426'
+          - '428'
+          - '429'
+          - '431'
+          - '451'
+          - '500'
+          - '501'
+          - '502'
+          - '503'
+          - '504'
+          - '505'
+          - '506'
+          - '507'
+          - '508'
+          - '509'
+          - '510'
+          - '511'
       view:
-        "$ref": "#/definitions/View"
+        $ref: '#/definitions/View'
       viewName:
         type: string
   ResponseEntity:
@@ -398,72 +454,75 @@ definitions:
       statusCode:
         type: string
         enum:
-        - '100'
-        - '101'
-        - '102'
-        - '103'
-        - '200'
-        - '201'
-        - '202'
-        - '203'
-        - '204'
-        - '205'
-        - '206'
-        - '207'
-        - '208'
-        - '226'
-        - '300'
-        - '301'
-        - '302'
-        - '303'
-        - '304'
-        - '305'
-        - '307'
-        - '308'
-        - '400'
-        - '401'
-        - '402'
-        - '403'
-        - '404'
-        - '405'
-        - '406'
-        - '407'
-        - '408'
-        - '409'
-        - '410'
-        - '411'
-        - '412'
-        - '413'
-        - '414'
-        - '415'
-        - '416'
-        - '417'
-        - '418'
-        - '419'
-        - '420'
-        - '421'
-        - '422'
-        - '423'
-        - '424'
-        - '426'
-        - '428'
-        - '429'
-        - '431'
-        - '500'
-        - '501'
-        - '502'
-        - '503'
-        - '504'
-        - '505'
-        - '506'
-        - '507'
-        - '508'
-        - '509'
-        - '510'
-        - '511'
+          - '100'
+          - '101'
+          - '102'
+          - '103'
+          - '200'
+          - '201'
+          - '202'
+          - '203'
+          - '204'
+          - '205'
+          - '206'
+          - '207'
+          - '208'
+          - '226'
+          - '300'
+          - '301'
+          - '302'
+          - '303'
+          - '304'
+          - '305'
+          - '307'
+          - '308'
+          - '400'
+          - '401'
+          - '402'
+          - '403'
+          - '404'
+          - '405'
+          - '406'
+          - '407'
+          - '408'
+          - '409'
+          - '410'
+          - '411'
+          - '412'
+          - '413'
+          - '414'
+          - '415'
+          - '416'
+          - '417'
+          - '418'
+          - '419'
+          - '420'
+          - '421'
+          - '422'
+          - '423'
+          - '424'
+          - '426'
+          - '428'
+          - '429'
+          - '431'
+          - '451'
+          - '500'
+          - '501'
+          - '502'
+          - '503'
+          - '504'
+          - '505'
+          - '506'
+          - '507'
+          - '508'
+          - '509'
+          - '510'
+          - '511'
+      statusCodeValue:
+        type: integer
+        format: int32
   View:
     type: object
     properties:
       contentType:
         type: string
-

@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import scala.App;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -95,6 +96,18 @@ public class APIController {
         value7.description = "retrieve the agent's connection endpoint parameters";
         value7.contentType = "application/json";
         value.add(value7);
+        APIEndpoints value8 = new APIEndpoints();
+        value8.endpoint = "/v1/api/pingback/{id}";
+        value8.method = "GET";
+        value8.description = "retrieve the healthcheck/pingback object data";
+        value8.contentType = "application/json";
+        value.add(value8);
+        APIEndpoints value9 = new APIEndpoints();
+        value9.endpoint = "/v1/api/pingback/";
+        value9.method = "POST";
+        value9.description = "registers a new healthcheck/pingback object";
+        value9.contentType = "application/json";
+        value.add(value9);
 
         Gson gson = new Gson();
         String jsonInString = gson.toJson(value);
@@ -175,6 +188,43 @@ public class APIController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error in persisting user data. please contact system admin");
             }
         }
+    }
+
+    @RequestMapping(value={"/api/pingback/{pingid}"}, method = RequestMethod.GET, produces = {"application/json"})
+    @ApiOperation(value = "locatePingData", notes = "Retrieve ping history")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "invalid api key"),
+            @ApiResponse(code = 200, message = "ok")
+    })
+    public @ResponseBody
+    ResponseEntity locatePingData(@RequestHeader(value = "x-auth-apikey") String apiKey, @RequestHeader(value = "x-auth-login") String login, @PathVariable(value="pingid") String pingid)
+    {
+        Gson gson = new Gson();
+        int pingId = -1;
+        try
+        {
+            pingId = Integer.parseInt(pingid);
+        }
+        catch(NumberFormatException nex)
+        {
+            //supplied value is not an id but a alpha
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("check url data");
+        }
+        int userId = SqlDriver.getUserId(login);
+
+        if(!SqlDriver.isValidApikey(userId, apiKey))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid api key");
+
+        //get corresponding ping object information.
+        HealthCheckOutput response = SqlDriver.getPingData(pingId, userId);
+        if(response != null) {
+            response.id = pingId;
+            response.accessUrl = "/api/pingback/" + pingId;
+            response.callHistory = Application.eventsCache.getEventTraceHistory(response.pingURL, response.reportURL);
+            return ResponseEntity.status(HttpStatus.OK).body(gson.toJson(response));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("no data found");
     }
 
     @RequestMapping(value={"/api/user/{userid}"}, method = RequestMethod.GET, produces = {"application/json"})
@@ -343,6 +393,43 @@ public class APIController {
         }
         else
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error in creating series object. please contact system admin");
+    }
+
+    @RequestMapping(value={"/api/pingback/"}, method = RequestMethod.POST, produces = {"application/json"})
+    @ApiOperation(value = "createPingBack", notes = "Creates a new health check run for a service by a user")
+    @ApiResponses({
+            @ApiResponse(code = 401, message = "invalid api key"),
+            @ApiResponse(code = 400, message = "check data"),
+            @ApiResponse(code = 201, message = "created"),
+            @ApiResponse(code = 500, message = "error in creating series object. please contact system admin")
+    })
+    public @ResponseBody
+    ResponseEntity createPingBack(@RequestBody String reqBody, @RequestHeader(value = "x-auth-login") String login, @RequestHeader(value = "x-auth-apikey") String apiKey)
+    {
+        Gson gson = new Gson();
+        HealthCheckInput incomingData = gson.fromJson(reqBody, HealthCheckInput.class);
+        if(!incomingData.isValidData())
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("check data");
+        if(!SqlDriver.isValidApikey(login, apiKey))
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid api key");
+
+        //now add this ping to this user within the db
+        int pingId = SqlDriver.addPingEntry(incomingData.pingURL,incomingData.reportURL,incomingData.periodicity,incomingData.toleranceFactor,login);
+
+        if(pingId != -1)
+        {
+            HealthCheckOutput outputData = new HealthCheckOutput();
+            outputData.id = pingId;
+            outputData.accessUrl = "/api/pingback/" + pingId;
+            outputData.pingURL = incomingData.pingURL;
+            outputData.reportURL = incomingData.reportURL;
+            outputData.periodicity = incomingData.periodicity;
+            outputData.toleranceFactor = incomingData.toleranceFactor;
+            outputData.callHistory = Application.eventsCache.getEventTraceHistory(incomingData.pingURL, incomingData.reportURL);
+            return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(outputData));
+        }
+        else
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("error in creating pingback object. please contact system admin");
     }
 
     @RequestMapping(value={"/api/endpoint"}, method = RequestMethod.GET, produces = {"application/json"})

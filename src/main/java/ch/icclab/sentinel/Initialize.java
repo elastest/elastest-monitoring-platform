@@ -29,7 +29,7 @@ import java.util.HashMap;
  */
 public class Initialize {
     final static Logger logger = Logger.getLogger(Initialize.class);
-    static String[] tables = {"user", "space", "series"};
+    static String[] tables = {"user", "space", "series", "healthcheck"};
     public static HashMap<String, String> tableInitScripts = new HashMap<String, String>();
 
     static void prepareDbInitScripts()
@@ -39,6 +39,8 @@ public class Initialize {
             tableInitScripts.put("user", "create table user (id INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(64), passwordhash VARCHAR(128), apikey VARCHAR(128))");
             tableInitScripts.put("space", "create table space (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(32), queryuser VARCHAR(32), querypass VARCHAR(32), userid INT)");
             tableInitScripts.put("series", "create table series (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(32), structure VARCHAR(512), spaceid INT)");
+            tableInitScripts.put("healthcheck", "create table healthcheck (id INTEGER PRIMARY KEY AUTOINCREMENT, pingurl VARCHAR(256), reporturl VARCHAR(256), periodicity INTEGER," +
+                    " tolerance INTEGER, userid INT)");
         }
         logger.info("Table initialization scripts have been initialized.");
     }
