@@ -20,59 +20,76 @@ Key concepts
 
 API return codes at a glance
 ============================
-+-------------------+-------+---------------+--------------------------------+
-| API endpoint      | Verb  | Return codes  | Comments                       |
-+===================+=======+===============+================================+
-| /v1/api/          | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | service down                   |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/user/     | POST  | 201           | created                        |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | valid admin token needed       |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 409           | user account already exists    |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | system error                   |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/user/{id} | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | unauthorized                   |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/space/    | POST  | 201           | created                        |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid api key                |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 409           | space already exists for user  |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | system error                   |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/series/   | POST  | 201           | created                        |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid api key                |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 409           | series already exists for user |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | system error                   |
-+-------------------+-------+---------------+--------------------------------+
-|/v1/api/key/{id}   | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | no such user exist             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid password               |
-+-------------------+-------+---------------+--------------------------------+
-|/v1/api/endpoint   | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid api key                |
-+-------------------+-------+---------------+--------------------------------+
++---------------------+------+--------------+--------------------------------+
+| API endpoint        | Verb | Return codes | Comments                       |
++=====================+======+==============+================================+
+| /v1/api/            | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | service down                   |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/user/       | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | valid admin token needed       |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 409          | user account already exists    |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/user/{id}   | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | unauthorized                   |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/space/      | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 409          | space already exists for user  |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/series/     | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 409          | series already exists for user |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/key/{id}     | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | no such user exist             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid password               |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/endpoint     | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|/v1/dashboard/       | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/pingback/    | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/pingback/{id}| GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+
 
 Header fields at a glance
 =========================
@@ -295,4 +312,88 @@ If the call succeeds, the parameter block is returned that can be used to proper
     "endpoint": "kafka:9092",
     "keySerializer": "StringSerializer",
     "valueSerializer": "StringSerializer"
+  }
+
+/v1/dashboard/ GET
+------------------
+This API call can be used to get the Grafana dashboard as an embedded iFrame from the sentinel framework. One may need to login into the dashboard using the Grafana account credentials. This API call is not authenticated. Authentication is enforced by Grafana.
+
+If the call succeeds, an HTML codeblock is returned which renders the dashboard. A sample response is shown next.
+
+::
+
+  <html><head></head><body style="background-color:black;"><script>
+  function resizeIframe(obj) {
+    obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  }
+  </script><div style="width:100%; background-color:black;"><img src="http://elastest.io/images/intense/elastest-logo-dark.png" align="left"></div><br><br><br><br><iframe onload="resizeIframe(this)" width="99%" height="90%" style="border:none; display:block;" src="http://localhost:3000/dashboard/db/elastest?refresh=30s&orgId=1&theme=light"></iframe></body></html>
+
+/v1/api/pingback/ POST
+----------------------
+This call is used to register a new pingback entry with sentinel. Think of it as a health check service. It allows one to register an endpoint to be monitored, and if the check fails then a callback to be made to another endpoint. This feature only supports GET calls. The call is available only to registered accounts, therefore a valid *username* and *api-key* needs to be supplied as header fields.
+
+::
+
+  curl -X POST http://localhost:9000/v1/api/pingback/ \
+  -H 'x-auth-apikey: some-api-key' -H 'x-auth-login: username' \
+  -d '{
+    "pingURL":"some-service-endpoint",
+    "reportURL":"some-reporting-endpoint",
+    "periodicity":30000,
+    "toleranceFactor":2,
+    "method":"body,status,up"
+  }'
+
+In the call above, **periodicity** is specified as multiples of 30 seconds in nanoseconds, **toleranceFactor** is the number of successive failed checks that will trigger a callback to the **reportURL** endpoint. Currently only two **methods** are supported -
+
+* code - the HTTP response code is the sole criteria for success or failure
+* body,{field},{intended value} - in this mode, the response body is treated as a JSON value, and **{field}** specifies the JSON field to be checked for the value specified by **{intended value}** field. If the defined value is not found, it is treated as a failure condition.
+
+Note: since comma (,) is used as a separator character, **{field}** and **{intented value}** parameters must not contain a comma (,) in them.
+
+If the call succeeds, the details of the registered pingback endpoint is returned. An example response is shown next -
+
+::
+
+  {
+    "id": 1,
+    "pingURL": "some-service-endpoint",
+    "reportURL": "some-reporting-endpoint",
+    "periodicity": 30000,
+    "toleranceFactor": 2,
+    "method": "body,status,up",
+    "accessUrl": "/api/pingback/1"
+  }
+
+/v1/api/pingback/{id} GET
+-------------------------
+This call allows the user to retrieve the details of a particular pickback object. The call is available only to registered accounts, therefore a valid *username* and *api-key* needs to be supplied as header fields.
+
+::
+
+  curl -X GET http://localhost:9000/v1/api/pingback/1 \
+  -H 'x-auth-apikey: some-api-key' -H 'x-auth-login: some-username'
+
+If the API call is successful, the details of the pingback is returned along with last 10 healthcheck results along with the timestamp. An example response is shown nect -
+
+::
+
+  {
+    "id": 1,
+    "pingURL": "some-service-endpoint",
+    "reportURL": "some-reporting-endpoint",
+    "periodicity": 30000,
+    "toleranceFactor": 2,
+    "method": "body,status,up",
+    "callHistory": [
+        {
+            "eventTime": 1511866036619,
+            "status": "NOK"
+        },
+        {
+            "eventTime": 1511866018280,
+            "status": "OK"
+        }
+    ],
+    "accessUrl": "/api/pingback/1"
   }
