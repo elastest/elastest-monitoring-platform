@@ -3,7 +3,7 @@ Currently three sentinel agents are available and more are being planned and wil
 * docker stats agent
 * system stats agent
 * logfile agent
-* inline logging guidelines
+* inline logging guidelines (for self instrumented code)
 
 In addition, it is very easy to use inline code to directly send your logs into sentinel. All agents are written in **Python3** and need **pip3** to install all dependencies.
 
@@ -43,7 +43,8 @@ $ python3 sentinel-docker-agent.py
 ```
 
 ## system stats agent
-The agent is located in the *sentinel-agents/systemstats/* subdirectory in the downloaded git repository. To install all dependencies please use -
+The agent is located in the *sentinel-agents/systemstats/* subdirectory in the 
+downloaded git repository. To install all dependencies please use -
 
 ```
 # pip3 install -f requirements.txt
@@ -56,7 +57,8 @@ $ python3 sentinel-sys-agent.py
 ```
 
 ## logfile agent
-The agent is located in the *sentinel-agents/logparsing/* subdirectory in the downloaded git repository. To install all dependencies please use -
+The agent is located in the *sentinel-agents/logparsing/* subdirectory in the 
+downloaded git repository. To install all dependencies please use -
 
 ```
 # pip3 install -f requirements.txt
@@ -69,3 +71,29 @@ $ python3 sentinel-log-agent.py
 ```
 
 ## inline logger guidelines
+In case you wish to send application metrics and logs explicitly and directly 
+to sentinel, you should basically marshall your data point as JSON value with 
+the following structure -
+
+```
+{
+	"agent":"sentinel-internal-log-agent",
+	"level":"log-level such as error/debug/info/warn",
+	"msg":"log message",
+	...
+}
+```
+
+The requirement is that you should send a flat JSON data as shown above. 
+**agent** field is necessary and it's value MUST be set to 
+**sentinel-internal-log-agent**, rest all JSON fields can be flexibly named 
+and set as per your application needs.
+
+This data point and subsequent points should be sent using any kafka client 
+with kafka-topic and key set to sentinel topic and series that you should have 
+defined already. Use **string serialization** to send data into kafka endpoint 
+of sentinel.
+
+It is important that the series *signature* be set to 
+**unixtime:s msgtype:json** so that sentinel knows how to properly parse the 
+incoming data stream.
