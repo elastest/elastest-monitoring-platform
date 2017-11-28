@@ -40,7 +40,7 @@ public class Initialize {
             tableInitScripts.put("space", "create table space (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(32), queryuser VARCHAR(32), querypass VARCHAR(32), userid INT)");
             tableInitScripts.put("series", "create table series (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(32), structure VARCHAR(512), spaceid INT)");
             tableInitScripts.put("healthcheck", "create table healthcheck (id INTEGER PRIMARY KEY AUTOINCREMENT, pingurl VARCHAR(256), reporturl VARCHAR(256), periodicity INTEGER," +
-                    " tolerance INTEGER, userid INT)");
+                    " tolerance INTEGER, method VARCHAR(32), userid INT)");
         }
         logger.info("Table initialization scripts have been initialized.");
     }

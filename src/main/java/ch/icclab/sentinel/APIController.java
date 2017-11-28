@@ -414,7 +414,7 @@ public class APIController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid api key");
 
         //now add this ping to this user within the db
-        int pingId = SqlDriver.addPingEntry(incomingData.pingURL,incomingData.reportURL,incomingData.periodicity,incomingData.toleranceFactor,login);
+        int pingId = SqlDriver.addPingEntry(incomingData.pingURL,incomingData.reportURL,incomingData.periodicity,incomingData.toleranceFactor, incomingData.method, login);
 
         if(pingId != -1)
         {
@@ -425,6 +425,7 @@ public class APIController {
             outputData.reportURL = incomingData.reportURL;
             outputData.periodicity = incomingData.periodicity;
             outputData.toleranceFactor = incomingData.toleranceFactor;
+            outputData.method = incomingData.method;
             outputData.callHistory = Application.eventsCache.getEventTraceHistory(incomingData.pingURL, incomingData.reportURL);
             return ResponseEntity.status(HttpStatus.CREATED).body(gson.toJson(outputData));
         }

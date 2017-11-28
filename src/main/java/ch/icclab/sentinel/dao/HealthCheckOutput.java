@@ -28,6 +28,7 @@ public class HealthCheckOutput {
     public String reportURL;
     public long periodicity;
     public int toleranceFactor;
+    public String method;
     public PingEvent[] callHistory;
     public String accessUrl;
 }

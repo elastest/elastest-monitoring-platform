@@ -353,18 +353,18 @@ public class SqlDriver
         return id;
     }
 
-    static int addPingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String login)
+    static int addPingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String method, String login)
     {
         if(isDuplicatePing(login, pingURL, reportURL))
         {
-            return updatePingEntry(pingURL, reportURL, periodicity, tolerance, getPingId(pingURL, reportURL, getUserId(login)));
+            return updatePingEntry(pingURL, reportURL, periodicity, tolerance, method, getPingId(pingURL, reportURL, getUserId(login)));
         }
 
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
-        String sql = create.insertInto(table("healthcheck"), field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("userid")).
-                values("?", "?", "?", "?", "?").getSQL();
+        String sql = create.insertInto(table("healthcheck"), field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("userid")).
+                values("?", "?", "?", "?", "?", "?").getSQL();
         int id = -1;
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -372,7 +372,8 @@ public class SqlDriver
             stmt.setString(2, reportURL);
             stmt.setLong(3, periodicity);
             stmt.setInt(4, tolerance);
-            stmt.setInt(5, getUserId(login));
+            stmt.setString(5, (method!=null ? method:"code"));
+            stmt.setInt(6, getUserId(login));
             stmt.executeUpdate();
             stmt.close();
             conn.close();
@@ -385,13 +386,13 @@ public class SqlDriver
         return id;
     }
 
-    static int updatePingEntry(String pingURL, String reportURL, long periodicity, int tolerance, int pingId)
+    static int updatePingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String method, int pingId)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
         String sql = create.update(table("healthcheck")).set(field("pingurl"), "?").set(field("reporturl"), "?").set(field("periodicity"), "?")
-                .set(field("tolerance"), "?").where("id = ?").getSQL();
+                .set(field("tolerance"), "?").set(field("method"), "?").where("id = ?").getSQL();
         int id = -1;
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -399,7 +400,8 @@ public class SqlDriver
             stmt.setString(2, reportURL);
             stmt.setLong(3, periodicity);
             stmt.setInt(4, tolerance);
-            stmt.setInt(5, pingId);
+            stmt.setString(5, (method!=null ? method:"code"));
+            stmt.setInt(6, pingId);
             stmt.executeUpdate();
             stmt.close();
             conn.close();
@@ -420,7 +422,7 @@ public class SqlDriver
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
-        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"))
+        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"))
                 .from("healthcheck").where("id = ?").and("userid = ?").getSQL();
         HealthCheckOutput data = null;
         try {
@@ -435,6 +437,7 @@ public class SqlDriver
                 data.reportURL = rs.getString(2);
                 data.periodicity = rs.getLong(3);
                 data.toleranceFactor = rs.getInt(4);
+                data.method = rs.getString(5);
             }
             rs.close();
             conn.close();
@@ -704,7 +707,7 @@ public class SqlDriver
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
-        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance")).from("healthcheck").getSQL();
+        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method")).from("healthcheck").getSQL();
         LinkedList<HealthCheckInput> pingList =  new LinkedList<>();
         try
         {
@@ -717,6 +720,7 @@ public class SqlDriver
                 temp.reportURL = rs.getString(2);
                 temp.periodicity = rs.getLong(3);
                 temp.toleranceFactor = rs.getInt(4);
+                temp.method = rs.getString(5);
                 pingList.add(temp);
             }
             rs.close();

@@ -27,6 +27,7 @@ public class HealthCheckInput {
     public String reportURL;
     public Long periodicity;
     public Integer toleranceFactor;
+    public String method; //defaults to HTTP status code
 
     public boolean isValidData()
     {

@@ -93,7 +93,7 @@ public class HealthCheckManager extends Thread
                 long lastEvent = Application.eventsCache.getLastEventTime(temp.pingURL, temp.reportURL);
                 if(System.currentTimeMillis() - lastEvent > temp.periodicity)
                 {
-                    Runnable checkWorker = new PingWorker(temp.pingURL, temp.reportURL, temp.toleranceFactor);
+                    Runnable checkWorker = new PingWorker(temp.pingURL, temp.reportURL, temp.toleranceFactor, temp.method);
                     Application.PingWorkerPool.execute(checkWorker);
                 }
             }
