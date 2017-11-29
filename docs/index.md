@@ -6,9 +6,10 @@ various componets of ElasTest platform and allows correlated queries aiding the
 fault location within the platform in an optimized manner.
 
 ## Features
-The version 0.1 of EMP provides the following featues:
+The version 0.5.0 of EMP provides the following featues:
 
 - Management APIs to control space and series creation
+- Ability to register and retrieve health pings and alerting callback
 - Ability to send system metrics through systemstats agent
 - Ability to send docker stats through dockerstats agent
 - Ability to send Java application log messages from a log file through 
@@ -43,7 +44,7 @@ clone. Then execute docker-compose as shown below:
 docker-compose up
 ```
 This command brings all the dependencies needed for sentinel:
-* Grafana - grafana/grafana:4.3.2
+* Grafana - grafana/grafana:4.6.1
 * InfluxDB - influxdb:1.2.4-alpine
 * Java8 - rolvlad/alpine-oraclejdk8
 * Kafka - spotify/kafka:latest
@@ -59,6 +60,17 @@ variables. An example environment block is shown next:
       - ZOOKEEPER_ENDPOINT=kafka:2181
       - KAFKA_ENDPOINT=kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
+      - INFLUX_URL=http://influxdb:8086
+      - INFLUX_URL_GRAFANA=http://localhost:8086
+      - GRAFANA_URL=http://grafana:3000
+      - GRAFANA_ADMIN=admin
+      - GRAFANA_PASSWORD=1ccl@b2017
+      - INFLUX_USER=root
+      - INFLUX_PASSWORD=pass1234
+      - SENTINEL_DB_ENDPOINT=/data/sentinel.db
+      - ADMIN_TOKEN=somevalue
+      - DASHBOARD_TITLE=elastest
+      - DASHBOARD_ENDPOINT=localhost:3000
 ```
 Currently, sentinel works only with InfluxDB time-series backend. Support 
 for emerging alternatives such as Timescaledb is planned and will be added 
@@ -75,18 +87,46 @@ localhost with the FQDN or the IP of the node.
 * KAFKA_ENDPOINT - the endpoint where Kafka cluster is reachable by sentinel
 * TOPIC_CHECK_INTERVAL - defined in milliseconds, denotes the time interval 
 between Kafka Topic query by topic manager in Sentinel.
+* ADMIN_TOKEN - emp administrator master token
+* DASHBOARD_TITLE - title value of the emp dashboard rendering by API
+* DASHBOARD_ENDPOINT - user facing URL of grafana dashboard
+
+The emp docker container is capable of bootstrapping the grafana dashboard for 
+visualization and prepare the DB for accepting metrics from various agents to 
+monitor certain well known ElasTest platform components. The bootstraping 
+constants are controlled through the following parameters that too are 
+specificed as environment variables in the docker compose definition.
+
+* INFLUX_URL - InfluxDB API endpoint for the bootstraping script
+* INFLUX_URL_GRAFANA - InfluxDB API endpoint to be configured in Grafana from 
+the end user perspective
+* GRAFANA_URL - Grafana endpoint for the bootstrap script
+* GRAFANA_ADMIN - admin user for injecting dashboard definition into Grafana
+* GRAFANA_PASSWORD - admin account password used for injecting dashboard 
+definition into grafana
+* INFLUX_USER - InfluxDB user account for populating the DB configurations in 
+Grafana
+* INFLUX_PASSWORD - InfluxDB user account password for populating the DB 
+configurations in Grafana
+* SENTINEL_DB_ENDPOINT - sqlite3 DB file path for preparing the DB structure 
+and setting up bootstrapped elements enabling emp agent operations
 
 ### Configuring Kafka container
 The kafka container allows certain parameters to be set via environment block.
 ```
       - ADVERTISED_PORT=9092
-      - ADVERTISED_HOST=kafka
+      - ADVERTISED_HOST=some-fqdn.io or localhost
+      - ADVERTISED_LISTENERS=some-fqdn.io or localhost
+      - LISTENERS=PLAINTEXT://localhost:9092
 ```
 Care must be taken in defining **ADVERTISED_HOST** value. The best solution 
 is to provide a FQDN or a public IP if Kafka is to be accessed by external 
 processes which will be the most common use-case of sentinel. Setting an 
 incorrect value of this parameter may leave your kafka cluster unreachable 
 for external services, or even sentinel process running in a container.
+
+**ADVERTISED_LISTENERS** comma separated list of FQDN URLs over which Kafka 
+brokers can be accessible by clients. 
 
 Our recommendation is to setup kafka cluster is a separate node entirely, 
 and configure **KAFKA_ENDPOINT** parameter for sentinel as a FQDN string.
@@ -158,10 +198,11 @@ stream.adminpass=1ccl@b2017
 admin.token=eedsR2v5n4uh7Gjy
 series.format.cache.size=100
 published.api.version=v1
+dashboard.title=elastest
+dashboard.endpoint=localhost:3000
 ```
 Many of the entries in the **application.properties** file are 
-self-explanatory. 
-A few non-obvious ones are explained next -
+self-explanatory. A few non-obvious ones are explained next -
 
 * server.port - on what port number sentinel APIs are accessible
 * displayexceptions - set this to **true** if you want to include exceptions 
@@ -201,6 +242,8 @@ APIs currently offered by the framework -
 * /v1/api/series/ - management of series with any space
 * /v1/api/key/ - API to retrieve user's API key if forgotten
 * /v1/api/endpoint - API to retrieve Sentinel's data interface parameters
+* /v1/dashboard/ - API to get the dashboard visualizing data
+* /v1/api/pingback/ - API to manage health check endpoints and callbacks
 
 #### Key concepts
 **Space**: Think of it as a collection of metrics belonging to different 
@@ -213,59 +256,75 @@ source.
 
 #### API return codes at a glance
 ```
-+-------------------+-------+---------------+--------------------------------+
-| API endpoint      | Verb  | Return codes  | Comments                       |
-+===================+=======+===============+================================+
-| /v1/api/          | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | service down                   |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/user/     | POST  | 201           | created                        |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | valid admin token needed       |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 409           | user account already exists    |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | system error                   |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/user/{id} | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | unauthorized                   |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/space/    | POST  | 201           | created                        |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid api key                |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 409           | space already exists for user  |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | system error                   |
-+-------------------+-------+---------------+--------------------------------+
-| /v1/api/series/   | POST  | 201           | created                        |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | check data                     |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid api key                |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 409           | series already exists for user |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 500           | system error                   |
-+-------------------+-------+---------------+--------------------------------+
-|/v1/api/key/{id}   | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 400           | no such user exist             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid password               |
-+-------------------+-------+---------------+--------------------------------+
-|/v1/api/endpoint   | GET   | 200           | ok                             |
-+-------------------+-------+---------------+--------------------------------+
-|                   |       | 401           | invalid api key                |
-+-------------------+-------+---------------+--------------------------------+
++---------------------+------+--------------+--------------------------------+
+| API endpoint        | Verb | Return codes | Comments                       |
++=====================+======+==============+================================+
+| /v1/api/            | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | service down                   |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/user/       | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | valid admin token needed       |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 409          | user account already exists    |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/user/{id}   | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | unauthorized                   |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/space/      | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 409          | space already exists for user  |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+| /v1/api/series/     | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 409          | series already exists for user |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/key/{id}     | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | no such user exist             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid password               |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/endpoint     | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|/v1/dashboard/       | GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/pingback/    | POST | 201          | created                        |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 400          | check data                     |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 500          | system error                   |
++---------------------+------+--------------+--------------------------------+
+|/v1/api/pingback/{id}| GET  | 200          | ok                             |
++---------------------+------+--------------+--------------------------------+
+|                     |      | 401          | invalid api key                |
++---------------------+------+--------------+--------------------------------+
 ```
 
 #### Header fields at a glance
@@ -341,7 +400,19 @@ The response is similar to one shown below -
      "method": "GET",
      "description": "retrieve the agent's connection endpoint parameters",
      "contentType": "application/json"
-   }
+   },
+   {
+        "endpoint": "/v1/api/pingback/{id}",
+        "method": "GET",
+        "description": "retrieve the healthcheck/pingback object data",
+        "contentType": "application/json"
+    },
+    {
+        "endpoint": "/v1/api/pingback/",
+        "method": "POST",
+        "description": "registers a new healthcheck/pingback object",
+        "contentType": "application/json"
+    }
   ]
 ```
 The output above is representative, and the actual API supported by sentinel 
@@ -515,6 +586,108 @@ properly configure the sentinel agents. A sample response is shown next.
   }
 ```
 
+##### /v1/dashboard/ GET
+This API call can be used to get the Grafana dashboard as an embedded iFrame 
+from the sentinel framework. One may need to login into the dashboard using 
+the Grafana account credentials. This API call is not authenticated. 
+Authentication is enforced by Grafana.
+
+If the call succeeds, an HTML codeblock is returned which renders the 
+dashboard. A sample response is shown next.
+
+```
+  <html><head></head><body style="background-color:black;"><script>
+  function resizeIframe(obj) {
+    obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';
+  }
+  </script><div style="width:100%; background-color:black;"><img src="http://elastest.io/images/intense/elastest-logo-dark.png" align="left"></div><br><br><br><br><iframe onload="resizeIframe(this)" width="99%" height="90%" style="border:none; display:block;" src="http://localhost:3000/dashboard/db/elastest?refresh=30s&orgId=1&theme=light"></iframe></body></html>
+```
+
+##### /v1/api/pingback/ POST
+This call is used to register a new pingback entry with sentinel. Think of it 
+as a health check service. It allows one to register an endpoint to be 
+monitored, and if the check fails then a callback to be made to another 
+endpoint. This feature only supports GET calls. The call is available only to 
+registered accounts, therefore a valid *username* and *api-key* needs to be 
+supplied as header fields.
+
+```
+  curl -X POST http://localhost:9000/v1/api/pingback/ \
+  -H 'x-auth-apikey: some-api-key' -H 'x-auth-login: username' \
+  -d '{
+    "pingURL":"some-service-endpoint",
+    "reportURL":"some-reporting-endpoint",
+    "periodicity":30000,
+    "toleranceFactor":2,
+    "method":"body,status,up"
+  }'
+```
+
+In the call above, **periodicity** is specified as multiples of 30 seconds in 
+nanoseconds, **toleranceFactor** is the number of successive failed checks 
+that will trigger a callback to the **reportURL** endpoint. Currently only two 
+**methods** are supported -
+
+* code - the HTTP response code is the sole criteria for success or failure
+* body,{field},{intended value} - in this mode, the response body is treated 
+as a JSON value, and **{field}** specifies the JSON field to be checked for 
+the value specified by **{intended value}** field. If the defined value is not 
+found, it is treated as a failure condition.
+
+Note: since comma (,) is used as a separator character, **{field}** and 
+**{intented value}** parameters must not contain a comma (,) in them.
+
+If the call succeeds, the details of the registered pingback endpoint is 
+returned. An example response is shown next -
+
+```
+  {
+    "id": 1,
+    "pingURL": "some-service-endpoint",
+    "reportURL": "some-reporting-endpoint",
+    "periodicity": 30000,
+    "toleranceFactor": 2,
+    "method": "body,status,up",
+    "accessUrl": "/api/pingback/1"
+  }
+```
+
+##### /v1/api/pingback/{id} GET
+This call allows the user to retrieve the details of a particular pickback 
+object. The call is available only to registered accounts, therefore a valid 
+*username* and *api-key* needs to be supplied as header fields.
+
+```
+  curl -X GET http://localhost:9000/v1/api/pingback/1 \
+  -H 'x-auth-apikey: some-api-key' -H 'x-auth-login: some-username'
+```
+
+If the API call is successful, the details of the pingback is returned along 
+with last 10 healthcheck results along with the timestamp. An example response 
+is shown next -
+
+```
+  {
+    "id": 1,
+    "pingURL": "some-service-endpoint",
+    "reportURL": "some-reporting-endpoint",
+    "periodicity": 30000,
+    "toleranceFactor": 2,
+    "method": "body,status,up",
+    "callHistory": [
+        {
+            "eventTime": 1511866036619,
+            "status": "NOK"
+        },
+        {
+            "eventTime": 1511866018280,
+            "status": "OK"
+        }
+    ],
+    "accessUrl": "/api/pingback/1"
+  }
+```
+
 ### Running agents
 Currently three sentinel agents are available and more are being planned and 
 will be released in the near future.
@@ -542,15 +715,15 @@ functionalities are ready including capability of configuring the spaces and
 series by framework users, and via available agents as well as inline 
 instrumentation, the ability to send in metrics and log streams into EMP.
 
-The technologies used in release 1.0 are -
+The technologies used in release 0.5.0 are -
 - Apache Kafka
 - InfluxDB 1.2.4
-- Grafana 4.3.2
+- Grafana 4.6.1
 - Oracle Java 8
 - Maven 3.0.5 or higher
 - Python 3.0 (for agents implementation)
 
-Currently (release 0.1) the query interface is the native query APIs as well 
+Currently (release 0.5.0) the query interface is the native query APIs as well 
 as admin dashboard exposed by InfluxDB. EMP's own query interface allowing 
 online queries, correlated analysis and much more will be made available soon.
 
