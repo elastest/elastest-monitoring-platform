@@ -9,6 +9,8 @@ services:
     environment:
       - ADVERTISED_PORT=9092
       - ADVERTISED_HOST=kafka
+      - ADVERTISED_LISTENERS=some-fqdn.io,localhost
+      - LISTENERS=PLAINTEXT://localhost:9092
   influxdb:
     image: influxdb:1.2.4-alpine
     ports:
