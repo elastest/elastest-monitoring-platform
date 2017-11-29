@@ -124,4 +124,14 @@ public class APIOfflineTest {
         ResponseEntity response = apiController.returnError();
         assertEquals("status code", 501, response.getStatusCodeValue());
     }
+
+    @Test
+    public void testCreatePingBack() {
+        setUp();
+        apiController = new APIController();
+        ResponseEntity response = apiController.createPingBack("{}", "testuser", "7ddbba60-8667-11e7-bb31-be2e44b06b34");
+        assertEquals("status code", 400, response.getStatusCodeValue());
+        //response = apiController.createPingBack("{\"pingURL\":\"admin-dashboard.cyclops-labs.io:8888/\",\"reportURL\":\"localhost:5000/\",\"periodicity\":30000,\"toleranceFactor\":2,\"method\":\"body,status,up\"}", "testuser", "7ddbba60-8667-11e7-bb31-be2e44b06b34");
+        //assertEquals("status code", 201, response.getStatusCodeValue());
+    }
 }

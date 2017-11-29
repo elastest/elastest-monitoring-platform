@@ -20,6 +20,7 @@ import org.springframework.util.Assert;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 /*
  *     Author: Piyush Harsh,
@@ -151,5 +152,16 @@ public class SqlDriverTest
     {
         setUp();
         assertEquals("list of spaces", 1, SqlDriver.getGlobalTopicsList().size());
+    }
+
+    @Test
+    public void testaddPingEntry()
+    {
+        setUp();
+        assertNotEquals("add a new ping entry", -1, SqlDriver.addPingEntry("testurl", "testurl", 30000, 1, "code", "testuser"));
+        assertNotEquals("update an existing ping entry", -1, SqlDriver.addPingEntry("testurl", "testurl", 30000, 1, "code", "testuser"));
+        assertNotNull("getting a ping object", SqlDriver.getPingData(1,1));
+        assertNotNull("getting list of pings", SqlDriver.getGlobalPingList());
+        assertEquals("getting list of pings", 1, SqlDriver.getGlobalPingList().size());
     }
 }

@@ -1,4 +1,5 @@
-package ch.icclab.sentinel;/*
+package ch.icclab.sentinel;
+
 /*
  * Copyright (c) 2017. ZHAW - ICCLab
  *  All Rights Reserved.
@@ -21,25 +22,13 @@ package ch.icclab.sentinel;/*
  *     URL: piyush-harsh.info
  */
 
-import ch.icclab.sentinel.dao.SentinelDockerStatsAgent;
-import ch.icclab.sentinel.dao.SentinelDockerStatsAgentMetric;
-import ch.icclab.sentinel.dao.SentinelDockerStatsAgentValue;
-import org.junit.Assert;
 import org.junit.Test;
 
-public class PersistentWorkerTest {
-
-    public void setUp()
-    {
-        Initialize.prepareDbInitScripts();
-        Initialize.initializeTestDb();
-    }
-
+public class PingWorkerTest {
     @Test
     public void testrun()
     {
-        setUp();
-        PersistenceWorker test = new PersistenceWorker("testtopic", "somekey", 0L, "some value");
+        PingWorker test = new PingWorker("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1, "code");
         test.run();
     }
 }

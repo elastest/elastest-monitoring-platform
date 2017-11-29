@@ -105,7 +105,7 @@ public class APIControllerTest
     }
 
     @Test
-    public void createSeriesrTest() throws Exception {
+    public void createSeriesTest() throws Exception {
         mockMvc.perform(post("/v1/api/series/").accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -117,6 +117,30 @@ public class APIControllerTest
         mockMvc.perform(get("/v1/api/endpoint").accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @Test
+    public void getDashboardEndpoint() throws Exception {
+        mockMvc.perform(get("/v1/dashboard/").accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+        ;
+    }
+
+    @Test
+    public void createPingBackTest() throws Exception {
+        mockMvc.perform(post("/v1/api/pingback/").accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+        ;
+    }
+
+    @Test
+    public void getPingBackEndpoint() throws Exception {
+        mockMvc.perform(get("/v1/api/pingback/1").accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().is4xxClientError())
         ;
     }
 

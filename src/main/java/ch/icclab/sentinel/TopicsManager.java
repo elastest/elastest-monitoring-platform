@@ -1,5 +1,6 @@
 package ch.icclab.sentinel;/*
- * Copyright (c) 2017. Cyclops-Labs Gmbh
+/*
+ * Copyright (c) 2017. ZHAW - ICCLab
  *  All Rights Reserved.
  *
  *     Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -15,15 +16,16 @@ package ch.icclab.sentinel;/*
  *     under the License.
  */
 
+/*
+ *     Author: Piyush Harsh,
+ *     URL: piyush-harsh.info
+ */
+
 import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.LinkedList;
 
-/*
- *     Author: Piyush Harsh,
- *     URL: piyush-harsh.info
- */
 public class TopicsManager extends Thread {
     final static Logger logger = Logger.getLogger(TopicsManager.class);
     public void run()
