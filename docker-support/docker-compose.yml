@@ -8,8 +8,8 @@ services:
       - 9092:9092
     environment:
       - ADVERTISED_PORT=9092
-      - ADVERTISED_HOST=kafka
-      - ADVERTISED_LISTENERS=some-fqdn.io,localhost
+      - ADVERTISED_HOST=some-fqdn.io or localhost
+      - ADVERTISED_LISTENERS=some-fqdn.io or localhost
       - LISTENERS=PLAINTEXT://localhost:9092
   influxdb:
     image: influxdb:1.2.4-alpine
