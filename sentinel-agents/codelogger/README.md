@@ -51,6 +51,13 @@ Similar libraries can be developed for popular languages such as Java, Go, etc.
 The future release of EMP will include more language adapters enabling inline 
 logging.
 
+## Dependency management
+The included sample code depends on the following python libraries
+* jsonpickle==0.9.4
+* kafka==1.3.3
+
+You can use **pip3** to install these dependencies before you use the sample code.
+
   Copyright (c) 2017. Zuercher Hochschule fuer Angewandte Wissenschaften
    All Rights Reserved.
  
