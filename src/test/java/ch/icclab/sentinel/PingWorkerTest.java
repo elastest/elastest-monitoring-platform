@@ -24,11 +24,35 @@ package ch.icclab.sentinel;
 
 import org.junit.Test;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class PingWorkerTest {
     @Test
     public void testrun()
     {
         PingWorker test = new PingWorker("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1, "code");
-        test.run();
+        ExecutorService PingWorkerPool = Executors.newFixedThreadPool(1);
+        PingWorkerPool.submit(test);
+        PingWorker test1 = new PingWorker("https://sentinel.demonstrator.info:9000/v1/api/", "http://localhost:5000/", 1, "code");
+        PingWorkerPool.submit(test1);
+        HealthEventsCache testCache = new HealthEventsCache(10);
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");
+        assertTrue("testing if insertion succeeded or not", testCache.getEventTraceHistory("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/").length >= 1);
+        assertEquals("testing for last event time", 1234561l, testCache.getLastEventTime("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/"));
+        //test.run();
     }
 }
