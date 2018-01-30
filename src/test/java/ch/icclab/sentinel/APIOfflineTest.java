@@ -18,7 +18,7 @@ package ch.icclab.sentinel;/*
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 import static org.junit.Assert.assertEquals;
-import org.springframework.http.HttpStatus;
+
 /*
  *     Author: Piyush Harsh,
  *     URL: piyush-harsh.info
