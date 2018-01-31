@@ -418,6 +418,72 @@ public class SqlDriver
         return id;
     }
 
+    static LinkedList<HealthCheckOutput> getPingList()
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("userid"))
+                .from("healthcheck").getSQL();
+        LinkedList<HealthCheckOutput> pingList = new LinkedList<>();
+        try
+        {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next())
+            {
+                HealthCheckOutput data = new HealthCheckOutput();
+                data.pingURL = rs.getString(1);
+                data.reportURL = rs.getString(2);
+                data.periodicity = rs.getLong(3);
+                data.toleranceFactor = rs.getInt(4);
+                data.method = rs.getString(5);
+                data.id = rs.getInt(6); //abusing slightly the id filed to store userId
+                pingList.add(data);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in compiling ping list: " + sqex.getMessage());
+        }
+        return pingList;
+    }
+
+    static LinkedList<HealthCheckOutput> getFilteredPingList(int userId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("id"))
+                .from("healthcheck").where("userid = ?").getSQL();
+        LinkedList<HealthCheckOutput> pingList = new LinkedList<>();
+        try
+        {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, userId);
+
+            ResultSet rs = stmt.executeQuery();
+            while(rs.next())
+            {
+                HealthCheckOutput data = new HealthCheckOutput();
+                data.pingURL = rs.getString(1);
+                data.reportURL = rs.getString(2);
+                data.periodicity = rs.getLong(3);
+                data.toleranceFactor = rs.getInt(4);
+                data.method = rs.getString(5);
+                data.id = rs.getInt(6);
+                pingList.add(data);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in compiling filtered ping list: " + sqex.getMessage());
+        }
+        return pingList;
+    }
+
     static HealthCheckOutput getPingData(int pingId, int userId)
     {
         Connection conn = getDBConnection();

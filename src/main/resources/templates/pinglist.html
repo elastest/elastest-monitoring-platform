@@ -27,8 +27,71 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css"
           integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
+    <script type="javascript">
+        function convertTimestamp(timestamp) {
+          var d = new Date(timestamp * 1000),	// Convert the passed timestamp to milliseconds
+                yyyy = d.getFullYear(),
+                mm = ('0' + (d.getMonth() + 1)).slice(-2),	// Months are zero based. Add leading 0.
+                dd = ('0' + d.getDate()).slice(-2),			// Add leading 0.
+                hh = d.getHours(),
+                h = hh,
+                min = ('0' + d.getMinutes()).slice(-2),		// Add leading 0.
+                ampm = 'AM',
+                time;
+
+            if (hh > 12) {
+                h = hh - 12;
+                ampm = 'PM';
+            } else if (hh === 12) {
+                h = 12;
+                ampm = 'PM';
+            } else if (hh == 0) {
+                h = 12;
+            }
+
+            // ie: 2013-02-18, 8:35 AM
+            time = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
+
+            return time;
+        }
+    </script>
 </head>
 <body>
-hi there
+    <div class="container-fluid">
+        <div class="row" style="background-color: white">
+            <div class="col">
+                <div class="alert alert-danger" th:if="${pinglist.empty}">No ping-backs registered!</div>
+                <div class="alert alert-info" th:unless="${pinglist.empty}" style="background-color: white">
+                    <h1 class="display-4">Summary of all registered health checks</h1>
+                    <table class="table table-hover table-sm">
+                        <caption>List of registered health-checks</caption>
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">User #</th>
+                            <th scope="col">Meta Info</th>
+                            <th scope="col">History (most recent first)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="ping : ${pinglist}">
+                                <th scope="row" th:text="${ping.id}" style="vertical-align:center;">1</th>
+                                <td>
+                                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Ping URL: ' + ping.pingURL}"></span><br>
+                                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Reporting URL: ' + ping.reportURL}"></span><br>
+                                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Check Period (in millisec): ' + ping.periodicity}"></span><br>
+                                </td>
+                                <td>
+                                    <span style="margin-right:2px;" th:each="event: ${ping.callHistory}">
+                                        <img th:if="${event.status == 'NOK'}" src="assets/red.png" width="20px" th:title="'Status: NOK&#013;&#010;Check carried out at (unixtime): ' + ${event.eventTime}">
+                                        <img th:if="${event.status == 'OK'}" src="assets/green.png" width="20px" th:title="'Status: OK&#013;&#010;Check carried out at (unixtime): ' + ${event.eventTime}">
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

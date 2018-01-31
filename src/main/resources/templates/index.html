@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!--
+  ~ Copyright (c) 2017. ZHAW - ICCLab
+  ~    All Rights Reserved.
+  ~
+  ~      Licensed under the Apache License, Version 2.0 (the "License"); you may
+  ~      not use this file except in compliance with the License. You may obtain
+  ~      a copy of the License at
+  ~
+  ~           http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~      Unless required by applicable law or agreed to in writing, software
+  ~      distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  ~      License for the specific language governing permissions and limitations
+  ~      under the License.
+  ~
+  ~
+  ~      Author: Piyush Harsh,
+  ~      URL: piyush-harsh.info
+  -->
+
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>sentinel :: data at a glance</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css"
+          integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-between" style="background-color: white">
+            <div class="col text-left">
+                <h4 th:text="'Welcome back: ' + ${username} + '!'"> </h4>
+            </div>
+            <div class="col text-right">
+                <a href="/logout"><img src="assets/logout.png" width="28px" title="logout"></a>
+            </div>
+        </div>
+
+        <div class="w-100" style="background-color: white">
+            <div class="w-100 alert alert-primary" style="background-color: #ffac2f; color: white">Information about registered monitoring spaces and series</div>
+        </div>
+        <div class="row" style="background-color: white">
+            <div class="col col-sm-4" th:each="space: ${userdata.spaces}">
+                <div class="alert alert-primary" style="margin-bottom: 0px; background-color: bisque;">
+                    <span th:text="'Space Name: ' + ${space.name}"></span>
+                </div>
+                <div class="alert alert-light border" style="margin-top: 0px; margin-bottom: 0px;">
+                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Access URL: ' + ${space.accessUrl}"></span><br>
+                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Topic Name: ' + ${space.topicName}"></span><br>
+                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard: ' + ${space.dataDashboardUrl}"></span><br>
+                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard User: ' + ${space.dataDashboardUser}"></span><br>
+                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard Password: ' + ${space.dataDashboardPassword}"></span>
+                </div>
+                <div class="row" style="padding: 0px; margin:0px">
+                    <div class="col border" style="margin: 0px;" th:each="series: ${space.seriesList}">
+                        <div class="alert alert-light" style="margin-bottom: 0px">
+                            <span th:text="'Series Name: ' + ${series.name}"></span>
+                        </div>
+                        <div class="alert alert-light" style="margin-top: 0px">
+                            <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Access URL: ' + ${series.accessUrl}"></span><br>
+                            <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Msg Format: ' + ${series.msgFormat}"></span><br>
+                        </div>
+                    </div>
+                    <div class="w-100">
+                        <button type="submit" class="btn btn-primary btn-raised" style="background-color:#ffac2f" disabled>Go to data view</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="w-100" style="background-color: white">
+            <div class="w-100 alert alert-primary" style="background-color: #ffac2f; color: white">Details on registered health check endpoints</div>
+        </div>
+
+        <div class="row" style="background-color: white">
+            <div class="col">
+                <div class="alert alert-danger" th:if="${pinglist.empty}">No ping-backs registered!</div>
+                <div class="alert alert-info" th:unless="${pinglist.empty}" style="background-color: white">
+                    <table class="table table-hover table-sm">
+                        <caption>List of registered health-checks</caption>
+                        <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Id #</th>
+                            <th scope="col">Meta Info</th>
+                            <th scope="col">History (most recent first)</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="ping : ${pinglist}">
+                            <th scope="row" th:text="${ping.id}" style="vertical-align:center;">1</th>
+                            <td>
+                                <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Ping URL: ' + ping.pingURL}"></span><br>
+                                <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Reporting URL: ' + ping.reportURL}"></span><br>
+                                <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Check Period (in millisec): ' + ping.periodicity}"></span><br>
+                            </td>
+                            <td>
+                                <span style="margin-right:2px;" th:each="event: ${ping.callHistory}">
+                                    <img th:if="${event.status == 'NOK'}" src="assets/red.png" width="20px" th:title="'Status: NOK&#013;&#010;Check carried out at (unixtime): ' + ${event.eventTime}">
+                                    <img th:if="${event.status == 'OK'}" src="assets/green.png" width="20px" th:title="'Status: OK&#013;&#010;Check carried out at (unixtime): ' + ${event.eventTime}">
+                                </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-left: 15px;">
+            <form method="post" action="/">
+                <input class="form-control" name="username" type="hidden" th:value="${username}">
+                <button type="submit" class="btn btn-primary btn-raised" style="background-color:#ffac2f">Refresh this page data</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

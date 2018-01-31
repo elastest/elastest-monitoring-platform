@@ -2,7 +2,7 @@ version: '3'
 
 services:
   emp:
-    image: elastest/emp:0.5.0
+    image: elastest/emp:latest
     ports:
       - 9000:9000
     environment:
