@@ -8,8 +8,8 @@ services:
       - 9092:9092
     environment:
       - ADVERTISED_PORT=9092
-      - ADVERTISED_HOST=some-fqdn.io or localhost
-      - ADVERTISED_LISTENERS=some-fqdn.io or localhost
+      - ADVERTISED_HOST=kafka
+      - ADVERTISED_LISTENERS=localhost
       - LISTENERS=PLAINTEXT://localhost:9092
   influxdb:
     image: influxdb:1.2.4-alpine
@@ -28,7 +28,7 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
   emp:
-    image: elastest/emp:0.5.0
+    image: elastest/emp:latest
     links:
       - influxdb
       - kafka
