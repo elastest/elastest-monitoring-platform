@@ -39,9 +39,10 @@
             </div>
         </div>
 
-        <div class="w-100" style="background-color: white">
-            <div class="w-100 alert alert-primary" style="background-color: #ffac2f; color: white">Information about registered monitoring spaces and series</div>
+        <div class="row" style="background-color: white">
+            <div class="w-100 alert alert-primary" style="background-color: white;">Information about registered monitoring spaces and series</div>
         </div>
+
         <div class="row" style="background-color: white">
             <div class="col col-sm-4" th:each="space: ${userdata.spaces}">
                 <div class="alert alert-primary" style="margin-bottom: 0px; background-color: bisque;">
@@ -55,7 +56,7 @@
                     <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard Password: ' + ${space.dataDashboardPassword}"></span>
                 </div>
                 <div class="row" style="padding: 0px; margin:0px">
-                    <div class="col border" style="margin: 0px;" th:each="series: ${space.seriesList}">
+                    <div class="col col-sm-6 border" style="margin: 0px;" th:each="series: ${space.seriesList}">
                         <div class="alert alert-light" style="margin-bottom: 0px">
                             <span th:text="'Series Name: ' + ${series.name}"></span>
                         </div>
@@ -71,10 +72,10 @@
             </div>
         </div>
 
-        <hr>
 
-        <div class="w-100" style="background-color: white">
-            <div class="w-100 alert alert-primary" style="background-color: #ffac2f; color: white">Details on registered health check endpoints</div>
+
+        <div class="row" style="background-color: white">
+            <div class="w-100 alert alert-primary" style="background-color: white;">Details on registered health check endpoints</div>
         </div>
 
         <div class="row" style="background-color: white">
@@ -110,7 +111,7 @@
                 </div>
             </div>
         </div>
-        <div class="row" style="padding-left: 15px;">
+        <div class="row" style="padding-left: 15px;background-color: white;">
             <form method="post" action="/">
                 <input class="form-control" name="username" type="hidden" th:value="${username}">
                 <button type="submit" class="btn btn-primary btn-raised" style="background-color:#ffac2f">Refresh this page data</button>

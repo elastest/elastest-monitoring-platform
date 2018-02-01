@@ -27,21 +27,31 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css"
           integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/popper.js@1.12.6/dist/umd/popper.js" integrity="sha384-fA23ZRQ3G/J53mElWqVJEGJzU0sTs+SvzG8fXVWP+kJQ1lwFAOkcUOysnlKJC33U" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-material-design@4.1.1/dist/js/bootstrap-material-design.js" integrity="sha384-3xciOSDAlaXneEmyOo0ME/2grfpqzhhTcM4cE32Ce9+8DW/04AGoTACzQpphYGYe" crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container-fluid">
-        <div class="row justify-content-center">
-            <h4>Login</h4>
+        <div class="row" style="height:50px;">
+
         </div>
         <div class="row justify-content-center">
-            <div class="col col-sm-2">
+            <h2>Sentinel :: Login</h2>
+        </div>
+
+        <div class="row" style="height:50px;"></div>
+
+        <div class="row justify-content-center">
+            <div class="col col-sm-4">
                 <form method="post" action="/login">
                     <div class="form-group">
-                        <label for="username" class="bmd-label-floating">Username</label>
+                        <label for="username">Username</label>
                         <input type="text" class="form-control" name="username" id="username">
+                        <small id="usernamehelp" class="form-text text-muted">Enter your sentinel username.</small>
                     </div>
                     <div class="form-group">
-                        <label for="password" class="bmd-label-floating">Password</label>
+                        <label for="password">Password</label>
                         <input type="password" class="form-control" name="password" id="password">
                     </div>
                     <button type="submit" class="btn btn-raised btn-primary" style="background-color:#ffac2f">Login</button>
