@@ -59,3 +59,7 @@ services:
       - sentinel:/data
 volumes:
   sentinel:
+networks:
+  default:
+    external:
+      name: sentinel
