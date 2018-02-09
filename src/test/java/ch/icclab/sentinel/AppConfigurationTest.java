@@ -70,13 +70,13 @@ public class AppConfigurationTest {
     @Test
     public void testgetKafkaURL()
     {
-        assertEquals("get kafka url value", "kafka.demonstrator.info:9092", AppConfiguration.getKafkaURL());
+        assertEquals("get kafka url value", "kafka.cloudlab.zhaw.ch:9092", AppConfiguration.getKafkaURL());
     }
 
     @Test
     public void testgetZookeeperURL()
     {
-        assertEquals("get zookeeper url value", "kafka.demonstrator.info:2181", AppConfiguration.getZookeeperURL());
+        assertEquals("get zookeeper url value", "kafka.cloudlab.zhaw.ch:2181", AppConfiguration.getZookeeperURL());
     }
 
     @Test
