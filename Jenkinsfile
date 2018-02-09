@@ -33,8 +33,8 @@ node('docker')
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
                 {
-                	print $USERNAME
-	                print $PASSWORD
+                	print USERNAME
+	                print PASSWORD
                     sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                     myimage.push()
                 }
