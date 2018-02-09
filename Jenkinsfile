@@ -36,5 +36,20 @@ node('docker')
                     sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                     myimage.push()
                 }
+
+            stage "Build Docker agent"
+            	echo ("Building")
+            	sh 'cd sentinel-agents/dockerstats'
+            	def myimage2 = docker.build 'elastest/emp-docker-agent:latest'
+
+            stage "Publish Docker agent"
+                echo ("Publishing")
+                //this is work arround as withDockerRegistry is not working properly
+                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
+                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
+                {
+                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+                    myimage2.push()
+                }
         }
 }
