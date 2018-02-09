@@ -37,7 +37,7 @@ node('docker')
                     myimage.push()
                 }
 
-            dir('sentinel-agents/dockerstats')
+            dir('./elastest-monitoring-platform/sentinel-agents/dockerstats')
         	{
         		stage "Build Docker agent"
 	            	echo ("Building")
@@ -54,7 +54,7 @@ node('docker')
 	                }
         	}
 
-        	dir('sentinel-agents/systemstats')
+        	dir('./elastest-monitoring-platform/sentinel-agents/systemstats')
         	{
         		stage "Build Docker agent"
 	            	echo ("Building")
