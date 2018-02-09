@@ -33,21 +33,11 @@ node('docker')
                 withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
                     usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
                 {
-                	print USERNAME
-	                print PASSWORD
                     sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
                     myimage.push()
                 }
-        }
 
-    stage "Container Prep for emp docker agent"
-        echo("The node is up")
-        def mycontainer2 = docker.image('elastest/ci-docker-siblings:latest')
-        mycontainer2.pull()
-        mycontainer2.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
-        {
-        	git 'https://github.com/elastest/elastest-monitoring-platform.git'
-        	dir('sentinel-agents/dockerstats')
+            dir('sentinel-agents/dockerstats')
         	{
         		stage "Build Docker agent"
 	            	echo ("Building")
@@ -59,22 +49,11 @@ node('docker')
 	                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
 	                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
 	                {
-	                	print $USERNAME
-	                	print $PASSWORD
 	                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
 	                    myimage2.push()
 	                }
         	}
-        	
-        }
 
-    stage "Container Prep for emp system agent"
-        echo("The node is up")
-        def mycontainer3 = docker.image('elastest/ci-docker-siblings:latest')
-        mycontainer3.pull()
-        mycontainer3.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
-        {
-        	git 'https://github.com/elastest/elastest-monitoring-platform.git'
         	dir('sentinel-agents/systemstats')
         	{
         		stage "Build Docker agent"
@@ -91,6 +70,5 @@ node('docker')
 	                    myimage3.push()
 	                }
         	}
-        	
         }
 }
