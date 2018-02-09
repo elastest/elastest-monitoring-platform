@@ -86,7 +86,8 @@ if __name__ == '__main__':
     print("ENV::DOCKER_SOCKET: ", os.getenv("DOCKER_SOCKET", None))
     print("ENV::KAFKA_ENDPOINT: ", os.getenv("KAFKA_ENDPOINT", None))
     print("ENV::SENTINEL_TOPIC: ", os.getenv("SENTINEL_TOPIC", None))
-    print("SENTINEL_SERIES: ", os.getenv("SENTINEL_SERIES", None))
+    print("ENV::SENTINEL_SERIES: ", os.getenv("SENTINEL_SERIES", None))
+    print("ENV::PERIODICITY: ", os.getenv("PERIODICITY", None))
     base_url = os.getenv("DOCKER_SOCKET", get_element_value("docker", "socket"))
     client = docker.DockerClient(base_url)
     container_cache = {}
@@ -176,7 +177,7 @@ if __name__ == '__main__':
             print("Unexpected error:", sys.exc_info()[0])
 
         try:
-            time.sleep(int(get_element_value("agent", "period")))
+            time.sleep(int(os.getenv("PERIODICITY", get_element_value("agent", "period"))))
         except KeyboardInterrupt:
             print("Terminating agent...")
             sys.exit(0)

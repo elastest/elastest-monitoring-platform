@@ -12,7 +12,7 @@ services:
       - SENTINEL_TOPIC=user-1-elastest_core
       - SENTINEL_SERIES=docker-stats
       - DOCKER_SOCKET=unix://var/run/docker.sock
-      - PERIODICITY=60
+      - PERIODICITY=120
 networks:
   default:
     external:

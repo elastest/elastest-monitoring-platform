@@ -67,7 +67,8 @@ if __name__ == '__main__':
     print("MAIN: starting agent process ...")
     print("ENV::KAFKA_ENDPOINT: ", os.getenv("KAFKA_ENDPOINT", None))
     print("ENV::SENTINEL_TOPIC: ", os.getenv("SENTINEL_TOPIC", None))
-    print("SENTINEL_SERIES: ", os.getenv("SENTINEL_SERIES", None))
+    print("ENV::SENTINEL_SERIES: ", os.getenv("SENTINEL_SERIES", None))
+    print("ENV::PERIODICITY: ", os.getenv("PERIODICITY", None))
     while True:
         msg_to_send = ""
         cpu_data = psutil.cpu_times()
@@ -87,7 +88,7 @@ if __name__ == '__main__':
         # print(psutil.disk_usage('/'))
         # print(psutil.net_io_counters())
         try:
-            time.sleep(int(get_element_value("agent", "period")))
+            time.sleep(int(os.getenv("PERIODICITY", get_element_value("agent", "period"))))
         except KeyboardInterrupt:
             print("Terminating agent...")
             sys.exit(0)
