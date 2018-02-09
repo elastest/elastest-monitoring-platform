@@ -157,8 +157,8 @@
                         <STREAM_ADMINUSER>testroot</STREAM_ADMINUSER>
                         <STREAM_ADMINPASS>testpass</STREAM_ADMINPASS>
                         <STREAM_ACCESSURL>localhost:8083</STREAM_ACCESSURL>
-                        <KAFKA_ENDPOINT>kafka.demonstrator.info:9092</KAFKA_ENDPOINT>
-                        <ZOOKEEPER_ENDPOINT>kafka.demonstrator.info:2181</ZOOKEEPER_ENDPOINT>
+                        <KAFKA_ENDPOINT>kafka.cloudlab.zhaw.ch:9092</KAFKA_ENDPOINT>
+                        <ZOOKEEPER_ENDPOINT>kafka.cloudlab.zhaw.ch:2181</ZOOKEEPER_ENDPOINT>
                         <STREAM_DBTYPE>influxdb</STREAM_DBTYPE>
                         <STREAM_DBENDPOINT>localhost:8086</STREAM_DBENDPOINT>
                         <SENTINEL_DB_TYPE>sqlite</SENTINEL_DB_TYPE>
