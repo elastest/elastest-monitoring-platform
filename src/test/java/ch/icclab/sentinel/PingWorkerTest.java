@@ -34,10 +34,10 @@ public class PingWorkerTest {
     @Test
     public void testrun()
     {
-        PingWorker test = new PingWorker("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1, "code");
+        PingWorker test = new PingWorker("http://blog.zhaw.ch/icclab/", "http://localhost:5000/", 1, "code");
         ExecutorService PingWorkerPool = Executors.newFixedThreadPool(1);
         PingWorkerPool.submit(test);
-        PingWorker test1 = new PingWorker("https://sentinel.demonstrator.info:9000/v1/api/", "http://localhost:5000/", 1, "code");
+        PingWorker test1 = new PingWorker("https://blog.zhaw.ch/icclab/", "http://localhost:5000/", 1, "code");
         PingWorkerPool.submit(test1);
         HealthEventsCache testCache = new HealthEventsCache(10);
         testCache.insertEvent("http://sentinel.demonstrator.info:9000/", "http://localhost:5000/", 1234561l, "NOK");

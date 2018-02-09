@@ -33,7 +33,7 @@ public class KafkaTestProducer {
     public static boolean send(String[] args)
     {
         Properties props = new Properties();
-        props.put("bootstrap.servers", "kafka.demonstrator.info:9092");
+        props.put("bootstrap.servers", "kafka.cloudlab.zhaw.ch:9092");
         props.put("acks", "all");
         props.put("retries", 0);
         props.put("batch.size", 16384);
