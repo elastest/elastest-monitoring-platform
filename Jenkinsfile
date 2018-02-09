@@ -45,21 +45,23 @@ node('docker')
         mycontainer2.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
         {
         	git 'https://github.com/elastest/elastest-monitoring-platform.git'
+        	dir('sentinel-agents/dockerstats')
+        	{
+        		stage "Build Docker agent"
+	            	echo ("Building")
+	            	def myimage2 = docker.build 'elastest/emp-docker-agent:latest'
 
-        	stage "Build Docker agent"
-            	echo ("Building")
-            	sh 'cd ./sentinel-agents/dockerstats'
-            	def myimage2 = docker.build 'elastest/emp-docker-agent:latest'
-
-            stage "Publish Docker agent"
-                echo ("Publishing")
-                //this is work arround as withDockerRegistry is not working properly
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
-                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
-                {
-                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
-                    myimage2.push()
-                }
+            	stage "Publish Docker agent"
+	                echo ("Publishing")
+	                //this is work arround as withDockerRegistry is not working properly
+	                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
+	                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
+	                {
+	                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+	                    myimage2.push()
+	                }
+        	}
+        	
         }
 
     stage "Container Prep for emp system agent"
@@ -69,21 +71,22 @@ node('docker')
         mycontainer3.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
         {
         	git 'https://github.com/elastest/elastest-monitoring-platform.git'
+        	dir('sentinel-agents/systemstats')
+        	{
+        		stage "Build Docker agent"
+	            	echo ("Building")
+	            	def myimage3 = docker.build 'elastest/emp-system-agent:latest'
 
-        	stage "Build Docker agent"
-            	echo ("Building")
-            	sh 'cd ./sentinel-agents/systemstats'
-            	def myimage3 = docker.build 'elastest/emp-system-agent:latest'
-
-            stage "Publish Docker agent"
-                echo ("Publishing")
-                //this is work arround as withDockerRegistry is not working properly
-                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
-                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
-                {
-                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
-                    myimage3.push()
-                }
+            	stage "Publish Docker agent"
+	                echo ("Publishing")
+	                //this is work arround as withDockerRegistry is not working properly
+	                withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'elastestci-dockerhub',
+	                    usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']])
+	                {
+	                    sh 'docker login -u "$USERNAME" -p "$PASSWORD"'
+	                    myimage3.push()
+	                }
+        	}
+        	
         }
-
 }
