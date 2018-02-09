@@ -40,9 +40,9 @@ node('docker')
 
     stage "Container Prep for emp docker agent"
         echo("The node is up")
-        def mycontainer = docker.image('elastest/ci-docker-siblings:latest')
-        mycontainer.pull()
-        mycontainer.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
+        def mycontainer2 = docker.image('elastest/ci-docker-siblings:latest')
+        mycontainer2.pull()
+        mycontainer2.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
         {
         	git 'https://github.com/elastest/elastest-monitoring-platform.git'
 
@@ -64,9 +64,9 @@ node('docker')
 
     stage "Container Prep for emp system agent"
         echo("The node is up")
-        def mycontainer = docker.image('elastest/ci-docker-siblings:latest')
-        mycontainer.pull()
-        mycontainer.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
+        def mycontainer3 = docker.image('elastest/ci-docker-siblings:latest')
+        mycontainer3.pull()
+        mycontainer3.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
         {
         	git 'https://github.com/elastest/elastest-monitoring-platform.git'
 
