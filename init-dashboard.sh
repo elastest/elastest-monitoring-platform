@@ -67,7 +67,7 @@ curl -X POST \
 
 sha256()
 {
- echo -n "$*" | shasum -a 256 | cut -d' ' -f1
+ echo -n "$*" | sha256sum | cut -d' ' -f1
 }
 
 # proconfiguring the elastest space and series and table schema
