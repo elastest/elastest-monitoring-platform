@@ -4,7 +4,7 @@ services:
   docker-agent:
     image: elastest/emp-docker-agent:latest
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       - KAFKA_ENDPOINT=kafka:9092
       - KAFKA_KEY_SERIALIZER=StringSerializer

@@ -103,62 +103,74 @@ if __name__ == '__main__':
                 container_data["name"] = container.name
                 stat = container.stats(decode=True, stream=False)
                 # extracting relevant stats
-                data = SentinelElement()
-                data.key = "networks_eth0_rx_bytes"
-                if (container.id + "_" + "networks-eth0-rx_bytes") in container_cache and \
-                                container_cache[container.id + "_" + "networks-eth0-rx_bytes"] > 0:
-                    data.value = stat["networks"]["eth0"]["rx_bytes"] - \
-                                 container_cache[container.id + "_" + "networks-eth0-rx_bytes"]
-                    container_cache[container.id + "_" + "networks-eth0-rx_bytes"] = \
-                        stat["networks"]["eth0"]["rx_bytes"]
-                    if data.value < 0:
+                try:
+                    data = SentinelElement()
+                    data.key = "networks_eth0_rx_bytes"
+                    if (container.id + "_" + "networks-eth0-rx_bytes") in container_cache and \
+                                    container_cache[container.id + "_" + "networks-eth0-rx_bytes"] > 0:
+                        data.value = stat["networks"]["eth0"]["rx_bytes"] - \
+                                     container_cache[container.id + "_" + "networks-eth0-rx_bytes"]
+                        container_cache[container.id + "_" + "networks-eth0-rx_bytes"] = \
+                            stat["networks"]["eth0"]["rx_bytes"]
+                        if data.value < 0:
+                            data.value = 0
+                    else:
+                        container_cache[container.id + "_" + "networks-eth0-rx_bytes"] = \
+                            stat["networks"]["eth0"]["rx_bytes"]
                         data.value = 0
-                else:
-                    container_cache[container.id + "_" + "networks-eth0-rx_bytes"] = \
-                        stat["networks"]["eth0"]["rx_bytes"]
-                    data.value = 0
-                data.type = "long"
-                sample_list.append(data)
+                    data.type = "long"
+                    sample_list.append(data)
+                except:
+                    print("Unexpected error in trying to get networks_eth0_rx_bytes:", sys.exc_info()[0])
 
-                data = SentinelElement()
-                data.key = "networks_eth0_tx_bytes"
-                if (container.id + "_" + "networks-eth0-tx_bytes") in container_cache and \
-                                container_cache[container.id + "_" + "networks-eth0-tx_bytes"] > 0:
-                    data.value = stat["networks"]["eth0"]["tx_bytes"] - \
-                                 container_cache[container.id + "_" + "networks-eth0-tx_bytes"]
-                    container_cache[container.id + "_" + "networks-eth0-tx_bytes"] = \
-                        stat["networks"]["eth0"]["tx_bytes"]
-                    if data.value < 0:
+                try:
+                    data = SentinelElement()
+                    data.key = "networks_eth0_tx_bytes"
+                    if (container.id + "_" + "networks-eth0-tx_bytes") in container_cache and \
+                                    container_cache[container.id + "_" + "networks-eth0-tx_bytes"] > 0:
+                        data.value = stat["networks"]["eth0"]["tx_bytes"] - \
+                                     container_cache[container.id + "_" + "networks-eth0-tx_bytes"]
+                        container_cache[container.id + "_" + "networks-eth0-tx_bytes"] = \
+                            stat["networks"]["eth0"]["tx_bytes"]
+                        if data.value < 0:
+                            data.value = 0
+                    else:
+                        container_cache[container.id + "_" + "networks-eth0-tx_bytes"] = \
+                            stat["networks"]["eth0"]["tx_bytes"]
                         data.value = 0
-                else:
-                    container_cache[container.id + "_" + "networks-eth0-tx_bytes"] = \
-                        stat["networks"]["eth0"]["tx_bytes"]
-                    data.value = 0
-                data.type = "long"
-                sample_list.append(data)
+                    data.type = "long"
+                    sample_list.append(data)
+                except:
+                    print("Unexpected error in trying to get networks_eth0_tx_bytes:", sys.exc_info()[0])
 
-                data = SentinelElement()
-                data.key = "memory_stats_usage"
-                data.value = stat["memory_stats"]["usage"]
-                data.type = "long"
-                sample_list.append(data)
+                try:
+                    data = SentinelElement()
+                    data.key = "memory_stats_usage"
+                    data.value = stat["memory_stats"]["usage"]
+                    data.type = "long"
+                    sample_list.append(data)
+                except:
+                    print("Unexpected error in trying to get memory_stats_usage:", sys.exc_info()[0])
 
-                data = SentinelElement()
-                data.key = "cpu_usage_total"
-                if (container.id + "_" + "cpu_stats-cpu_usage-total_usage") in container_cache and \
-                                container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"] > 0:
-                    data.value = stat["cpu_stats"]["cpu_usage"]["total_usage"] - \
-                                 container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"]
-                    container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"] = \
-                        stat["cpu_stats"]["cpu_usage"]["total_usage"]
-                    if data.value < 0:
+                try:
+                    data = SentinelElement()
+                    data.key = "cpu_usage_total"
+                    if (container.id + "_" + "cpu_stats-cpu_usage-total_usage") in container_cache and \
+                                    container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"] > 0:
+                        data.value = stat["cpu_stats"]["cpu_usage"]["total_usage"] - \
+                                     container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"]
+                        container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"] = \
+                            stat["cpu_stats"]["cpu_usage"]["total_usage"]
+                        if data.value < 0:
+                            data.value = 0
+                    else:
+                        container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"] = \
+                            stat["cpu_stats"]["cpu_usage"]["total_usage"]
                         data.value = 0
-                else:
-                    container_cache[container.id + "_" + "cpu_stats-cpu_usage-total_usage"] = \
-                        stat["cpu_stats"]["cpu_usage"]["total_usage"]
-                    data.value = 0
-                data.type = "long"
-                sample_list.append(data)
+                    data.type = "long"
+                    sample_list.append(data)
+                except:
+                    print("Unexpected error in trying to get cpu_usage_total:", sys.exc_info()[0])
 
                 container_data["metrics"] = sample_list
                 element_list.append(container_data)
