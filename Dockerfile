@@ -25,6 +25,7 @@ LABEL description="Builds the emp docker image."
 
 EXPOSE 9000
 RUN apk --update add sqlite curl
+RUN apk add --no-cache util-linux
 COPY target/sentinel-0.1.jar /emp.jar
 COPY application.properties /application.properties
 ADD init-dashboard.sh init-dashboard.sh
