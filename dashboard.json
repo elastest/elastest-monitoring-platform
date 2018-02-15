@@ -17,7 +17,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": "${DS_ELASTEST}",
+            "datasource": "elastest",
             "fill": 1,
             "id": 1,
             "legend": {
@@ -203,7 +203,7 @@
               "rgba(237, 129, 40, 0.89)",
               "#d44a3a"
             ],
-            "datasource": "${DS_ELASTEST}",
+            "datasource": "elastest",
             "decimals": 0,
             "format": "short",
             "gauge": {
@@ -319,7 +319,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": "${DS_ELASTEST}",
+            "datasource": "elastest",
             "fill": 1,
             "id": 17,
             "legend": {
@@ -961,7 +961,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": "${DS_ELASTEST}",
+            "datasource": "elastest",
             "fill": 1,
             "id": 18,
             "legend": {
@@ -1613,7 +1613,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": "${DS_ELASTEST}",
+            "datasource": "elastest",
             "fill": 1,
             "id": 19,
             "legend": {
@@ -2253,7 +2253,7 @@
             "bars": false,
             "dashLength": 10,
             "dashes": false,
-            "datasource": "${DS_ELASTEST}",
+            "datasource": "elastest",
             "fill": 1,
             "id": 20,
             "legend": {
