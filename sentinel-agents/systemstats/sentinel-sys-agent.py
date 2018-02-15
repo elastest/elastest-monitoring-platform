@@ -24,12 +24,14 @@ import configparser
 import time
 import psutil
 import os
+import socket
 import sys
 from datetime import datetime
 from kafka import KafkaProducer
 
 config = configparser.RawConfigParser()
 config.read("sentinel-agent.conf")
+hostname = str(socket.gethostname())
 
 
 def get_section():
@@ -76,8 +78,8 @@ if __name__ == '__main__':
         ram_data = psutil.virtual_memory()
         disk_data = psutil.disk_usage('/')
 
-        msg_to_send += "unixtime:" + str(time.time()*1000) + " cpu_user:" + str(cpu_data.user) + " cpu_system:" + \
-                       str(cpu_data.system) + " cpu_idle:" + str(cpu_data.idle) + " cpu_percent:" + \
+        msg_to_send += "unixtime:" + str(time.time()*1000) + " host:" + hostname + " cpu_user:" + str(cpu_data.user) + \
+                       " cpu_system:" + str(cpu_data.system) + " cpu_idle:" + str(cpu_data.idle) + " cpu_percent:" + \
                        str(cpu_percent) + " ram_percent:" + str(ram_data.percent) + " disk_percent:" + \
                        str(disk_data.percent)
         send_msg(msg_to_send)

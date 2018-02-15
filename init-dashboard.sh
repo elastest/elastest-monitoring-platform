@@ -76,7 +76,7 @@ then
   echo "table already exists, will try to populate defaults anyway"
   sqlite3 ${sentineldb} "INSERT INTO user VALUES (1, 'elastest', '$(sha256 pass1234)', '$(uuidgen)')"
   sqlite3 ${sentineldb} "INSERT INTO space VALUES (1, 'elastest_core', 'user1elastest_core', 'Tv8W4qShV2SaGNRV', 1)"
-  sqlite3 ${sentineldb} "INSERT INTO series VALUES (1, 'sys-stats', 'unixtime:ms cpu_user:float cpu_system:float cpu_idle:float cpu_percent:float ram_percent:float disk_percent:float', 1)"
+  sqlite3 ${sentineldb} "INSERT INTO series VALUES (1, 'sys-stats', 'unixtime:ms host:string cpu_user:float cpu_system:float cpu_idle:float cpu_percent:float ram_percent:float disk_percent:float', 1)"
   sqlite3 ${sentineldb} "INSERT INTO series VALUES (2, 'docker-stats', 'unixtime:s msgtype:json', 1)"
 else
   sqlite3 ${sentineldb} "CREATE TABLE user (id INTEGER PRIMARY KEY AUTOINCREMENT, login VARCHAR(64), passwordhash VARCHAR(128), apikey VARCHAR(128))"
