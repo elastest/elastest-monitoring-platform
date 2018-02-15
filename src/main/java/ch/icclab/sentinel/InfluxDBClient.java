@@ -249,7 +249,14 @@ public class InfluxDBClient
                             for (Object jsonKey:json.keySet())
                             {
                                 if(((String)(jsonKey)).equalsIgnoreCase("agent")) continue;
-                                builder.addField((String)(jsonKey), (String)json.get((String)(jsonKey)));
+                                try
+                                {
+                                    builder.addField((String)(jsonKey), (String)json.get((String)(jsonKey)));
+                                }
+                                catch(ClassCastException cex)
+                                {
+                                    builder.addField((String)(jsonKey), ((Float)json.get((String)(jsonKey))).floatValue());
+                                }
                             }
                             Point point1 = builder.build();
                             influxDB.write(topic, "autogen", point1);
