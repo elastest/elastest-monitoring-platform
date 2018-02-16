@@ -36,6 +36,12 @@ services:
     ports:
       - 9000:9000
     environment:
+      - SERVER_SSL_ENABLED=false
+      - SERVER_SSL_KEY_ALIAS=sentinel
+      - SERVER_SSL_KEY_STORE_TYPE=PKCS12
+      - SERVER_SSL_KEY_STORE_PASSWORD=pass1234
+      - SERVER_SSL_KEY_STORE=/data/key/keystore.p12
+      - SERVER_SSL_KEY_PASSWORD=pass1234
       - STREAM_ADMINUSER=root
       - STREAM_ADMINPASS=pass1234
       - STREAM_DBENDPOINT=influxdb:8086
