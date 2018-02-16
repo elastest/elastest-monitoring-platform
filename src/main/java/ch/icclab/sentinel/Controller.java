@@ -26,17 +26,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import ch.icclab.sentinel.dao.HealthCheckOutput;
+import ch.icclab.sentinel.dao.MyCookie;
 import ch.icclab.sentinel.dao.SpaceOutput;
 import ch.icclab.sentinel.dao.UserDataOutput;
 import com.google.gson.Gson;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.apache.log4j.Logger;
 
+import java.util.Base64;
 import java.util.LinkedList;
 
 @org.springframework.stereotype.Controller
@@ -61,10 +60,113 @@ public class Controller {
         return "pinglist";
     }
 
-    @RequestMapping(value="/", method = RequestMethod.GET)
-    public String showOverview(@CookieValue(value = "islogged", defaultValue = "no") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
+    @RequestMapping(value="/profile", method = RequestMethod.GET)
+    public String showProfileData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
-        if (loggedCookie.matches("no"))
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+
+        int userId = SqlDriver.getUserId(userName);
+
+        model.addAttribute("username", userName);
+        model.addAttribute("apikey", SqlDriver.getAPIKey(userId));
+
+        return "profile";
+    }
+
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public String showOverview(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        UserDataOutput data = new UserDataOutput();
+        int userId = SqlDriver.getUserId(userName);
+        data.id = userId;
+        data.accessUrl = "/api/user/" + userId;
+        data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
+        model.addAttribute("userdata", data);
+        model.addAttribute("username", userName);
+
+        LinkedList<HealthCheckOutput> pingList = SqlDriver.getFilteredPingList(userId);
+        for(HealthCheckOutput pingdata:pingList)
+        {
+            pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
+        }
+        model.addAttribute("pinglist", pingList);
+
+        return "index2";
+    }
+
+    @RequestMapping(value="/login", method = RequestMethod.POST)
+    public String processLogin(@RequestParam(value = "username", required = true) String username, @RequestParam(value = "password", required = true) String password,
+                               HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+    {
+        boolean isValidLogin = SqlDriver.isValidPassword(SqlDriver.getUserId(username), password);
+        if(isValidLogin)
+        {
+            Gson gson = new Gson();
+            MyCookie myCookie = new MyCookie();
+            myCookie.isLogged = "yes";
+            myCookie.username = username;
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+            redirectAttributes.addFlashAttribute("username",username);
+        }
+        return "redirect:/";
+    }
+
+    @RequestMapping(value="/logout", method = RequestMethod.GET)
+    public String showLogout(HttpServletResponse response,Model model)
+    {
+        Gson gson = new Gson();
+        MyCookie myCookie = new MyCookie();
+        myCookie.isLogged = "no";
+        String rawValue = gson.toJson(myCookie);
+        String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+        Cookie foo = new Cookie("islogged", encoded); //bake cookie
+        response.addCookie(foo);
+        return "redirect:/";
+    }
+
+    @RequestMapping(value="/test", method = RequestMethod.GET)
+    public String showTestPage(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletResponse response, Model model)
+    {
+        if (loggedCookie.matches("no") || model.asMap().get("username") == null)
             return "login"; //login sets username model attribute
         else
         {
@@ -88,64 +190,7 @@ public class Controller {
             pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
         }
         model.addAttribute("pinglist", pingList);
-
-        return "index";
-    }
-
-    @RequestMapping(value="/", method = RequestMethod.POST)
-    public String showRefreshedOverview(@RequestParam(value = "username", required = true) String username, @CookieValue(value = "islogged", defaultValue = "no") String loggedCookie,
-                                        HttpServletRequest request, HttpServletResponse response, Model model)
-    {
-        if (loggedCookie.matches("no"))
-            return "login"; //login sets username model attribute
-        else
-        {
-            Cookie foo = new Cookie("islogged", "yes"); //bake cookie
-            foo.setMaxAge(600); //10 minutes expiery
-            response.addCookie(foo);
-        }
-
-        String userName = username;
-        UserDataOutput data = new UserDataOutput();
-        int userId = SqlDriver.getUserId(userName);
-        data.id = userId;
-        data.accessUrl = "/api/user/" + userId;
-        data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
-        model.addAttribute("userdata", data);
-        model.addAttribute("username", userName);
-
-        LinkedList<HealthCheckOutput> pingList = SqlDriver.getFilteredPingList(userId);
-        for(HealthCheckOutput pingdata:pingList)
-        {
-            pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
-        }
-        model.addAttribute("pinglist", pingList);
-
-        return "index";
-    }
-
-    @RequestMapping(value="/login", method = RequestMethod.POST)
-    public String processLogin(@RequestParam(value = "username", required = true) String username, @RequestParam(value = "password", required = true) String password,
-                               HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
-    {
-        boolean isValidLogin = SqlDriver.isValidPassword(SqlDriver.getUserId(username), password);
-        if(isValidLogin)
-        {
-            Cookie foo = new Cookie("islogged", "yes"); //bake cookie
-            foo.setMaxAge(600); //10 minutes expiery
-            response.addCookie(foo);
-            redirectAttributes.addFlashAttribute("username",username);
-        }
-        model.addAttribute("username", username);
-        return "redirect:/";
-    }
-
-    @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String showLogout(HttpServletResponse response,Model model)
-    {
-        Cookie foo = new Cookie("islogged", "no"); //bake cookie
-        response.addCookie(foo);
-        return "redirect:/";
+        return "index2";
     }
 
 }
