@@ -26,26 +26,26 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>Sentinel | Extensible monitoring at your fingertips</title>
     <!-- Favicon-->
-    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
 
     <!-- Bootstrap Core Css -->
-    <link href="assets/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link href="/assets/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
 
     <!-- Waves Effect Css -->
-    <link href="assets/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link href="/assets/plugins/node-waves/waves.css" rel="stylesheet" />
 
     <!-- Animation Css -->
-    <link href="assets/plugins/animate-css/animate.css" rel="stylesheet" />
+    <link href="/assets/plugins/animate-css/animate.css" rel="stylesheet" />
 
     <!-- Custom Css -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="/assets/css/style.css" rel="stylesheet">
 
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
-    <link href="assets/css/themes/all-themes.css" rel="stylesheet" />
+    <link href="/assets/css/themes/all-themes.css" rel="stylesheet" />
 </head>
 
 <body class="theme-red">
@@ -73,7 +73,7 @@
             <!-- User Info -->
             <div class="user-info">
                 <div class="image">
-                    <img src="assets/images/user.png" width="48" height="48" alt="User" />
+                    <img src="/assets/images/user.png" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${username}">John Doe</div>
@@ -136,20 +136,23 @@
                     <span th:if="${createmsg != null}" th:text="${createmsg}">some msg</span>
                 </div>
             </div>
+
             <div class="block-header">
-                <h2>Registered monitoring spaces</h2>
+                <h2 th:text="'Registered series in this space (' + ${spacename} + ')'">Registered series in this space</h2>
             </div>
+
             <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${spacelist.empty}">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${serieslist.empty}">
                     <div class="card">
-                        <div class="body">No registered space found!</div>
+                        <div class="body">No registered series found!</div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" th:each="space: ${userdata.spaces}">
+
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" th:each="series: ${serieslist}">
                     <div class="card">
                         <div class="header">
                             <h2>
-                                Space: <span th:text="${space.name}"></span> <small th:text="'API Endpoint: ' + ${space.accessUrl}"></small>
+                                Series: <span th:text="${series.name}"></span> <small th:text="'API Endpoint: ' + ${series.accessUrl}"></small>
                             </h2>
                             <ul class="header-dropdown m-r--5">
                                 <li class="dropdown">
@@ -157,30 +160,23 @@
                                         <i class="material-icons">more_vert</i>
                                     </a>
                                     <ul class="dropdown-menu pull-right">
-                                        <li><a th:href="@{'/space/' + ${space.id}}">More details</a></li>
+                                        <li><a th:href="@{'/series/' + ${series.id}}">Explore recent data</a></li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>
                         <div class="body">
-                            Useful information related to this space:<br><br>
+                            Useful information related to this series:<br><br>
                             <blockquote style="font-size: small">
                                 <ul>
-                                    <li th:text="'Kafka topic name: ' + ${space.topicName}"></li>
                                     <li th:inline="text">
-                                        Data dashboard: [[${space.dataDashboardUrl}]] [ <a target="_blank" th:href="@{${space.dataDashboardUrl}}">link</a> ]
-                                    </li>
-                                    <li th:inline="text">
-                                        Data dashboard account: <span style="color:#00008b">[[${space.dataDashboardUser}]]</span>
-                                    </li>
-                                    <li th:inline="text">
-                                        Data dashboard password: <span style="color:darkred">[[${space.dataDashboardPassword}]]</span>
+                                        Defined message format: <span style="color:darkred">[[${series.msgFormat}]]</span>
                                     </li>
                                 </ul>
                             </blockquote>
                         </div>
                         <div class="header">
-                            <h2><small>use the card menu to explore more about this space</small></h2>
+                            <h2><small>use the card menu to explore more about this series</small></h2>
                         </div>
                     </div>
                 </div>
@@ -190,26 +186,35 @@
             <div class="block-header">
                 <h2>Management actions</h2>
             </div>
+
             <div class="row clearfix">
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
                         <div class="header">
                             <h2>
-                                Create new monitored space <small>The space name must be unique among all your registered spaces. <b>Please do not use dashes ( - ) in the name, underscore ( _ ) is allowed</b>.</small>
+                                Create new data series in this space <small>The series name must be unique among all your registered series in this space. <b>Please do not use spaces (  ) in the name, underscore ( _ ) or dash ( - ) is allowed</b>.</small>
                             </h2>
                         </div>
                         <div class="body">
-                            <form method="post" action="/newspace">
+                            <form method="post" action="/newseries">
                                 <div class="row clearfix">
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                                         <div class="form-group">
                                             <div class="form-line">
-                                                <input name="spacename" type="text" class="form-control" placeholder="space name (no spaces and no dashes)">
+                                                <input name="seriesname" type="text" class="form-control" placeholder="series name (no spaces)">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                                        <button type="submit" class="btn btn-primary btn-lg m-l-15 waves-effect">create space</button>
+                                    <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input name="msgformat" type="text" class="form-control" placeholder="message format">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                        <input name="spacename" type="hidden" th:value="${spacename}">
+                                        <button type="submit" class="btn btn-primary btn-lg m-l-15 waves-effect">create series</button>
                                     </div>
                                 </div>
                             </form>
@@ -221,19 +226,19 @@
     </section>
 
     <!-- Jquery Core Js -->
-    <script src="assets/plugins/jquery/jquery.min.js"></script>
+    <script src="/assets/plugins/jquery/jquery.min.js"></script>
 
     <!-- Bootstrap Core Js -->
-    <script src="assets/plugins/bootstrap/js/bootstrap.js"></script>
+    <script src="/assets/plugins/bootstrap/js/bootstrap.js"></script>
 
     <!-- Select Plugin Js -->
-    <script src="assets/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+    <script src="/assets/plugins/bootstrap-select/js/bootstrap-select.js"></script>
 
     <!-- Slimscroll Plugin Js -->
-    <script src="assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+    <script src="/assets/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
 
     <!-- Waves Effect Plugin Js -->
-    <script src="assets/plugins/node-waves/waves.js"></script>
+    <script src="/assets/plugins/node-waves/waves.js"></script>
 
     <!-- Custom Js -->
 

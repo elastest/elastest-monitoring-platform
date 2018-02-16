@@ -83,6 +83,10 @@ public class Controller {
         String userName = myCookie.username;
         UserDataOutput data = new UserDataOutput();
         int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
         data.id = userId;
         data.accessUrl = "/api/user/" + userId;
         model.addAttribute("username", userName);
@@ -96,6 +100,67 @@ public class Controller {
         kafkadata.valueSerializer = AppConfiguration.getKafkaValueSerializer();
         model.addAttribute("kafkadata", kafkadata);
         return "profile";
+    }
+
+    @RequestMapping(value="/space/{spaceid}", method = RequestMethod.GET)
+    public String showSpaceDetails(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @PathVariable(value="spaceid") String spaceid, HttpServletRequest request, HttpServletResponse response, Model model)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
+        UserDataOutput data = new UserDataOutput();
+        data.id = userId;
+        data.accessUrl = "/api/user/" + userId;
+        data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
+
+        int spaceId = -1;
+        try {
+            spaceId = Integer.parseInt(spaceid);
+        } catch(NumberFormatException nex)
+        {
+            //supplied value is not an id but a login
+            spaceId = -1;
+        }
+
+        if(spaceId == -1) {
+            model.addAttribute("createmsg", "bad series request data, check input");
+            return "spacedetails";
+        }
+
+        for(SpaceOutput space: data.spaces)
+        {
+            if(space.id == spaceId)
+            {
+                SeriesOutput[] list = space.seriesList;
+                model.addAttribute("serieslist", Arrays.asList(list));
+                model.addAttribute("username", userName);
+                model.addAttribute("spacename", space.name);
+                return "spacedetails";
+            }
+        }
+
+        model.addAttribute("username", userName);
+        return "spacedetails";
     }
 
     @RequestMapping(value="/spaces", method = RequestMethod.GET)
@@ -120,11 +185,16 @@ public class Controller {
 
         String userName = myCookie.username;
         int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
         UserDataOutput data = new UserDataOutput();
         data.id = userId;
         data.accessUrl = "/api/user/" + userId;
         data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
         model.addAttribute("userdata", data);
+        model.addAttribute("spacelist", Arrays.asList(data.spaces));
         model.addAttribute("username", userName);
         return "space";
     }
@@ -151,6 +221,11 @@ public class Controller {
         }
 
         String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
         SpaceInput incomingData = new SpaceInput();
         incomingData.name = spacename;
         if(!incomingData.isValidData())
@@ -171,17 +246,17 @@ public class Controller {
         String qUserPass = HelperMethods.randomString(16);
         int spaceId = SqlDriver.addSpace(userName, incomingData.name, qUserName, qUserPass);
         String[] kafkaTopics = KafkaClient.listTopics();
-        if(Arrays.asList(kafkaTopics).contains("user" + SqlDriver.getUserId(userName) + "-" + incomingData.name))
+        if(Arrays.asList(kafkaTopics).contains("user" + userId + "-" + incomingData.name))
         {
             logger.info("This space " + incomingData.name + " for user: " + userName + " is already with Kafka cluster.");
         }
         else
         {
-            boolean status = KafkaClient.createTopic("user-" + SqlDriver.getUserId(userName) + "-" + incomingData.name);
+            boolean status = KafkaClient.createTopic("user-" + userId + "-" + incomingData.name);
             if(status)
-                logger.info("Topic registered with kafka cluster: " + "user-" + SqlDriver.getUserId(userName) + "-" + incomingData.name);
+                logger.info("Topic registered with kafka cluster: " + "user-" + userId + "-" + incomingData.name);
             else
-                logger.warn("Topic could not be registered with kafka cluster: " + "user" + SqlDriver.getUserId(userName) + "-" + incomingData.name);
+                logger.warn("Topic could not be registered with kafka cluster: " + "user" + userId + "-" + incomingData.name);
         }
         if(spaceId != -1)
         {
@@ -241,6 +316,10 @@ public class Controller {
         String userName = myCookie.username;
         UserDataOutput data = new UserDataOutput();
         int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
         data.id = userId;
         data.accessUrl = "/api/user/" + userId;
         data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
