@@ -130,6 +130,12 @@
 
     <section class="content">
         <div class="container-fluid">
+            <div class="row clearfix" th:if="${createmsg != null}">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 alert alert-danger alert-dismissible" role="alert" style="text-align: center">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <span th:if="${createmsg != null}" th:text="${createmsg}">some msg</span>
+                </div>
+            </div>
             <div class="block-header">
                 <h2>Registered monitoring spaces</h2>
             </div>
@@ -141,6 +147,16 @@
                             <h2>
                                 Space: <span th:text="${space.name}"></span> <small th:text="'API Endpoint: ' + ${space.accessUrl}"></small>
                             </h2>
+                            <ul class="header-dropdown m-r--5">
+                                <li class="dropdown">
+                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <i class="material-icons">more_vert</i>
+                                    </a>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a th:href="@{'/space/' + ${space.id}}">More details</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
                         </div>
                         <div class="body">
                             Useful information related to this space:<br><br>
@@ -159,15 +175,43 @@
                                 </ul>
                             </blockquote>
                         </div>
-                        <div class="footer">
-                            <form method="post" th:action="'/space/' + ${space.id}">
-                                <button title="see details including series and data trends" type="submit" class="btn btn-primary btn-lg m-l-15 waves-effect">more details</button>
-                            </form>
-                            <br>
+                        <div class="header">
+                            <h2><small>use the card menu to explore more about this space</small></h2>
                         </div>
                     </div>
                 </div>
 
+            </div>
+
+            <div class="block-header">
+                <h2>Management actions</h2>
+            </div>
+            <div class="row clearfix">
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                Create new monitored space <small>The space name must be unique among all your registered spaces. <b>Please do not use dashes ( - ) in the name, underscore ( _ ) is allowed</b>.</small>
+                            </h2>
+                        </div>
+                        <div class="body">
+                            <form method="post" action="/newspace">
+                                <div class="row clearfix">
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <div class="form-group">
+                                            <div class="form-line">
+                                                <input name="spacename" type="text" class="form-control" placeholder="space name (no spaces and no dashes)">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                                        <button type="submit" class="btn btn-primary btn-lg m-l-15 waves-effect">create space</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

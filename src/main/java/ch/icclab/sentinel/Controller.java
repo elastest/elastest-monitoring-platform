@@ -25,16 +25,16 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import ch.icclab.sentinel.dao.HealthCheckOutput;
-import ch.icclab.sentinel.dao.MyCookie;
-import ch.icclab.sentinel.dao.SpaceOutput;
-import ch.icclab.sentinel.dao.UserDataOutput;
+import ch.icclab.sentinel.dao.*;
 import com.google.gson.Gson;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.apache.log4j.Logger;
 
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.LinkedList;
 
@@ -89,6 +89,12 @@ public class Controller {
         model.addAttribute("apikey", SqlDriver.getAPIKey(userId));
         model.addAttribute("userdata", data);
 
+        //agent configuration common data
+        EndpointInfo kafkadata = new EndpointInfo();
+        kafkadata.endpoint = AppConfiguration.getKafkaURL();
+        kafkadata.keySerializer = AppConfiguration.getKafkaKeySerializer();
+        kafkadata.valueSerializer = AppConfiguration.getKafkaValueSerializer();
+        model.addAttribute("kafkadata", kafkadata);
         return "profile";
     }
 
@@ -121,6 +127,90 @@ public class Controller {
         model.addAttribute("userdata", data);
         model.addAttribute("username", userName);
         return "space";
+    }
+
+    @RequestMapping(value="/newspace", method = RequestMethod.POST)
+    public String processCreateSpace(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @RequestParam(value = "spacename", required = true) String spacename,
+                               HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        SpaceInput incomingData = new SpaceInput();
+        incomingData.name = spacename;
+        if(!incomingData.isValidData())
+        {
+            redirectAttributes.addFlashAttribute("createmsg","bad data, check input");
+            return "redirect:/spaces";
+        }
+
+        if(SqlDriver.isDuplicateSpace(userName, incomingData.name))
+        {
+            redirectAttributes.addFlashAttribute("createmsg","space already exists");
+            return "redirect:/spaces";
+        }
+
+        //now add this space to this user
+        String topicName = "user-" + SqlDriver.getUserId(userName) + "-" + incomingData.name;
+        String qUserName = "user" + SqlDriver.getUserId(userName) + incomingData.name;
+        String qUserPass = HelperMethods.randomString(16);
+        int spaceId = SqlDriver.addSpace(userName, incomingData.name, qUserName, qUserPass);
+        String[] kafkaTopics = KafkaClient.listTopics();
+        if(Arrays.asList(kafkaTopics).contains("user" + SqlDriver.getUserId(userName) + "-" + incomingData.name))
+        {
+            logger.info("This space " + incomingData.name + " for user: " + userName + " is already with Kafka cluster.");
+        }
+        else
+        {
+            boolean status = KafkaClient.createTopic("user-" + SqlDriver.getUserId(userName) + "-" + incomingData.name);
+            if(status)
+                logger.info("Topic registered with kafka cluster: " + "user-" + SqlDriver.getUserId(userName) + "-" + incomingData.name);
+            else
+                logger.warn("Topic could not be registered with kafka cluster: " + "user" + SqlDriver.getUserId(userName) + "-" + incomingData.name);
+        }
+        if(spaceId != -1)
+        {
+            SpaceOutput outputData = new SpaceOutput();
+            outputData.id = spaceId;
+            outputData.accessUrl = "/api/space/" + spaceId;
+            outputData.name = incomingData.name;
+            outputData.topicName = topicName;
+            outputData.dataDashboardPassword = qUserPass;
+            //InfluxDBClient.addDB(outputData.topicName); //just in case this has not been created by kafka topic monitoring thread
+            boolean status = InfluxDBClient.addUser(outputData.topicName, outputData.topicName, outputData.dataDashboardPassword);
+            if(status)
+            {
+                outputData.dataDashboardUser = qUserName;
+                outputData.dataDashboardUrl = "http://" + AppConfiguration.getStreamAccessUrl() + "/";
+            }
+            else
+            {
+                outputData.dataDashboardPassword = null;
+                logger.warn("Problem creating new user for this scape: " + outputData.topicName);
+            }
+            redirectAttributes.addFlashAttribute("createmsg","space created");
+            return "redirect:/spaces";
+        }
+        else
+        {
+            redirectAttributes.addFlashAttribute("createmsg","space could not be created, contact system administrator");
+        }
+        return "redirect:/spaces";
     }
 
     @RequestMapping(value="/", method = RequestMethod.GET)

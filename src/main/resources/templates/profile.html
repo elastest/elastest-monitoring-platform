@@ -166,6 +166,24 @@
                     </div>
                 </div>
 
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                Agent Configuration Data <small>Common agent connectivity configuration parameters</small>
+                            </h2>
+                        </div>
+                        <div class="body">
+                            Use these details to configure some of the sentinel agents parameters (rest you can find in space / series sections):<br><br>
+                            <ul class="list-unstyled">
+                                <li th:text="${'Kafka endpoint: ' + kafkadata.endpoint}"></li>
+                                <li th:text="${'Key Serializer: ' + kafkadata.keySerializer}"></li>
+                                <li th:text="${'Value Serializer: ' + kafkadata.valueSerializer}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
