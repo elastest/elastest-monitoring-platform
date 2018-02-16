@@ -81,13 +81,43 @@ public class Controller {
         }
 
         String userName = myCookie.username;
-
+        UserDataOutput data = new UserDataOutput();
         int userId = SqlDriver.getUserId(userName);
-
+        data.id = userId;
+        data.accessUrl = "/api/user/" + userId;
         model.addAttribute("username", userName);
         model.addAttribute("apikey", SqlDriver.getAPIKey(userId));
+        model.addAttribute("userdata", data);
 
         return "profile";
+    }
+
+    @RequestMapping(value="/spaces", method = RequestMethod.GET)
+    public String showSpaceData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+
+
+
+        return "space";
     }
 
     @RequestMapping(value="/", method = RequestMethod.GET)
@@ -97,12 +127,10 @@ public class Controller {
         String cookievalue = new String(barr);
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
-        System.out.println(model.asMap().get("loginmsg"));
         if (myCookie != null && myCookie.isLogged.matches("no"))
         {
             if(model.asMap().get("loginmsg") != null)
             {
-                System.out.println((String) model.asMap().get("loginmsg"));
                 model.addAttribute("loginmsg", (String) model.asMap().get("loginmsg"));
             }
             return "login";
@@ -172,36 +200,6 @@ public class Controller {
         Cookie foo = new Cookie("islogged", encoded); //bake cookie
         response.addCookie(foo);
         return "redirect:/";
-    }
-
-    @RequestMapping(value="/test", method = RequestMethod.GET)
-    public String showTestPage(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletResponse response, Model model)
-    {
-        if (loggedCookie.matches("no") || model.asMap().get("username") == null)
-            return "login"; //login sets username model attribute
-        else
-        {
-            Cookie foo = new Cookie("islogged", "yes"); //bake cookie
-            foo.setMaxAge(600); //10 minutes expiery
-            response.addCookie(foo);
-        }
-
-        String userName = (String) model.asMap().get("username");
-        UserDataOutput data = new UserDataOutput();
-        int userId = SqlDriver.getUserId(userName);
-        data.id = userId;
-        data.accessUrl = "/api/user/" + userId;
-        data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
-        model.addAttribute("userdata", data);
-        model.addAttribute("username", userName);
-
-        LinkedList<HealthCheckOutput> pingList = SqlDriver.getFilteredPingList(userId);
-        for(HealthCheckOutput pingdata:pingList)
-        {
-            pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
-        }
-        model.addAttribute("pinglist", pingList);
-        return "index2";
     }
 
 }

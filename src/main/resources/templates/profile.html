@@ -148,6 +148,24 @@
                     </div>
                 </div>
 
+                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                    <div class="card">
+                        <div class="header">
+                            <h2>
+                                REST Access Data <small>Miscellaneous items</small>
+                            </h2>
+                        </div>
+                        <div class="body">
+                            Use these details while using sentinel RESTful APIs:<br><br>
+                            <ul class="list-unstyled">
+                                <li th:text="${'Sentinel user-id: ' + userdata.id}"></li>
+                                <li th:text="${'Sentinel access uri: ' + userdata.accessUrl}"></li>
+                                <li th:text="${'Your username: ' + username}"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </section>
