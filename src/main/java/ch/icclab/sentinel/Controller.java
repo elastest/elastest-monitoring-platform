@@ -114,9 +114,12 @@ public class Controller {
 
         String userName = myCookie.username;
         int userId = SqlDriver.getUserId(userName);
-
-
-
+        UserDataOutput data = new UserDataOutput();
+        data.id = userId;
+        data.accessUrl = "/api/user/" + userId;
+        data.spaces = SqlDriver.getUserSpaces(userId).toArray(new SpaceOutput[SqlDriver.getUserSpaces(userId).size()]);
+        model.addAttribute("userdata", data);
+        model.addAttribute("username", userName);
         return "space";
     }
 
