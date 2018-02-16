@@ -23,7 +23,7 @@
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <title>sentinel:: please login</title>
+    <title>sentinel :: please login</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons">
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-material-design@4.0.0-beta.4/dist/css/bootstrap-material-design.min.css"
           integrity="sha384-R80DC0KVBO4GSTw+wZ5x2zn2pu4POSErBkf8/fSFhPXHxvHJydT0CSgAP2Yo2r4I" crossorigin="anonymous">
@@ -42,6 +42,12 @@
 
         <div class="row" style="height:50px;"></div>
 
+        <div class="row justify-content-center" th:if="${loginmsg != null}">
+            <div class="col col-sm-4 alert alert-primary" role="alert" style="text-align: center">
+                <span th:if="${loginmsg != null}" th:text="${loginmsg}">(c) 2018 SPLab - ZHAW</span>
+            </div>
+        </div>
+
         <div class="row justify-content-center">
             <div class="col col-sm-4">
                 <form method="post" action="/login">
@@ -58,6 +64,7 @@
                 </form>
             </div>
         </div>
+
     </div>
 </body>
 </html>

@@ -97,9 +97,16 @@ public class Controller {
         String cookievalue = new String(barr);
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
-
+        System.out.println(model.asMap().get("loginmsg"));
         if (myCookie != null && myCookie.isLogged.matches("no"))
+        {
+            if(model.asMap().get("loginmsg") != null)
+            {
+                System.out.println((String) model.asMap().get("loginmsg"));
+                model.addAttribute("loginmsg", (String) model.asMap().get("loginmsg"));
+            }
             return "login";
+        }
         else
         {
             myCookie.isLogged = "yes";
@@ -146,6 +153,10 @@ public class Controller {
             foo.setMaxAge(600); //10 minutes expiery
             response.addCookie(foo);
             redirectAttributes.addFlashAttribute("username",username);
+        }
+        else
+        {
+            redirectAttributes.addFlashAttribute("loginmsg","invalid login, please try with valid credentials");
         }
         return "redirect:/";
     }
