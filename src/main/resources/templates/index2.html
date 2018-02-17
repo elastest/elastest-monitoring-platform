@@ -155,7 +155,7 @@
                                         <i class="material-icons">more_vert</i>
                                     </a>
                                     <ul class="dropdown-menu pull-right">
-                                        <li><a href="/spaces">Manage ping-backs</a></li>
+                                        <li><a href="/healthchecks">Manage ping-backs</a></li>
                                     </ul>
                                 </li>
                             </ul>
@@ -193,7 +193,6 @@
                         <div class="body table-responsive">
                             <span th:if="${activetriggerlist.empty}">You have no active alerts!</span>
                             <table th:unless="${activetriggerlist.empty}" class="table">
-                                <caption>List of actively triggered health-check callbacks</caption>
                                 <thead>
                                     <tr>
                                         <th>Check URL</th>
