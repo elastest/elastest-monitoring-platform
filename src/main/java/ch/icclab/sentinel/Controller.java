@@ -60,6 +60,41 @@ public class Controller {
         return "pinglist";
     }
 
+    @RequestMapping(value="/visualization", method = RequestMethod.GET)
+    public String showDashboard(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
+
+        String src = "http://" + AppConfiguration.getDashboardEndpoint() + "/dashboard/db/" +
+                AppConfiguration.getDashboardTitle() + "?refresh=30s&orgId=1&theme=light";
+        model.addAttribute("iframesrc", src);
+        model.addAttribute("dashboard", AppConfiguration.getDashboardEndpoint());
+        model.addAttribute("username", userName);
+        return "visualization";
+    }
+
     @RequestMapping(value="/profile", method = RequestMethod.GET)
     public String showProfileData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {

@@ -1,4 +1,25 @@
-﻿<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+﻿<!--
+  ~ Copyright (c) 2017. ZHAW - ICCLab
+  ~    All Rights Reserved.
+  ~
+  ~      Licensed under the Apache License, Version 2.0 (the "License"); you may
+  ~      not use this file except in compliance with the License. You may obtain
+  ~      a copy of the License at
+  ~
+  ~           http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~      Unless required by applicable law or agreed to in writing, software
+  ~      distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+  ~      WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+  ~      License for the specific language governing permissions and limitations
+  ~      under the License.
+  ~
+  ~
+  ~      Author: Piyush Harsh,
+  ~      URL: piyush-harsh.info
+  -->
+
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -113,88 +134,39 @@
         <!-- #END# Left Sidebar -->
     </section>
 
+    <script type="text/javascript">
+        function ResizeIframe(id)
+        {
+            var frame = document.getElementById(id);
+            frame.height = frame.contentWindow.document.body.scrollHeight + "px";
+            //frame.width = frame.contentWindow.document.body.scrollWidth + "px";
+        }
+    </script>
+
     <section class="content">
         <div class="container-fluid">
             <div class="block-header">
-                <h2>Summary</h2>
+                <h2>Data Visualization</h2>
             </div>
             <div class="row clearfix">
 
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>
-                                Monitored Spaces <small>Number of monitored spaces</small>
-                            </h2>
-                            <ul class="header-dropdown m-r--5">
-                                <li class="dropdown">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a href="/spaces">Manage spaces</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body">
-                            You have <span th:text="${#lists.size(userdata.spaces)}">no</span> space(s) defined!
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-3 col-md-3 col-sm-6 col-xs-12">
-                    <div class="card">
-                        <div class="header">
-                            <h2>
-                                Health Checks <small>Number of health check items</small>
-                            </h2>
-                            <ul class="header-dropdown m-r--5">
-                                <li class="dropdown">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a href="/spaces">Manage ping-backs</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body">
-                            You have <span th:text="${#lists.size(pinglist)}">no</span> health-check(s) defined!
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="block-header">
-                <h2>Active Alerts</h2>
-            </div>
-
-            <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
                         <div class="header">
                             <h2>
-                                Active alerts <small>Overview of alerts currently active</small>
+                                Configurable Dashboard <small th:text="${'Dashboard: http://' + dashboard}">Value of your API key</small>
                             </h2>
-                            <ul class="header-dropdown m-r--5">
-                                <li class="dropdown">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a href="/spaces">Manage ping-backs</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
                         </div>
                         <div class="body">
-                            You have no active alerts!
+                            Use the dashboard ( <a th:href="@{'http://' + ${dashboard}}" target="_blank">link</a> ) to configure and create existing / new dashboards.
+                            A sample preconfigured dashboard is embedded as an example.
+                        </div>
+                        <div class="body">
+                            <iframe id="MyIframe" onload="ResizeIframe('MyIframe')" width="100%" frameborder="0" th:src="${iframesrc}"></iframe>
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
