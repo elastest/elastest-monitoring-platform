@@ -141,7 +141,6 @@ public class Controller {
             //supplied value is not an id but a login
             spaceId = -1;
         }
-
         if(spaceId == -1) {
             model.addAttribute("createmsg", "bad series request data, check input");
             return "spacedetails";
@@ -155,6 +154,13 @@ public class Controller {
                 model.addAttribute("serieslist", Arrays.asList(list));
                 model.addAttribute("username", userName);
                 model.addAttribute("spacename", space.name);
+                model.addAttribute("topicname", space.topicName);
+                //agent configuration common data
+                EndpointInfo kafkadata = new EndpointInfo();
+                kafkadata.endpoint = AppConfiguration.getKafkaURL();
+                kafkadata.keySerializer = AppConfiguration.getKafkaKeySerializer();
+                kafkadata.valueSerializer = AppConfiguration.getKafkaValueSerializer();
+                model.addAttribute("kafkadata", kafkadata);
                 return "spacedetails";
             }
         }
@@ -286,6 +292,67 @@ public class Controller {
             redirectAttributes.addFlashAttribute("createmsg","space could not be created, contact system administrator");
         }
         return "redirect:/spaces";
+    }
+
+    @RequestMapping(value="/newseries", method = RequestMethod.POST)
+    public String processCreateSeries(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie,
+                                      @RequestParam(value = "spacename", required = true) String spacename,
+                                      @RequestParam(value = "seriesname", required = true) String seriesname,
+                                      @RequestParam(value = "msgformat", required = true) String msgformat,
+                                     HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
+
+        SeriesInput incomingData = new SeriesInput();
+        incomingData.name = seriesname;
+        incomingData.spaceName = spacename;
+        incomingData.msgSignature = msgformat;
+        int spaceId = SqlDriver.getSpaceId(userName, incomingData.spaceName);
+
+        if(!incomingData.isValidData())
+        {
+            redirectAttributes.addFlashAttribute("createmsg","bad data, check input");
+            return "redirect:/space/" + spaceId;
+        }
+
+        int seriesId = SqlDriver.addSeries(incomingData.name, incomingData.msgSignature, spaceId);
+
+        if(seriesId != -1)
+        {
+            SeriesOutput outputData = new SeriesOutput();
+            outputData.id = seriesId;
+            outputData.accessUrl = "/api/series/" + seriesId;
+            outputData.name = incomingData.name;
+            redirectAttributes.addFlashAttribute("createmsg","series created");
+            return "redirect:/space/" + spaceId;
+        }
+        else
+        {
+            redirectAttributes.addFlashAttribute("createmsg","series could not be created, contact system administrator");
+        }
+        return "redirect:/space/" + spaceId;
     }
 
     @RequestMapping(value="/", method = RequestMethod.GET)

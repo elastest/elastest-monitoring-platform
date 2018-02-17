@@ -152,7 +152,7 @@
                     <div class="card">
                         <div class="header">
                             <h2>
-                                Series: <span th:text="${series.name}"></span> <small th:text="'API Endpoint: ' + ${series.accessUrl}"></small>
+                                Series: <span th:text="'Series Name: ' + ${series.name}"></span> <small th:text="'API Endpoint: ' + ${series.accessUrl}"></small>
                             </h2>
                             <ul class="header-dropdown m-r--5">
                                 <li class="dropdown">
@@ -170,8 +170,19 @@
                             <blockquote style="font-size: small">
                                 <ul>
                                     <li th:inline="text">
-                                        Defined message format: <span style="color:darkred">[[${series.msgFormat}]]</span>
+                                        Defined message format: <span style="color:#00008b">[[${series.msgFormat}]]</span>
                                     </li>
+                                    <li th:inline="text">
+                                        Associated with topic name: <span style="color:darkred">[[${topicname}]]</span>
+                                    </li>
+                                </ul>
+                            </blockquote>
+                            Associated configuration values for agents sending data into this series:<br><br>
+                            <blockquote style="font-size: small">
+                                <ul>
+                                    <li th:text="${'Kafka endpoint: ' + kafkadata.endpoint}"></li>
+                                    <li th:text="${'Key Serializer: ' + kafkadata.keySerializer}"></li>
+                                    <li th:text="${'Value Serializer: ' + kafkadata.valueSerializer}"></li>
                                 </ul>
                             </blockquote>
                         </div>
@@ -205,14 +216,27 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 col-md-4 col-sm-12 col-xs-12">
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                                        <select name="selectvalue" class="form-control show-tick">
+                                            <option value="">-- select from predefined formats --</option>
+                                            <option value="unixtime:ms host:string cpu_user:float cpu_system:float cpu_idle:float cpu_percent:float ram_percent:float disk_percent:float">Format for system agent</option>
+                                            <option value="unixtime:s msgtype:json">Format for docker agent</option>
+                                            <option value="unixtime:ms loglevel:string class:string logmsg:string">Format for Java application log file agent</option>
+                                            <option value="unixtime:s msgtype:json">Recommended format for code instrumentation</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 demo-checkbox">
+                                        <input type="checkbox" id="basic_checkbox_1" name="override" value="override" />
+                                        <label for="basic_checkbox_1">override with your own format below (ignores any selected option)</label>
+                                    </div>
+                                    <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
                                         <div class="form-group">
                                             <div class="form-line">
                                                 <input name="msgformat" type="text" class="form-control" placeholder="message format">
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-lg-2 col-md-4 col-sm-12 col-xs-12">
+                                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
                                         <input name="spacename" type="hidden" th:value="${spacename}">
                                         <button type="submit" class="btn btn-primary btn-lg m-l-15 waves-effect">create series</button>
                                     </div>
@@ -240,7 +264,16 @@
     <!-- Waves Effect Plugin Js -->
     <script src="/assets/plugins/node-waves/waves.js"></script>
 
+    <!-- Autosize Plugin Js -->
+    <script src="/assets/plugins/autosize/autosize.js"></script>
+
+    <!-- Moment Plugin Js -->
+    <script src="/assets/plugins/momentjs/moment.js"></script>
+
     <!-- Custom Js -->
+    <script src="/assets/js/pages/forms/basic-form-elements.js"></script>
+    <!-- Demo Js -->
+    <script src="/assets/js/demo.js"></script>
 
 </body>
 
