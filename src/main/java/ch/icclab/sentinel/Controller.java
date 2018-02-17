@@ -492,13 +492,88 @@ public class Controller {
         model.addAttribute("username", userName);
 
         LinkedList<HealthCheckOutput> pingList = SqlDriver.getFilteredPingList(userId);
+        LinkedList<HealthCheckOutput> activeList = new LinkedList<>();
         for(HealthCheckOutput pingdata:pingList)
         {
             pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
+            boolean isTriggered = true;
+            if(pingdata.callHistory.length < pingdata.toleranceFactor)
+                isTriggered = false;
+            else
+            {
+                for (int i = 0; i < pingdata.toleranceFactor; i++) {
+                    if (pingdata.callHistory[i].status.equalsIgnoreCase("ok"))
+                    {
+                        isTriggered = false;
+                        break;
+                    }
+                }
+            }
+            if(isTriggered) activeList.add(pingdata);
         }
         model.addAttribute("pinglist", pingList);
-
+        model.addAttribute("activetriggerlist", activeList);
         return "index2";
+    }
+
+    @RequestMapping(value="/healthchecks", method = RequestMethod.GET)
+    public String showHealthCheckOverview(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+        {
+            if(model.asMap().get("loginmsg") != null)
+            {
+                model.addAttribute("loginmsg", (String) model.asMap().get("loginmsg"));
+            }
+            return "login";
+        }
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        UserDataOutput data = new UserDataOutput();
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
+        model.addAttribute("username", userName);
+
+        LinkedList<HealthCheckOutput> pingList = SqlDriver.getFilteredPingList(userId);
+        LinkedList<HealthCheckOutput> activeList = new LinkedList<>();
+
+        for(HealthCheckOutput pingdata:pingList)
+        {
+            pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
+            boolean isTriggered = true;
+            if(pingdata.callHistory.length < pingdata.toleranceFactor)
+                isTriggered = false;
+            else
+            {
+                for (int i = 0; i < pingdata.toleranceFactor; i++) {
+                    if (pingdata.callHistory[i].status.equalsIgnoreCase("ok"))
+                    {
+                        isTriggered = false;
+                        break;
+                    }
+                }
+            }
+            if(isTriggered) activeList.add(pingdata);
+        }
+        model.addAttribute("pinglist", pingList);
+        model.addAttribute("activetriggerlist", activeList);
+        return "healthcheck";
     }
 
     @RequestMapping(value="/login", method = RequestMethod.POST)

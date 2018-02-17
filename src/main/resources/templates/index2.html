@@ -185,13 +185,30 @@
                                         <i class="material-icons">more_vert</i>
                                     </a>
                                     <ul class="dropdown-menu pull-right">
-                                        <li><a href="/spaces">Manage ping-backs</a></li>
+                                        <li><a href="/healthchecks">Manage ping-backs</a></li>
                                     </ul>
                                 </li>
                             </ul>
                         </div>
-                        <div class="body">
-                            You have no active alerts!
+                        <div class="body table-responsive">
+                            <span th:if="${activetriggerlist.empty}">You have no active alerts!</span>
+                            <table th:unless="${activetriggerlist.empty}" class="table">
+                                <caption>List of actively triggered health-check callbacks</caption>
+                                <thead>
+                                    <tr>
+                                        <th>Check URL</th>
+                                        <th>Report URL</th>
+                                        <th>Latest check time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="ping : ${activetriggerlist}">
+                                        <td th:text="${ping.pingURL}"></td>
+                                        <td th:text="${ping.reportURL}"></td>
+                                        <td th:text="'Unix time: ' + ${ping.callHistory[0].eventTime}"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
