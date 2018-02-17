@@ -298,7 +298,9 @@ public class Controller {
     public String processCreateSeries(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie,
                                       @RequestParam(value = "spacename", required = true) String spacename,
                                       @RequestParam(value = "seriesname", required = true) String seriesname,
-                                      @RequestParam(value = "msgformat", required = true) String msgformat,
+                                      @RequestParam(value = "msgformat", required = false) String msgformat,
+                                      @RequestParam(value = "selectvalue", required = false) String selectedformat,
+                                      @RequestParam(value = "override", required = false) String override,
                                      HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
@@ -324,16 +326,25 @@ public class Controller {
         {
             return "redirect:/logout";
         }
-
+        //decide if to use selectvalue or not
         SeriesInput incomingData = new SeriesInput();
         incomingData.name = seriesname;
         incomingData.spaceName = spacename;
-        incomingData.msgSignature = msgformat;
-        int spaceId = SqlDriver.getSpaceId(userName, incomingData.spaceName);
+        if(override == null)
+            incomingData.msgSignature = selectedformat;
+        else
+            incomingData.msgSignature = msgformat;
 
+        int spaceId = SqlDriver.getSpaceId(userName, incomingData.spaceName);
+        System.out.println("format to use " + incomingData.msgSignature);
         if(!incomingData.isValidData())
         {
             redirectAttributes.addFlashAttribute("createmsg","bad data, check input");
+            return "redirect:/space/" + spaceId;
+        }
+        if(SqlDriver.isDuplicateSeries(userName, incomingData.name, incomingData.spaceName))
+        {
+            redirectAttributes.addFlashAttribute("createmsg","series already exists");
             return "redirect:/space/" + spaceId;
         }
 
