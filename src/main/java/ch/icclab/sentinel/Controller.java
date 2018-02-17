@@ -497,7 +497,7 @@ public class Controller {
         {
             pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
             boolean isTriggered = true;
-            if(pingdata.callHistory.length < pingdata.toleranceFactor)
+            if(pingdata.callHistory != null && pingdata.callHistory.length < pingdata.toleranceFactor)
                 isTriggered = false;
             else
             {
