@@ -36,6 +36,7 @@ import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 @org.springframework.stereotype.Controller
@@ -135,6 +136,57 @@ public class Controller {
         kafkadata.valueSerializer = AppConfiguration.getKafkaValueSerializer();
         model.addAttribute("kafkadata", kafkadata);
         return "profile";
+    }
+
+    @RequestMapping(value="/series/{seriesid}", method = RequestMethod.GET)
+    public String showSeriesDetails(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @PathVariable(value="seriesid") String seriesid, HttpServletRequest request, HttpServletResponse response, Model model)
+    {
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
+
+        int seriesId = -1;
+        try {
+            seriesId = Integer.parseInt(seriesid);
+        } catch(NumberFormatException nex)
+        {
+            //supplied value is not an id but a login
+            seriesId = -1;
+        }
+        if(seriesId == -1) {
+            model.addAttribute("createmsg", "bad series request data, check input");
+            return "seriesdetails";
+        }
+
+        String seriesName = SqlDriver.getSeriesName(seriesId);
+        int spaceId = SqlDriver.getSpaceId(seriesId);
+        String spaceName = SqlDriver.getSpaceName(spaceId);
+
+        String dbName = "user-" + userId + "-" + spaceName;
+        HashMap<String, Object>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 100);
+
+        model.addAttribute("username", userName);
+        return "seriesdetails";
     }
 
     @RequestMapping(value="/space/{spaceid}", method = RequestMethod.GET)

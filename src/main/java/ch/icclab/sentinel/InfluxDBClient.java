@@ -32,6 +32,7 @@ import org.jooq.tools.json.JSONParser;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
@@ -169,6 +170,11 @@ public class InfluxDBClient
             }
         }
         return false;
+    }
+
+    static HashMap<String, Object>[] getLastPoints(String topic, String key, int count)
+    {
+        return null;
     }
 
     static boolean addPoint(String topic, String key, String msg)

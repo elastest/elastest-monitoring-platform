@@ -720,6 +720,78 @@ public class SqlDriver
         return msgFormat;
     }
 
+    static String getSeriesName(int seriesId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("name")).from("series").where("id = ?").getSQL();
+        String name = null;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, seriesId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                name = rs.getString(1);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in locating series name for series: " + sqex.getMessage());
+        }
+        return name;
+    }
+
+    static String getSpaceName(int spaceId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("name")).from("space").where("id = ?").getSQL();
+        String name = null;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, spaceId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                name = rs.getString(1);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in locating name for space: " + sqex.getMessage());
+        }
+        return name;
+    }
+
+    static int getSpaceId(int seriesId)
+    {
+        Connection conn = getDBConnection();
+        DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
+        String sql = create.select(field("spaceid")).from("series").where("id = ?").getSQL();
+        int spaceId = -1;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, seriesId);
+            ResultSet rs = stmt.executeQuery();
+            if(rs.next())
+            {
+                spaceId = rs.getInt(1);
+            }
+            rs.close();
+            conn.close();
+        }
+        catch(SQLException sqex)
+        {
+            logger.warn("Caught exception in locating space id for series: " + sqex.getMessage());
+        }
+        return spaceId;
+    }
+
     static String getAPIKey(int userId)
     {
         Connection conn = getDBConnection();
