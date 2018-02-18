@@ -52,6 +52,7 @@ public class Controller {
     @RequestMapping(value="/statuslist", method = RequestMethod.GET)
     public String showIndex(HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /statuslist");
         LinkedList<HealthCheckOutput> pingList = SqlDriver.getPingList();
         for(HealthCheckOutput data:pingList)
         {
@@ -64,6 +65,7 @@ public class Controller {
     @RequestMapping(value="/visualization", method = RequestMethod.GET)
     public String showDashboard(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /visualization");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -99,6 +101,7 @@ public class Controller {
     @RequestMapping(value="/profile", method = RequestMethod.GET)
     public String showProfileData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /profile");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -141,6 +144,7 @@ public class Controller {
     @RequestMapping(value="/series/{seriesid}", method = RequestMethod.GET)
     public String showSeriesDetails(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @PathVariable(value="seriesid") String seriesid, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /series/" + seriesid);
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -192,6 +196,7 @@ public class Controller {
     @RequestMapping(value="/space/{spaceid}", method = RequestMethod.GET)
     public String showSpaceDetails(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @PathVariable(value="spaceid") String spaceid, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /space/" + spaceid);
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -259,6 +264,7 @@ public class Controller {
     @RequestMapping(value="/spaces", method = RequestMethod.GET)
     public String showSpaceData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /spaces");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -296,6 +302,7 @@ public class Controller {
     public String processCreateSpace(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @RequestParam(value = "spacename", required = true) String spacename,
                                HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
+        logger.info("processing /newspace");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -390,6 +397,7 @@ public class Controller {
                                       @RequestParam(value = "override", required = false) String override,
                                      HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
+        logger.info("processing /newseries");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -456,6 +464,7 @@ public class Controller {
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String showOverview(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -519,6 +528,7 @@ public class Controller {
     @RequestMapping(value="/healthchecks", method = RequestMethod.GET)
     public String showHealthCheckOverview(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
+        logger.info("serving /healthchecks");
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -557,7 +567,7 @@ public class Controller {
         {
             pingdata.callHistory = Application.eventsCache.getEventTraceHistory(pingdata.pingURL, pingdata.reportURL);
             boolean isTriggered = true;
-            if(pingdata.callHistory.length < pingdata.toleranceFactor)
+            if((pingdata.callHistory != null && pingdata.callHistory.length < pingdata.toleranceFactor) || (pingdata.callHistory == null))
                 isTriggered = false;
             else
             {
@@ -580,6 +590,7 @@ public class Controller {
     public String processLogin(@RequestParam(value = "username", required = true) String username, @RequestParam(value = "password", required = true) String password,
                                HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
+        logger.info("serving /login");
         boolean isValidLogin = SqlDriver.isValidPassword(SqlDriver.getUserId(username), password);
         if(isValidLogin)
         {
@@ -604,6 +615,7 @@ public class Controller {
     @RequestMapping(value="/logout", method = RequestMethod.GET)
     public String showLogout(HttpServletResponse response,Model model)
     {
+        logger.info("processing /logout");
         Gson gson = new Gson();
         MyCookie myCookie = new MyCookie();
         myCookie.isLogged = "no";
