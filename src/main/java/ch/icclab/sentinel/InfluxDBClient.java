@@ -26,6 +26,10 @@ import org.apache.log4j.Logger;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
+import org.influxdb.dto.Query;
+import org.influxdb.dto.QueryResult;
+import org.influxdb.dto.QueryResult.Result;
+import org.influxdb.dto.QueryResult.Series;
 import org.jooq.tools.json.JSONObject;
 import org.jooq.tools.json.JSONParser;
 
@@ -34,6 +38,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static ch.icclab.sentinel.Application.msgFormatCache;
@@ -177,7 +182,22 @@ public class InfluxDBClient
         if(key == null || key.trim().length() == 0) key = "default";
         if(influxDB != null)
         {
+            Query query = new Query("SELECT * FROM \"" + key + "\" order by desc limit " + count, topic);
+            QueryResult result = influxDB.query(query);
+            if(result.hasError()) return null;
+            else
+            {
+                List<Result> dataPoints =  result.getResults();
+                for(Result point:dataPoints)
+                {
+                    List<Series> series = point.getSeries();
+                    for(Series val:series)
+                    {
+                        
+                    }
+                }
 
+            }
         }
         return null;
     }
