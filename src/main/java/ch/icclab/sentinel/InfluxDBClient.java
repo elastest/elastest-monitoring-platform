@@ -174,6 +174,11 @@ public class InfluxDBClient
 
     static HashMap<String, Object>[] getLastPoints(String topic, String key, int count)
     {
+        if(key == null || key.trim().length() == 0) key = "default";
+        if(influxDB != null)
+        {
+
+        }
         return null;
     }
 
