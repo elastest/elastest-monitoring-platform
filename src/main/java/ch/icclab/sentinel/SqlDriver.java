@@ -472,6 +472,7 @@ public class SqlDriver
                 data.toleranceFactor = rs.getInt(4);
                 data.method = rs.getString(5);
                 data.id = rs.getInt(6);
+                data.accessUrl = "/api/pingback/" + data.id;
                 pingList.add(data);
             }
             rs.close();

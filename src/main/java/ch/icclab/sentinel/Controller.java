@@ -431,7 +431,7 @@ public class Controller {
             incomingData.msgSignature = msgformat;
 
         int spaceId = SqlDriver.getSpaceId(userName, incomingData.spaceName);
-        System.out.println("format to use " + incomingData.msgSignature);
+        logger.info("creating new series, msgformat to use " + incomingData.msgSignature);
         if(!incomingData.isValidData())
         {
             redirectAttributes.addFlashAttribute("createmsg","bad data, check input");
@@ -459,6 +459,67 @@ public class Controller {
             redirectAttributes.addFlashAttribute("createmsg","series could not be created, contact system administrator");
         }
         return "redirect:/space/" + spaceId;
+    }
+
+    @RequestMapping(value="/newhealthcheck", method = RequestMethod.POST)
+    public String processCreateHealthCheck(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie,
+                                      @RequestParam(value = "pingurl", required = true) String pingurl,
+                                      @RequestParam(value = "reporturl", required = true) String reporturl,
+                                      @RequestParam(value = "periodicity", required = false) String periodicity,
+                                      @RequestParam(value = "method", required = false) String method,
+                                      @RequestParam(value = "tolerance", required = false) String tolerance,
+                                      HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+    {
+        logger.info("processing /newhealthcheck");
+        byte [] barr = Base64.getDecoder().decode(loggedCookie);
+        String cookievalue = new String(barr);
+        Gson gson = new Gson();
+        MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+
+        if (myCookie != null && myCookie.isLogged.matches("no"))
+            return "login";
+        else
+        {
+            myCookie.isLogged = "yes";
+            String rawValue = gson.toJson(myCookie);
+            String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
+            Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setMaxAge(600); //10 minutes expiery
+            response.addCookie(foo);
+        }
+
+        String userName = myCookie.username;
+        int userId = SqlDriver.getUserId(userName);
+        if(userId == -1)
+        {
+            return "redirect:/logout";
+        }
+        //decide if to use selectvalue or not
+        HealthCheckInput incomingData = new HealthCheckInput();
+        incomingData.method = method.trim();
+        incomingData.periodicity = Long.parseLong(periodicity);
+        incomingData.toleranceFactor = Integer.parseInt(tolerance);
+        incomingData.pingURL = pingurl.trim();
+        incomingData.reportURL = reporturl.trim();
+
+        if(!incomingData.isValidData())
+        {
+            redirectAttributes.addFlashAttribute("createmsg","bad data, check input");
+            return "redirect:/healthchecks";
+        }
+
+        int pingId = SqlDriver.addPingEntry(incomingData.pingURL,incomingData.reportURL,incomingData.periodicity,incomingData.toleranceFactor, incomingData.method, userName);
+
+        if(pingId != -1)
+        {
+            redirectAttributes.addFlashAttribute("createmsg","health check data registered / updated");
+            return "redirect:/healthchecks";
+        }
+        else
+        {
+            redirectAttributes.addFlashAttribute("createmsg","health check could not be registered, contact system administrator");
+        }
+        return "redirect:/healthchecks";
     }
 
     @RequestMapping(value="/", method = RequestMethod.GET)
