@@ -31,92 +31,38 @@
 <body>
     <div class="container-fluid">
         <div class="row justify-content-between" style="background-color: white">
-            <div class="col text-left">
-                <h4 th:text="'Welcome back: ' + ${username} + '!'"> </h4>
-            </div>
             <div class="col text-right">
                 <a href="/logout"><img src="assets/logout.png" width="28px" title="logout"></a>
             </div>
         </div>
 
-        <div class="row" style="background-color: white">
-            <div class="w-100 alert alert-primary" style="background-color: white;">Information about registered monitoring spaces and series</div>
-        </div>
 
-        <div class="row" style="background-color: white">
-            <div class="col col-sm-4" th:each="space: ${userdata.spaces}">
-                <div class="alert alert-primary" style="margin-bottom: 0px; background-color: bisque;">
-                    <span th:text="'Space Name: ' + ${space.name}"></span>
-                </div>
-                <div class="alert alert-light border" style="margin-top: 0px; margin-bottom: 0px;">
-                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Access URL: ' + ${space.accessUrl}"></span><br>
-                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Topic Name: ' + ${space.topicName}"></span><br>
-                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard: ' + ${space.dataDashboardUrl}"></span><br>
-                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard User: ' + ${space.dataDashboardUser}"></span><br>
-                    <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Data Dashboard Password: ' + ${space.dataDashboardPassword}"></span>
-                </div>
-                <div class="row" style="padding: 0px; margin:0px">
-                    <div class="col col-sm-6 border" style="margin: 0px;" th:each="series: ${space.seriesList}">
-                        <div class="alert alert-light" style="margin-bottom: 0px">
-                            <span th:text="'Series Name: ' + ${series.name}"></span>
-                        </div>
-                        <div class="alert alert-light" style="margin-top: 0px">
-                            <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Access URL: ' + ${series.accessUrl}"></span><br>
-                            <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="'Msg Format: ' + ${series.msgFormat}"></span><br>
-                        </div>
-                    </div>
-                    <div class="w-100">
-                        <button type="submit" class="btn btn-primary btn-raised" style="background-color:#ffac2f" disabled>Go to data view</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <div id='grafana-dashboard' class="col-lg-12"></div>
 
 
+        <script type="text/javascript">
+            GrafanaEmbed = {
+                grafanaUrl: 'http://kafka.cloudlab.zhaw.ch:3000',
+                dashboard: 'elastest',
+                queryParams: {
+                    dashnav: 0,
+                    // this is a base64-encoded string of username:password
+                    // for example on a *NIX machine (and Mac OS X):
+                    // $ echo "kiosk1:supersecret" | base64
+                    // a2lvc2sxOnN1cGVyc2VjcmV0Cg==
+                    auth: 'YWRtaW46MWNjbEBiMjAxNwo=',
+                    theme: 'light'
+                }
+            };
 
-        <div class="row" style="background-color: white">
-            <div class="w-100 alert alert-primary" style="background-color: white;">Details on registered health check endpoints</div>
-        </div>
+            (function() {
+                var d = document.createElement('script'); d.type = 'text/javascript'; d.async = true;
+                d.src = GrafanaEmbed.grafanaUrl + '/public/app/features/dashboard/embed.js';
+                (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(d);
+            })();
+        </script>
 
-        <div class="row" style="background-color: white">
-            <div class="col">
-                <div class="alert alert-danger" th:if="${pinglist.empty}">No ping-backs registered!</div>
-                <div class="alert alert-info" th:unless="${pinglist.empty}" style="background-color: white">
-                    <table class="table table-hover table-sm">
-                        <caption>List of registered health-checks</caption>
-                        <thead class="thead-dark">
-                        <tr>
-                            <th scope="col">Id #</th>
-                            <th scope="col">Meta Info</th>
-                            <th scope="col">History (most recent first)</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr th:each="ping : ${pinglist}">
-                            <th scope="row" th:text="${ping.id}" style="vertical-align:center;">1</th>
-                            <td>
-                                <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Ping URL: ' + ping.pingURL}"></span><br>
-                                <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Reporting URL: ' + ping.reportURL}"></span><br>
-                                <span style="font-family: Arial Narrow,Arial,sans-serif;font-size:15px;line-height:18px;" th:text="${'Check Period (in millisec): ' + ping.periodicity}"></span><br>
-                            </td>
-                            <td>
-                                <span style="margin-right:2px;" th:each="event: ${ping.callHistory}">
-                                    <img th:if="${event.status == 'NOK'}" src="assets/red.png" width="20px" th:title="'Status: NOK&#013;&#010;Check carried out at (unixtime): ' + ${event.eventTime}">
-                                    <img th:if="${event.status == 'OK'}" src="assets/green.png" width="20px" th:title="'Status: OK&#013;&#010;Check carried out at (unixtime): ' + ${event.eventTime}">
-                                </span>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="row" style="padding-left: 15px;background-color: white;">
-            <form method="post" action="/">
-                <input class="form-control" name="username" type="hidden" th:value="${username}">
-                <button type="submit" class="btn btn-primary btn-raised" style="background-color:#ffac2f">Refresh this page data</button>
-            </form>
-        </div>
+
     </div>
 </body>
 </html>

@@ -137,6 +137,7 @@
 
     <section class="content">
         <div class="container-fluid">
+
             <div class="row clearfix" th:if="${createmsg != null}">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 alert alert-info alert-dismissible" role="alert" style="text-align: center">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
@@ -145,110 +146,35 @@
             </div>
 
             <div class="block-header">
-                <h2 th:text="'Registered series in this space (' + ${spacename} + ')'">Registered series in this space</h2>
+                <h2 th:text="'Latest (max 100 rows, latest shown first) data points in series: ' + ${seriesname}">Latest (100) data points in series (latest data first)</h2>
             </div>
 
             <div class="row clearfix">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${serieslist.empty}">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" th:if="${seriesrows.empty}">
                     <div class="card">
-                        <div class="body">No registered series found!</div>
+                        <div class="body">No data points found!</div>
                     </div>
                 </div>
 
-                <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" th:each="series: ${serieslist}">
-                    <div class="card">
-                        <div class="header">
-                            <h2>
-                                Series: <span th:text="'Series Name: ' + ${series.name}"></span> <small th:text="'API Endpoint: ' + ${series.accessUrl}"></small>
-                            </h2>
-                            <ul class="header-dropdown m-r--5">
-                                <li class="dropdown">
-                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                        <i class="material-icons">more_vert</i>
-                                    </a>
-                                    <ul class="dropdown-menu pull-right">
-                                        <li><a th:href="@{'/series/' + ${series.id}}">Explore recent data</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="body">
-                            Useful information related to this series:<br><br>
-                            <blockquote style="font-size: small">
-                                <ul>
-                                    <li th:inline="text">
-                                        Defined message format: <span style="color:#00008b">[[${series.msgFormat}]]</span>
-                                    </li>
-                                    <li th:inline="text">
-                                        Associated with topic name: <span style="color:darkred">[[${topicname}]]</span>
-                                    </li>
-                                </ul>
-                            </blockquote>
-                            Associated configuration values for agents sending data into this series:<br><br>
-                            <blockquote style="font-size: small">
-                                <ul>
-                                    <li th:text="${'Kafka endpoint: ' + kafkadata.endpoint}"></li>
-                                    <li th:text="${'Key Serializer: ' + kafkadata.keySerializer}"></li>
-                                    <li th:text="${'Value Serializer: ' + kafkadata.valueSerializer}"></li>
-                                </ul>
-                            </blockquote>
-                        </div>
-                        <div class="header">
-                            <h2><small>use the card menu to explore more about this series</small></h2>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="block-header">
-                <h2>Management actions</h2>
-            </div>
-
-            <div class="row clearfix">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                     <div class="card">
-                        <div class="header">
-                            <h2>
-                                Create new data series in this space <small>The series name must be unique among all your registered series in this space. <b>Please do not use spaces (  ) in the name, underscore ( _ ) or dash ( - ) is allowed</b>.</small>
-                            </h2>
-                        </div>
-                        <div class="body">
-                            <form method="post" action="/newseries">
-                                <div class="row clearfix">
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <div class="form-line">
-                                                <input name="seriesname" type="text" class="form-control" placeholder="series name (no spaces)">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
-                                        <select name="selectvalue" class="form-control show-tick">
-                                            <option value="">-- select from predefined formats --</option>
-                                            <option value="unixtime:ms host:string cpu_user:float cpu_system:float cpu_idle:float cpu_percent:float ram_percent:float disk_percent:float">Format for system agent</option>
-                                            <option value="unixtime:s msgtype:json">Format for docker agent</option>
-                                            <option value="unixtime:ms loglevel:string class:string logmsg:string">Format for Java application log file agent</option>
-                                            <option value="unixtime:s msgtype:json">Recommended format for code instrumentation</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12 demo-checkbox">
-                                        <input type="checkbox" id="basic_checkbox_1" name="override" value="override" />
-                                        <label for="basic_checkbox_1">override with your own format below (ignores any selected option)</label>
-                                    </div>
-                                    <div class="col-lg-10 col-md-10 col-sm-12 col-xs-12">
-                                        <div class="form-group">
-                                            <div class="form-line">
-                                                <input name="msgformat" type="text" class="form-control" placeholder="message format">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-2 col-md-2 col-sm-12 col-xs-12">
-                                        <input name="spacename" type="hidden" th:value="${spacename}">
-                                        <button type="submit" class="btn btn-primary btn-lg m-l-15 waves-effect">create series</button>
-                                    </div>
-                                </div>
-                            </form>
+                        <div class="body table-responsive">
+                            <table th:unless="${seriesrows.empty}" class="table">
+                                <thead>
+                                    <tr>
+                                        <th th:each="column: ${columns}">
+                                            <span th:text="${column}"></span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="row : ${seriesrows}">
+                                        <td th:each="point: ${row}">
+                                            <span th:text="${point.value}"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -279,9 +205,7 @@
 
     <!-- Custom Js -->
     <script src="/assets/js/pages/forms/basic-form-elements.js"></script>
-    <!-- Demo Js -->
-    <script src="/assets/js/demo.js"></script>
-
+    <script src="/assets/js/pages/forms/advanced-form-elements.js"></script>
 </body>
 
 </html>

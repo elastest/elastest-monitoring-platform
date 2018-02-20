@@ -34,10 +34,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.*;
 
 @org.springframework.stereotype.Controller
 public class Controller {
@@ -187,9 +184,13 @@ public class Controller {
         String spaceName = SqlDriver.getSpaceName(spaceId);
 
         String dbName = "user-" + userId + "-" + spaceName;
-        HashMap<String, Object>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 100);
+        LinkedList<InfluxDBColumnData>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 100);
 
+        List<String> columns = InfluxDBClient.getColumnLabels(dbName, seriesName);
+        model.addAttribute("columns", columns);
+        model.addAttribute("seriesrows", Arrays.asList(points));
         model.addAttribute("username", userName);
+        model.addAttribute("seriesname", seriesName);
         return "seriesdetails";
     }
 
@@ -520,6 +521,12 @@ public class Controller {
             redirectAttributes.addFlashAttribute("createmsg","health check could not be registered, contact system administrator");
         }
         return "redirect:/healthchecks";
+    }
+
+    @RequestMapping(value="/test", method = RequestMethod.GET)
+    public String showTestPage(HttpServletRequest request, HttpServletResponse response, Model model) {
+        logger.info("serving /test");
+        return "index";
     }
 
     @RequestMapping(value="/", method = RequestMethod.GET)

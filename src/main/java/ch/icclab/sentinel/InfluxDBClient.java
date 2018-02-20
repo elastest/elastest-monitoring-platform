@@ -17,6 +17,7 @@ package ch.icclab.sentinel;
  */
 
 import ch.icclab.sentinel.cache.ListElement;
+import ch.icclab.sentinel.dao.InfluxDBColumnData;
 import ch.icclab.sentinel.dao.SentinelDockerStatsAgent;
 import ch.icclab.sentinel.dao.SentinelDockerStatsAgentMetric;
 import ch.icclab.sentinel.dao.SentinelDockerStatsAgentValue;
@@ -177,8 +178,33 @@ public class InfluxDBClient
         return false;
     }
 
-    static HashMap<String, Object>[] getLastPoints(String topic, String key, int count)
+    static List<String> getColumnLabels(String topic, String key)
     {
+        if(key == null || key.trim().length() == 0) key = "default";
+        if(influxDB != null)
+        {
+            Query query = new Query("SELECT * FROM \"" + key + "\" order by desc limit 1", topic);
+            QueryResult result = influxDB.query(query);
+            if(result.hasError()) return null;
+            else
+            {
+                List<Result> dataPoints =  result.getResults();
+                for(Result point:dataPoints) //this is a single iteration loop
+                {
+                    List<Series> series = point.getSeries();
+                    for(Series val:series) //this is a single iteration loop
+                    {
+                        return val.getColumns();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    static LinkedList<InfluxDBColumnData>[] getLastPoints(String topic, String key, int count)
+    {
+        LinkedList<InfluxDBColumnData>[] response = null;
         if(key == null || key.trim().length() == 0) key = "default";
         if(influxDB != null)
         {
@@ -188,16 +214,37 @@ public class InfluxDBClient
             else
             {
                 List<Result> dataPoints =  result.getResults();
-                for(Result point:dataPoints)
+                for(Result point:dataPoints) //this is a single iteration loop
                 {
                     List<Series> series = point.getSeries();
-                    for(Series val:series)
+                    for(Series val:series) //this is a single iteration loop
                     {
-                        
+                        logger.info("retrieved data points for series: " + val.getName());
+                        List<String> columns = val.getColumns();
+                        List<List<Object>> values = val.getValues(); //gets one series
+                        logger.info("Retrieved " + values.size() + " rows.");
+                        response = new LinkedList[values.size()];
+                        int counter = 0;
+                        int listIndex = 0;
+                        for(List<Object> obj:values)
+                        {
+                            response[listIndex] = new LinkedList<>();
+                            for(Object objval:obj)
+                            {
+                                InfluxDBColumnData dataSample = new InfluxDBColumnData();
+                                dataSample.label = columns.get(counter);
+                                dataSample.value = objval;
+                                response[listIndex].add(dataSample);
+                                logger.info("Added data point: " + columns.get(counter) + "," + objval + " at linkedList index " + listIndex);
+                                counter++;
+                            }
+                            counter = 0;
+                            listIndex++;
+                        }
                     }
                 }
-
             }
+            return response;
         }
         return null;
     }

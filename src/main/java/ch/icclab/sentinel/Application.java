@@ -71,6 +71,7 @@ public class Application {
         TopicsManager topicSyncProcess = new TopicsManager();
         topicSyncProcess.start(); //this consumes 1 processor core
         healthManager.start(); //this consumes 1 processor core if available
+        //InfluxDBClient.getLastPoints("user-1-test", "sys-stats", 10);
     }
 
 }
