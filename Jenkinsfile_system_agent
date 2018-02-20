@@ -11,7 +11,7 @@ node('docker')
             stage "Build image - Package"
                 echo ("Building")
 		sh 'cd sentinel-agents/systemstats'
-                def myimage = docker.build 'elastest/emp-system-agent:latest'
+                def myimage = docker.build("elastest/emp-system-agent:latest", "./sentinel-agents/systemstats")
 
             stage "Run image"
                 myimage.run()
