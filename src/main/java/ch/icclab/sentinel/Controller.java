@@ -185,7 +185,7 @@ public class Controller {
 
         String dbName = "user-" + userId + "-" + spaceName;
         try {
-            LinkedList<InfluxDBColumnData>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 100);
+            LinkedList<InfluxDBColumnData>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 50);
             List<String> columns = InfluxDBClient.getColumnLabels(dbName, seriesName);
             model.addAttribute("columns", columns);
             model.addAttribute("seriesrows", Arrays.asList(points));
