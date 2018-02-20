@@ -127,17 +127,30 @@ public class APIController {
     {
         String src = "http://" + AppConfiguration.getDashboardEndpoint() + "/dashboard/db/" +
                 AppConfiguration.getDashboardTitle() + "?refresh=30s&orgId=1&theme=light";
-        String returnVal = "<html><head></head><body style=\"background-color:black;\">";
+        String returnVal = "<html><head></head><body style=\"background-color:white;\">";
         returnVal += "<script>\n" +
                 "  function resizeIframe(obj) {\n" +
                 "    obj.style.height = obj.contentWindow.document.body.scrollHeight + 'px';\n" +
                 "  }\n" +
                 "</script>";
-        returnVal += "<div style=\"width:100%; background-color:black;\"><img src=\"http://elastest.io/images/intense/elastest-logo-dark.png\" align=\"left\"></div>";
+        returnVal += "<div style=\"width:100%; background-color:black;\"><img src=\"http://elastest.io/images/intense/elastest-logo-light.png\" align=\"left\"></div>";
         returnVal += "<br><br><br><br>";
         returnVal += "<iframe onload=\"resizeIframe(this)\" width=\"99%\" height=\"90%\" style=\"border:none; display:block;\" src=\"" + src + "\">";
         returnVal += "</iframe></body></html>";
         return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_HTML).body(returnVal);
+    }
+
+    @RequestMapping(value = {"/dashboardsrc"}, method = RequestMethod.GET, produces = {"text/plain"})
+    @ApiOperation(value = "showDashboardIframeSrc", notes = "Produces iframe source link for static dashboard dashboard")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "ok")
+    })
+    public @ResponseBody
+    ResponseEntity showDashboardIframeSrc()
+    {
+        String src = "http://" + AppConfiguration.getDashboardEndpoint() + "/dashboard/db/" +
+                AppConfiguration.getDashboardTitle() + "?refresh=30s&orgId=1&theme=light";
+        return ResponseEntity.status(HttpStatus.OK).contentType(MediaType.TEXT_PLAIN).body(src);
     }
 
     @RequestMapping(value = {"/error"}, method = RequestMethod.GET, produces = {"application/json"})
