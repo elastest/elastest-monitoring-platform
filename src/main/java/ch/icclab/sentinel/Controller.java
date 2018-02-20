@@ -184,11 +184,16 @@ public class Controller {
         String spaceName = SqlDriver.getSpaceName(spaceId);
 
         String dbName = "user-" + userId + "-" + spaceName;
-        LinkedList<InfluxDBColumnData>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 100);
-
-        List<String> columns = InfluxDBClient.getColumnLabels(dbName, seriesName);
-        model.addAttribute("columns", columns);
-        model.addAttribute("seriesrows", Arrays.asList(points));
+        try {
+            LinkedList<InfluxDBColumnData>[] points = InfluxDBClient.getLastPoints(dbName, seriesName, 100);
+            List<String> columns = InfluxDBClient.getColumnLabels(dbName, seriesName);
+            model.addAttribute("columns", columns);
+            model.addAttribute("seriesrows", Arrays.asList(points));
+        }
+        catch(Exception ex)
+        {
+            model.addAttribute("createmsg", "unable to retrieve data points at this moment");
+        }
         model.addAttribute("username", userName);
         model.addAttribute("seriesname", seriesName);
         return "seriesdetails";
