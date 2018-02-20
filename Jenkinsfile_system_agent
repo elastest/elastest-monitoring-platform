@@ -9,10 +9,10 @@ node('docker')
             git 'https://github.com/elastest/elastest-monitoring-platform.git'
 	    
             stage "Build image - Package"
-                dir ('sentinel-agents/systemstats') {
-                	echo ("Building")
-                	def myimage = docker.build 'elastest/emp-system-agent:latest'
-		}
+                echo ("Building")
+		sh 'cd sentinel-agents/systemstats'
+                def myimage = docker.build 'elastest/emp-system-agent:latest'
+
             stage "Run image"
                 myimage.run()
 
