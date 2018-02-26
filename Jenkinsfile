@@ -22,7 +22,7 @@ node('docker')
 
             stage "Build image - Package"
                 echo ("Building")
-                def myimage = docker.build 'elastest/emp:latest'
+                def myimage = docker.build 'elastest/emp:0.8'
 
             stage "Run image"
                 myimage.run()
