@@ -31,7 +31,7 @@ services:
       - emp-influxdb
       - emp-kafka
     ports:
-      - 9000:9000
+      - 9100:9000
     environment:
       - STREAM_ADMINUSER=root
       - STREAM_ADMINPASS=pass1234
