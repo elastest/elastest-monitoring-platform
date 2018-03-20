@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  grafana:
+    image: grafana/grafana:4.6.1
+    ports:
+      - 3000:3000
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
+      - GF_SERVER_DOMAIN=localhost
+      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:/grafana
