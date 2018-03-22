@@ -89,6 +89,9 @@ services:
     links:
       - emp-kafka
       - emp
+    depends_on:
+      - emp-kafka
+      - emp
     environment:
       - KAFKA_ENDPOINT=emp-kafka:9092
       - KAFKA_KEY_SERIALIZER=StringSerializer
@@ -103,6 +106,9 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     links:
+      - emp-kafka
+      - emp
+    depends_on:
       - emp-kafka
       - emp
     environment:
