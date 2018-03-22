@@ -9,6 +9,8 @@ services:
     environment:
       - ADVERTISED_PORT=9092
       - ADVERTISED_HOST=emp-kafka
+      - ADVERTISED_LISTENERS=emp-kafka
+      - LISTENERS=PLAINTEXT://localhost:9092
     networks:
       - elastest
   emp-influxdb:
@@ -45,7 +47,7 @@ services:
       - STREAM_ADMINPASS=pass1234
       - STREAM_DBENDPOINT=emp-influxdb:8086
       - STREAM_ACCESSURL=localhost:8083
-      - STREAM_DBTYPE=emp-influxdb
+      - STREAM_DBTYPE=influxdb
       - ZOOKEEPER_ENDPOINT=emp-kafka:2181
       - KAFKA_ENDPOINT=emp-kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
@@ -80,6 +82,53 @@ services:
       - emp:/data
     networks:
       - elastest
+  emp-system-agent:
+    image: elastest/emp-system-agent:latest
+    links:
+      - emp-kafka
+      - emp
+    environment:
+      - KAFKA_ENDPOINT=emp-kafka:9092
+      - KAFKA_KEY_SERIALIZER=StringSerializer
+      - KAFKA_VALUE_SERIALIZER=StringSerializer
+      - SENTINEL_TOPIC=user-1-elastest_core
+      - SENTINEL_SERIES=sys-stats
+      - PERIODICITY=60
+    networks:
+      - elastest
+    depends_on:
+      - emp-kafka
+      - emp
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://emp:9000/v1/api/"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
+  emp-docker-agent:
+    image: elastest/emp-docker-agent:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    links:
+      - emp-kafka
+      - emp
+    environment:
+      - KAFKA_ENDPOINT=emp-kafka:9092
+      - KAFKA_KEY_SERIALIZER=StringSerializer
+      - KAFKA_VALUE_SERIALIZER=StringSerializer
+      - SENTINEL_TOPIC=user-1-elastest_core
+      - SENTINEL_SERIES=docker-stats
+      - DOCKER_SOCKET=unix://var/run/docker.sock
+      - PERIODICITY=120
+    networks:
+      - elastest
+    depends_on:
+      - emp-kafka
+      - emp
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://emp:9000/v1/api/"]
+        interval: 30s
+        timeout: 10s
+        retries: 5
 volumes:
   emp:
 networks:
