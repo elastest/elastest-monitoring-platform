@@ -96,14 +96,6 @@ services:
       - PERIODICITY=60
     networks:
       - elastest
-    depends_on:
-      - emp-kafka
-      - emp
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://emp:9000/v1/api/"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
   emp-docker-agent:
     image: elastest/emp-docker-agent:latest
     volumes:
@@ -121,14 +113,6 @@ services:
       - PERIODICITY=120
     networks:
       - elastest
-    depends_on:
-      - emp-kafka
-      - emp
-    healthcheck:
-        test: ["CMD", "curl", "-f", "http://emp:9000/v1/api/"]
-        interval: 30s
-        timeout: 10s
-        retries: 5
 volumes:
   emp:
 networks:
