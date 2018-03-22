@@ -46,7 +46,7 @@ services:
       - STREAM_ADMINUSER=root
       - STREAM_ADMINPASS=pass1234
       - STREAM_DBENDPOINT=emp-influxdb:8086
-      - STREAM_ACCESSURL=localhost:8083
+      - STREAM_ACCESSURL=nightly.elastest.io:37000/influxui
       - STREAM_DBTYPE=influxdb
       - ZOOKEEPER_ENDPOINT=emp-kafka:2181
       - KAFKA_ENDPOINT=emp-kafka:9092
@@ -60,6 +60,8 @@ services:
       - INFLUX_PASSWORD=pass1234
       - SENTINEL_DB_ENDPOINT=/data/sentinel.db
       - ADMIN_TOKEN=somevalue
+      - DASHBOARD_TITLE=elastest
+      - DASHBOARD_ENDPOINT=nightly.elastest.io:37000/grafana
       - ET_EDM_ALLUXIO_API=http://edm-alluxio-master:19999/
       - ET_EDM_MYSQL_HOST=edm-mysql
       - ET_EDM_MYSQL_PORT=3306
