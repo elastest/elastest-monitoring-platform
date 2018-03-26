@@ -26,7 +26,7 @@ services:
     networks:
       - elastest
   emp-grafana:
-    image: grafana/grafana:4.3.2
+    image: grafana/grafana:4.6.1
     ports:
       - 3000:3000
     environment:
