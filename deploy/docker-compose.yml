@@ -52,7 +52,7 @@ services:
       - KAFKA_ENDPOINT=emp-kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
       - INFLUX_URL=http://emp-influxdb:8086
-      - INFLUX_URL_GRAFANA=http://localhost:8086
+      - INFLUX_URL_GRAFANA=http://emp-influxdb:8086
       - GRAFANA_URL=http://emp-grafana:3000
       - GRAFANA_ADMIN=admin
       - GRAFANA_PASSWORD=1ccl@b2017

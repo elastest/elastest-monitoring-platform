@@ -37,7 +37,7 @@ generate_post_data()
         "name": "elastest",
         "type": "influxdb",
         "typeLogoUrl": "public/app/plugins/datasource/influxdb/img/influxdb_logo.svg",
-        "access": "direct",
+        "access": "proxy",
         "url": "$influxURLGrafana",
         "password": "$influxpassword",
         "user": "$influxuser",
