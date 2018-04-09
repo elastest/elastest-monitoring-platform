@@ -119,7 +119,7 @@ public class ControllerTest {
     public void showIndexTest()
     {
         Controller controller = new Controller();
-        String value = controller.showIndex(null, null, model);
+        String value = controller.showIndex(null, response, model);
         assertEquals("pinglist", value);
     }
 
