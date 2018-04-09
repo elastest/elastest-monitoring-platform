@@ -139,18 +139,18 @@ public class APIControllerTest
         ;
     }
 
-    @Test
-    public void createPingBackTestV2() throws Exception {
-        mockMvc.perform(post("/v1/api/pingback/")
-                .header("x-auth-login","testuser")
-                .header("x-auth-apikey","7ddbba60-8667-11e7-bb31-be2e44b06b34")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"pingURL\": \"https://admin-dashboard.cyclops-labs.io:8888/\",\"reportURL\": \"http://localhost:5000/\",\"periodicity\": 30000,\"toleranceFactor\": 2,\"method\": \"body,status,up\"}")
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isCreated())
-        ;
-    }
+//    @Test
+//    public void createPingBackTestV2() throws Exception {
+//        mockMvc.perform(post("/v1/api/pingback/")
+//                .header("x-auth-login","testuser")
+//                .header("x-auth-apikey","7ddbba60-8667-11e7-bb31-be2e44b06b34")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content("{\"pingURL\": \"https://admin-dashboard.cyclops-labs.io:8888/\",\"reportURL\": \"http://localhost:5000/\",\"periodicity\": 30000,\"toleranceFactor\": 2,\"method\": \"body,status,up\"}")
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+//                .andExpect(status().isCreated())
+//        ;
+//    }
 
     @Test
     public void createPingBackTestV3() throws Exception {
@@ -173,16 +173,16 @@ public class APIControllerTest
         ;
     }
 
-    @Test
-    public void getPingBackEndpointV2() throws Exception {
-        mockMvc.perform(get("/v1/api/pingback/1")
-                .header("x-auth-login","testuser")
-                .header("x-auth-apikey","7ddbba60-8667-11e7-bb31-be2e44b06b34")
-                .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
-                .andExpect(status().isOk())
-        ;
-    }
+//    @Test
+//    public void getPingBackEndpointV2() throws Exception {
+//        mockMvc.perform(get("/v1/api/pingback/1")
+//                .header("x-auth-login","testuser")
+//                .header("x-auth-apikey","7ddbba60-8667-11e7-bb31-be2e44b06b34")
+//                .accept(MediaType.APPLICATION_JSON))
+//                .andDo(print())
+//                .andExpect(status().isOk())
+//        ;
+//    }
 
     @Test
     public void getPingBackEndpointV3() throws Exception {
