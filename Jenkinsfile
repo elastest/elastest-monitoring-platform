@@ -7,6 +7,17 @@ node('docker')
         mycontainer.inside("-u jenkins -v /var/run/docker.sock:/var/run/docker.sock:rw")
         {
             git 'https://github.com/elastest/elastest-monitoring-platform.git'
+
+            stage ("Setup") {
+            	try
+            	{
+            		sh "docker fm -f influx"
+            	} catch(e) {
+            		echo "Error: $e"
+            	}
+            	
+            	sh "docker run --name influx -d --rm influxdb:1.2.4-alpine"
+            }
 	    
             stage "Tests"
                 echo ("Starting tests")
