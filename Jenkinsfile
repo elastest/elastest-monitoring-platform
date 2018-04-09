@@ -11,7 +11,7 @@ node('docker')
             stage ("Setup") {
             	try
             	{
-            		sh "docker fm -f influx"
+            		sh "docker rm -f influx"
             	} catch(e) {
             		echo "Error: $e"
             	}
