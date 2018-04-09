@@ -1,5 +1,5 @@
 package ch.icclab.sentinel;/*
- * Copyright (c) 2017. Cyclops-Labs Gmbh
+ * Copyright (c) 2017. ZHAW - ICCLab
  *  All Rights Reserved.
  *
  *     Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -162,6 +162,6 @@ public class SqlDriverTest
         assertNotEquals("update an existing ping entry", -1, SqlDriver.addPingEntry("testurl", "testurl", 30000, 1, "code", "testuser"));
         assertNotNull("getting a ping object", SqlDriver.getPingData(1,1));
         assertNotNull("getting list of pings", SqlDriver.getGlobalPingList());
-        assertEquals("getting list of pings", 1, SqlDriver.getGlobalPingList().size());
+        assertEquals("getting list of pings", 2, SqlDriver.getGlobalPingList().size());
     }
 }

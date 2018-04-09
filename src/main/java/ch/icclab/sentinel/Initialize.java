@@ -97,6 +97,7 @@ public class Initialize {
             statement.executeUpdate("INSERT INTO user " + "VALUES (1, 'testuser', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', '7ddbba60-8667-11e7-bb31-be2e44b06b34')");
             statement.executeUpdate("INSERT INTO space " + "VALUES (1, 'testspace', 'test', 'test', 1)");
             statement.executeUpdate("INSERT INTO series " + "VALUES (1, 'testseries', 'unixtime:s msgtype:json', 1)");
+            statement.executeUpdate("INSERT INTO healthcheck " + "VALUES (1, 'https://blog.zhaw.ch/icclab/', 'https://requestb.in/1gznano1', 30000, 2, 'code', 1)");
             logger.info("Database (re)initialized with test entries successfully!");
             con.close();
         }
