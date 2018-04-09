@@ -52,8 +52,9 @@ import static org.junit.Assert.*;
 @ContextConfiguration
 @PropertySource("classpath:application.properties")
 public class ControllerTest {
-    Model model = new ExtendedModelMap();
+    Model model;
     MockHttpServletResponse response;
+    MockHttpServletRequest request;
     RedirectAttributes ra = new RedirectAttributes() {
         @Override
         public RedirectAttributes addAttribute(String s, Object o) {
@@ -119,7 +120,10 @@ public class ControllerTest {
     public void showIndexTest()
     {
         Controller controller = new Controller();
-        String value = controller.showIndex(null, response, model);
+        response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showIndex(request, response, model);
         assertEquals("pinglist", value);
     }
 
@@ -128,7 +132,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showDashboard("eyJpc0xvZ2dlZCI6Im5vIn0=",null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showDashboard("eyJpc0xvZ2dlZCI6Im5vIn0=", request, response, model);
         assertEquals("login", value);
     }
 
@@ -137,7 +143,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showDashboard(loggedIn,null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showDashboard(loggedIn, request, response, model);
         assertEquals("visualization", value);
     }
 
@@ -146,7 +154,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showProfileData(loggedIn,null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showProfileData(loggedIn, request, response, model);
         assertEquals("profile", value);
     }
 
@@ -155,7 +165,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showProfileData(loggedOut,null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showProfileData(loggedOut, request, response, model);
         assertEquals("login", value);
     }
 
@@ -164,7 +176,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showSeriesDetails(loggedIn, "1",null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showSeriesDetails(loggedIn, "1", request, response, model);
         assertEquals("seriesdetails", value);
     }
 
@@ -173,7 +187,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showSeriesDetails(loggedOut, "1",null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showSeriesDetails(loggedOut, "1", request, response, model);
         assertEquals("login", value);
     }
 
@@ -182,7 +198,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showSpaceDetails(loggedIn, "1",null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showSpaceDetails(loggedIn, "1", request, response, model);
         assertEquals("spacedetails", value);
     }
 
@@ -191,7 +209,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showSpaceDetails(loggedOut, "1",null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showSpaceDetails(loggedOut, "1", request, response, model);
         assertEquals("login", value);
     }
 
@@ -200,7 +220,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showSpaceData(loggedIn,null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showSpaceData(loggedIn, request, response, model);
         assertEquals("space", value);
     }
 
@@ -209,7 +231,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showSpaceData(loggedOut,null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showSpaceData(loggedOut, request, response, model);
         assertEquals("login", value);
     }
 
@@ -218,7 +242,9 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
-        String value = controller.showTestPage(null, response, model);
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
+        String value = controller.showTestPage(request, response, model);
         assertEquals("index", value);
     }
 
@@ -227,8 +253,10 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
         model.addAttribute("loginmsg", "some string");
-        String value = controller.showOverview(loggedOut, null, response, model);
+        String value = controller.showOverview(loggedOut, request, response, model);
         assertEquals("login", value);
     }
 
@@ -237,8 +265,10 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
         model.addAttribute("loginmsg", "some string");
-        String value = controller.showOverview(loggedIn, null, response, model);
+        String value = controller.showOverview(loggedIn, request, response, model);
         assertEquals("index2", value);
     }
 
@@ -247,8 +277,10 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
         model.addAttribute("loginmsg", "some string");
-        String value = controller.showHealthCheckOverview(loggedOut, null, response, model);
+        String value = controller.showHealthCheckOverview(loggedOut, request, response, model);
         assertEquals("login", value);
     }
 
@@ -257,8 +289,10 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
         model.addAttribute("loginmsg", "some string");
-        String value = controller.showHealthCheckOverview(loggedIn, null, response, model);
+        String value = controller.showHealthCheckOverview(loggedIn, request, response, model);
         assertEquals("healthcheck", value);
     }
 
@@ -267,6 +301,8 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
         String value = controller.showLogout(response, model);
         assertEquals("redirect:/", value);
     }
@@ -276,6 +312,8 @@ public class ControllerTest {
     {
         Controller controller = new Controller();
         response = new MockHttpServletResponse();
+        request = new MockHttpServletRequest();
+        model = new ExtendedModelMap();
         String value = controller.processLogin("testuser","test", response, model, ra);
         assertEquals("redirect:/", value);
     }
