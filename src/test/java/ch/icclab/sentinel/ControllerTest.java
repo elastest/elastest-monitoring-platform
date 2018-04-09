@@ -259,17 +259,17 @@ public class ControllerTest {
         assertEquals("login", value);
     }
 
-//    @Test
-//    public void showOverviewTestV2()
-//    {
-//        Controller controller = new Controller();
-//        HttpServletResponse response = new MockHttpServletResponse();
-//        HttpServletRequest request = new MockHttpServletRequest();
-//        Model model = new ExtendedModelMap();
-//        model.addAttribute("loginmsg", "some string");
-//        String value = controller.showOverview(loggedIn, request, response, model);
-//        assertEquals("index2", value);
-//    }
+    @Test
+    public void showOverviewTestV2()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        model.addAttribute("loginmsg", "some string");
+        String value = controller.showOverview(loggedIn, request, response, model);
+        assertEquals("index2", value);
+    }
 
     @Test
     public void showHealthCheckOverviewTest()
@@ -283,17 +283,17 @@ public class ControllerTest {
         assertEquals("login", value);
     }
 
-//    @Test
-//    public void showHealthCheckTestV2()
-//    {
-//        Controller controller = new Controller();
-//        HttpServletResponse response = new MockHttpServletResponse();
-//        HttpServletRequest request = new MockHttpServletRequest();
-//        Model model = new ExtendedModelMap();
-//        model.addAttribute("loginmsg", "some string");
-//        String value = controller.showHealthCheckOverview(loggedIn, request, response, model);
-//        assertEquals("healthcheck", value);
-//    }
+    @Test
+    public void showHealthCheckTestV2()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        model.addAttribute("loginmsg", "some string");
+        String value = controller.showHealthCheckOverview(loggedIn, request, response, model);
+        assertEquals("healthcheck", value);
+    }
 
     @Test
     public void showLogoutTest()
