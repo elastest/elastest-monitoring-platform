@@ -15,8 +15,8 @@ node('docker')
             	} catch(e) {
             		echo "Error: $e"
             	}
-            	
-            	sh "docker run --name influx -d --rm influxdb:1.2.4-alpine"
+
+            	sh "docker run -p 8086:8086 --name influx -d --rm influxdb:1.2.4-alpine"
             }
 	    
             stage "Tests"
