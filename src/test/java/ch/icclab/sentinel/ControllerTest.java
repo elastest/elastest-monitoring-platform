@@ -112,18 +112,19 @@ public class ControllerTest {
     public void setUp() throws Exception {
         Initialize.prepareDbInitScripts();
         Initialize.initializeTestDb();
+        Application.eventsCache = new HealthEventsCache(100);
     }
 
-//    @Test
-//    public void showIndexTest()
-//    {
-//        Controller controller = new Controller();
-//        HttpServletResponse response = new MockHttpServletResponse();
-//        HttpServletRequest request = new MockHttpServletRequest();
-//        Model model = new ExtendedModelMap();
-//        String value = controller.showIndex(request, response, model);
-//        assertEquals("pinglist", value);
-//    }
+    @Test
+    public void showIndexTest()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.showIndex(request, response, model);
+        assertEquals("pinglist", value);
+    }
 
     @Test
     public void showDashboardTest()
