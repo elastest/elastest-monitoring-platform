@@ -21,18 +21,18 @@ node('docker')
 	    
             stage "Tests"
                 echo ("Starting tests")
-                sh 'mvn clean test'
+                sh 'cd emp; mvn clean test'
                 step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
 
             stage "Package"
                 echo ("Packaging")
-                sh 'mvn package -DskipTests'
+                sh 'cd emp; mvn package -DskipTests'
 
             stage "Archive atifacts"
-                archiveArtifacts artifacts: 'target/*.jar'
+                archiveArtifacts artifacts: 'emp/target/*.jar'
 
             stage "Build image - Package"
-                echo ("Building")
+                echo ("Building EMP Package")
                 def myimage = docker.build 'elastest/emp:latest'
 
             stage "Run image"
