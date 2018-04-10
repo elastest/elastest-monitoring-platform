@@ -183,20 +183,25 @@ public class InfluxDBClient
         if(key == null || key.trim().length() == 0) key = "default";
         if(influxDB != null)
         {
-            Query query = new Query("SELECT * FROM \"" + key + "\" order by desc limit 1", topic);
-            QueryResult result = influxDB.query(query);
-            if(result.hasError()) return null;
-            else
-            {
-                List<Result> dataPoints =  result.getResults();
-                for(Result point:dataPoints) //this is a single iteration loop
-                {
-                    List<Series> series = point.getSeries();
-                    for(Series val:series) //this is a single iteration loop
+            try {
+                Query query = new Query("SELECT * FROM \"" + key + "\" order by desc limit 1", topic);
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
                     {
-                        return val.getColumns();
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
+                        {
+                            return val.getColumns();
+                        }
                     }
                 }
+            }
+            catch(Exception ex)
+            {
+                return null;
             }
         }
         return null;
@@ -209,42 +214,45 @@ public class InfluxDBClient
         if(influxDB != null)
         {
             Query query = new Query("SELECT * FROM \"" + key + "\" order by desc limit " + count, topic);
-            QueryResult result = influxDB.query(query);
-            if(result.hasError()) return null;
-            else
-            {
-                List<Result> dataPoints =  result.getResults();
-                for(Result point:dataPoints) //this is a single iteration loop
-                {
-                    List<Series> series = point.getSeries();
-                    for(Series val:series) //this is a single iteration loop
+            try {
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
                     {
-                        logger.info("retrieved data points for series: " + val.getName());
-                        List<String> columns = val.getColumns();
-                        List<List<Object>> values = val.getValues(); //gets one series
-                        logger.info("Retrieved " + values.size() + " rows.");
-                        response = new LinkedList[values.size()];
-                        int counter = 0;
-                        int listIndex = 0;
-                        for(List<Object> obj:values)
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
                         {
-                            response[listIndex] = new LinkedList<>();
-                            for(Object objval:obj)
-                            {
-                                InfluxDBColumnData dataSample = new InfluxDBColumnData();
-                                dataSample.label = columns.get(counter);
-                                dataSample.value = objval;
-                                response[listIndex].add(dataSample);
-                                logger.info("Added data point: " + columns.get(counter) + "," + objval + " at linkedList index " + listIndex);
-                                counter++;
+                            logger.info("retrieved data points for series: " + val.getName());
+                            List<String> columns = val.getColumns();
+                            List<List<Object>> values = val.getValues(); //gets one series
+                            logger.info("Retrieved " + values.size() + " rows.");
+                            response = new LinkedList[values.size()];
+                            int counter = 0;
+                            int listIndex = 0;
+                            for (List<Object> obj : values) {
+                                response[listIndex] = new LinkedList<>();
+                                for (Object objval : obj) {
+                                    InfluxDBColumnData dataSample = new InfluxDBColumnData();
+                                    dataSample.label = columns.get(counter);
+                                    dataSample.value = objval;
+                                    response[listIndex].add(dataSample);
+                                    logger.info("Added data point: " + columns.get(counter) + "," + objval + " at linkedList index " + listIndex);
+                                    counter++;
+                                }
+                                counter = 0;
+                                listIndex++;
                             }
-                            counter = 0;
-                            listIndex++;
                         }
                     }
                 }
+                return response;
             }
-            return response;
+            catch(Exception ex)
+            {
+                return null;
+            }
         }
         return null;
     }

@@ -317,4 +317,114 @@ public class ControllerTest {
         assertEquals("redirect:/", value);
     }
 
+    @Test
+    public void processCreateSpaceTest()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSpace(loggedIn,"test", response, model, ra);
+        assertEquals("redirect:/spaces", value);
+    }
+
+    @Test
+    public void processCreateSpaceTestV2()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSpace(loggedOut,"test", response, model, ra);
+        assertEquals("login", value);
+    }
+
+    @Test
+    public void processCreateSpaceTestV3()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSpace(loggedIn,"testspace", response, model, ra);
+        assertEquals("redirect:/spaces", value);
+    }
+
+    @Test
+    public void processCreateSeriesTest()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", "", null, response, model, ra);
+        assertEquals("redirect:/space/1", value);
+    }
+
+    @Test
+    public void processCreateSeriesTestV2()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", null, null, response, model, ra);
+        assertEquals("redirect:/space/1", value);
+    }
+
+    @Test
+    public void processCreateSeriesTestV3()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSeries(loggedOut,"testspace", "test", "unixtime:s msgtype:json", "", "yes", response, model, ra);
+        assertEquals("login", value);
+    }
+
+    @Test
+    public void processCreateSeriesTestV4()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", "", "yes", response, model, ra);
+        assertEquals("redirect:/space/1", value);
+    }
+
+    @Test
+    public void processCreateHealthCheckTest()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateHealthCheck(loggedIn,"http://www.yahoo.com", "http://localhost:3000/", "30000", "code", "2", response, model, ra);
+        assertEquals("redirect:/healthchecks", value);
+    }
+
+    @Test
+    public void processCreateHealthCheckTestV2()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateHealthCheck(loggedOut,"http://www.yahoo.com", "http://localhost:3000/", "30000", "code", "2", response, model, ra);
+        assertEquals("login", value);
+    }
+
+    @Test
+    public void processCreateHealthCheckTestV3()
+    {
+        Controller controller = new Controller();
+        HttpServletResponse response = new MockHttpServletResponse();
+        HttpServletRequest request = new MockHttpServletRequest();
+        Model model = new ExtendedModelMap();
+        String value = controller.processCreateHealthCheck(loggedIn,"", "http://localhost:3000/", "30000", "code", "2", response, model, ra);
+        assertEquals("redirect:/healthchecks", value);
+    }
+
 }
