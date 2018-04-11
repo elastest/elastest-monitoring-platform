@@ -314,7 +314,8 @@ public class InfluxDBClient
                             {
                                 builder = Point.measurement(key);
                                 builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-                                builder.addField("host", data.host);
+                                builder.tag("host", data.host);
+                                //builder.addField("host", data.host);
                                 Double sourceTime = new Double(Double.parseDouble(data.unixtime));
                                 builder.addField("agent-time", sourceTime.longValue());
                                 builder.addField("container-id", value.id);
@@ -388,7 +389,10 @@ public class InfluxDBClient
                                     String toStore = msgSubparts[1];
                                     toStore = toStore.replaceAll("_", " ");
                                     toStore = toStore.replaceAll("@", ":");
-                                    builder.addField(msgSubparts[0], toStore);
+                                    if(msgSubparts[0].equalsIgnoreCase("host"))
+                                        builder.tag("host", toStore);
+                                    else
+                                        builder.addField(msgSubparts[0], toStore);
                                     break;
                                 case "int":
                                 case "long":
