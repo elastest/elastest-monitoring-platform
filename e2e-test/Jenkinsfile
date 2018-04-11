@@ -9,6 +9,7 @@ elastest_lib.setAuthenticatedElastest(true)
 def elastest= elastest_lib.getElastestMethods()
 
 elastest_lib.setMode('experimental')
+elastest_lib.setVerbose(true)
 //definition of nodes is managed by the library. Just declare the steps of your pipeline
 //inside the elastest_lib.pipeline({...})
 
@@ -31,7 +32,7 @@ elastest_lib.pipeline({
             stage ("E2E tests")
                 //extra params are sent to java execution
                 try {
-                   sh "cd e2e-test; mvn -B clean test -DetmUrl="+elastest //the full url should be parametrized (including protocol)
+                   sh "cd e2e-test; mvn -B clean test -DetmUrl="+elastestURL //the full url should be parametrized (including protocol)
                 } catch(e) {
                     sh 'docker ps | awk "{print $NF}" | grep ece | xargs docker logs'
                 }
