@@ -96,7 +96,7 @@ public class EMPEnd2EndTests {
         password.sendKeys(grafanaPass);
         driver.findElement(By.xpath("//span[text()='Password']//following::button")).click();
         WebElement alert = driver.findElement(By.className("alert-title"));
-        logger.info("Result of login attempt: " + alert.getText());
+        logger.info("Result of login attempt: " + alert.getText() + ", expected should be: Invalid username or password");
         assertEquals("checking alert message", "Invalid username or password", alert.getText());
     }
 
@@ -105,11 +105,11 @@ public class EMPEnd2EndTests {
     {
         try
         {
-            driver.navigate().back();
-            logger.info("Wrapping up: switching focus back to TORM Dashboard");
-            driver.switchTo().defaultContent();
-            logger.info("Cleaning up");
-            driver.findElement(By.id("tjobexecs")).click();
+//            driver.navigate().back();
+//            logger.info("Wrapping up: switching focus back to TORM Dashboard");
+//            driver.switchTo().defaultContent();
+//            logger.info("Cleaning up");
+//            driver.findElement(By.id("tjobexecs")).click();
         }
         catch(Exception e)
         {
