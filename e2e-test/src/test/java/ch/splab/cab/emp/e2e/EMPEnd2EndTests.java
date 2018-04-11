@@ -39,6 +39,7 @@ import static org.junit.Assert.assertTrue;
 public class EMPEnd2EndTests {
     private static final Logger logger = LogManager.getLogger("EMPEnd2EndTests");
     String tormURL = "http://localhost:37000";
+    String grafanaPass = "someincorrectvalue";
     private boolean isEMPPresent = false;
 
     WebDriver driver;
@@ -87,8 +88,16 @@ public class EMPEnd2EndTests {
     @Test
     public void invokeEmp()
     {
-        logger.info("logging in");
-
+        logger.info("logging in grafana directly");
+        driver.get(tormURL + "/grafana/");
+        WebElement username = driver.findElement(By.name("username"));
+        WebElement password = driver.findElement(By.name("password"));
+        username.sendKeys("admin");
+        password.sendKeys(grafanaPass);
+        driver.findElement(By.xpath("//span[text()='Password']//following::button")).click();
+        WebElement alert = driver.findElement(By.className("alert-title"));
+        logger.info("Result of login attempt: " + alert.getText());
+        assertEquals("checking alert message", "Invalid username or password", alert.getText());
     }
 
     @After
@@ -96,6 +105,7 @@ public class EMPEnd2EndTests {
     {
         try
         {
+            driver.navigate().back();
             logger.info("Wrapping up: switching focus back to TORM Dashboard");
             driver.switchTo().defaultContent();
             logger.info("Cleaning up");
