@@ -49,8 +49,14 @@ def get_element_value(section_name, element_name):
 def get_kafka_producer(endpoint, key_serializer, value_serializer):
     print("SETUP: instantiating kafka producer: endpoint:", endpoint)
     if key_serializer == "StringSerializer" and value_serializer == "StringSerializer":
-        return KafkaProducer(linger_ms=1, acks='all', retries=0, key_serializer=str.encode,
-                             value_serializer=str.encode, bootstrap_servers=[endpoint])
+        for x in range(0, 9):
+            try:
+                return KafkaProducer(linger_ms=1, acks='all', retries=0, key_serializer=str.encode,
+                                 value_serializer=str.encode, bootstrap_servers=[endpoint])
+            except:
+                print("kafka endpoint seems to be not ready, trying again in 10 seconds: attemp #" + str(x+1) + " of 10.")
+                time.sleep(10)
+
 
 
 kafka_producer = get_kafka_producer(os.getenv("KAFKA_ENDPOINT", get_element_value("kafka-endpoint", "endpoint")),
