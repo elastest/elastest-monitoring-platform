@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>ch.icclab</groupId>
+    <groupId>ch.splab.cab</groupId>
     <artifactId>sentinel</artifactId>
-    <version>0.1</version>
+    <version>0.9.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -165,6 +165,8 @@
                         <SENTINEL_DB_ENDPOINT>/tmp/test.db</SENTINEL_DB_ENDPOINT>
                         <TOPIC_CHECK_INTERVAL>30000</TOPIC_CHECK_INTERVAL>
                         <ADMIN_TOKEN>sometoken</ADMIN_TOKEN>
+                        <DASHBOARD_TITLE>elastest</DASHBOARD_TITLE>
+                        <DASHBOARD_ENDPOINT>localhost:3000</DASHBOARD_ENDPOINT>
                     </environmentVariables>
                 </configuration>
             </plugin>
@@ -187,7 +189,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>ch.icclab.sentinel.Application</mainClass>
+                            <mainClass>ch.splab.cab.sentinel.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
