@@ -5,7 +5,12 @@ services:
     image: grafana/grafana:4.6.1
     ports:
       - 3000:3000
+    volumes:
+      - ./key:/data/key
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=1ccl@b2017
-      - GF_SERVER_DOMAIN=localhost
-      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:/grafana
+#      - GF_SERVER_DOMAIN=localhost
+#      - GF_SERVER_ROOT_URL=%(protocol)s://%(domain)s:/grafana
+      - GF_SERVER_PROTOCOL=https
+      - GF_SERVER_CERT_FILE=/data/key/cert.pem
+      - GF_SERVER_CERT_KEY=/data/key/key.pem
