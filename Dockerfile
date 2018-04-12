@@ -1,4 +1,4 @@
-# Copyright (c) 2017. ZHAW - ICCLab
+# Copyright (c) 2017. ZHAW - Service Prototyping Lab
 # All Rights Reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,6 +17,7 @@
 # URL: piyush-harsh.info
 #
 # Thanks to: https://hub.docker.com/r/frolvlad/alpine-oraclejdk8/
+
 FROM frolvlad/alpine-oraclejdk8
 
 LABEL maintainer="elastest-users@googlegroups.com"
@@ -26,7 +27,7 @@ LABEL description="Builds the emp docker image."
 EXPOSE 9000
 RUN apk --update add sqlite curl
 RUN apk add --no-cache util-linux
-COPY emp/target/sentinel-0.1.jar /emp.jar
+COPY emp/target/sentinel-0.9.0.jar /emp.jar
 COPY emp/application.properties /application.properties
 ADD emp/init-dashboard.sh init-dashboard.sh
 ADD emp/dashboard.json dashboard.json
