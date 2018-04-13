@@ -276,7 +276,7 @@
                   [
                     {
                       "params": [
-                        "container-name"
+                        "container-id"
                       ],
                       "type": "field"
                     },
