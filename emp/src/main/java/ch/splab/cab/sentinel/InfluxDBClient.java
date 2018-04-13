@@ -320,7 +320,8 @@ public class InfluxDBClient
                                 Double sourceTime = new Double(Double.parseDouble(data.unixtime));
                                 builder.addField("agent-time", sourceTime.longValue());
                                 builder.addField("container-id", value.id);
-                                builder.addField("container-name", value.name);
+                                builder.tag("container-name", value.name);
+                                //builder.addField("container-name", value.name);
                                 for(SentinelDockerStatsAgentMetric metric: value.metrics)
                                 {
                                     builder.addField(metric.key, metric.value);
