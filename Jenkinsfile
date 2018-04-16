@@ -33,7 +33,7 @@ node('docker')
 
             stage "Build image - Package"
                 echo ("Building EMP Package")
-                def myimage = docker.build 'elastest/emp:0.9'
+                def myimage = docker.build 'elastest/emp:latest'
 
             stage "Run image"
                 myimage.run()
