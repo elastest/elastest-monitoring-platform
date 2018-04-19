@@ -27,26 +27,26 @@
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <title>Sentinel | Extensible monitoring at your fingertips</title>
     <!-- Favicon-->
-    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" th:href="@{${basepath} + '/assets/images/favicon.ico'}" type="image/x-icon">
 
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
 
     <!-- Bootstrap Core Css -->
-    <link href="assets/plugins/bootstrap/css/bootstrap.css" rel="stylesheet">
+    <link th:href="@{${basepath} + '/assets/plugins/bootstrap/css/bootstrap.css'}" rel="stylesheet">
 
     <!-- Waves Effect Css -->
-    <link href="assets/plugins/node-waves/waves.css" rel="stylesheet" />
+    <link th:href="@{${basepath} + '/assets/plugins/node-waves/waves.css'}" rel="stylesheet" />
 
     <!-- Animation Css -->
-    <link href="assets/plugins/animate-css/animate.css" rel="stylesheet" />
+    <link th:href="@{${basepath} + '/assets/plugins/animate-css/animate.css'}" rel="stylesheet" />
 
     <!-- Custom Css -->
-    <link href="assets/css/style.css" rel="stylesheet">
+    <link th:href="@{${basepath} + '/assets/css/style.css'}" rel="stylesheet">
 
     <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
-    <link href="assets/css/themes/all-themes.css" rel="stylesheet" />
+    <link th:href="@{${basepath} + '/assets/css/themes/all-themes.css'}" rel="stylesheet" />
 </head>
 
 <body class="theme-red">
@@ -59,7 +59,7 @@
             <div class="navbar-header">
                 <a href="javascript:void(0);" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse" aria-expanded="false"></a>
                 <a href="javascript:void(0);" class="bars"></a>
-                <a class="navbar-brand" href="/">Sentinel Administration Panel</a>
+                <a class="navbar-brand" th:href="@{${basepath} + '/'}">Sentinel Administration Panel</a>
             </div>
             <div class="collapse navbar-collapse" id="navbar-collapse">
                 <ul class="nav navbar-nav navbar-right">
@@ -74,7 +74,7 @@
             <!-- User Info -->
             <div class="user-info">
                 <div class="image">
-                    <img src="assets/images/user.png" width="48" height="48" alt="User" />
+                    <img th:src="@{${basepath} + '/assets/images/user.png'}" width="48" height="48" alt="User" />
                 </div>
                 <div class="info-container">
                     <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${username}">John Doe</div>
@@ -82,10 +82,10 @@
                     <div class="btn-group user-helper-dropdown">
                         <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
                         <ul class="dropdown-menu pull-right">
-                            <li><a href="/profile"><i class="material-icons">person</i>Profile</a></li>
+                            <li><a th:href="@{${basepath} + '/profile'}"><i class="material-icons">person</i>Profile</a></li>
                             <li><a href="https://sentinel-monitoring.readthedocs.io/en/latest/index.html" target="_blank"><i class="material-icons">help</i>Help</a></li>
                             <li role="seperator" class="divider"></li>
-                            <li><a href="/logout"><i class="material-icons">input</i>Sign Out</a></li>
+                            <li><a th:href="@{${basepath} + '/logout'}"><i class="material-icons">input</i>Sign Out</a></li>
                         </ul>
                     </div>
                 </div>
@@ -96,25 +96,25 @@
                 <ul class="list">
                     <li class="header">MAIN NAVIGATION</li>
                     <li>
-                        <a href="/">
+                        <a th:href="@{${basepath} + '/'}">
                             <i class="material-icons">home</i>
                             <span>Home</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/spaces">
+                        <a th:href="@{${basepath} + '/spaces'}">
                             <i class="material-icons">widgets</i>
                             <span>Spaces</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/healthchecks">
+                        <a th:href="@{${basepath} + '/healthchecks'}">
                             <i class="material-icons">alarm</i>
                             <span>Health Checks</span>
                         </a>
                     </li>
                     <li>
-                        <a href="/visualization">
+                        <a th:href="@{${basepath} + '/visualization'}">
                             <i class="material-icons">timeline</i>
                             <span>Visualization</span>
                         </a>

@@ -82,6 +82,15 @@ public class AppConfiguration {
     @Value("${dashboard.endpoint}")
     String dashboardendpoint;
 
+    @Value("${proxy.workaround.enable}")
+    String proxyworkaroundenable;
+
+    @Value("${proxy.workaround.type}")
+    String proxyworkaroundtype;
+
+    @Value("${proxy.workaround.location}")
+    String proxyworkaroundlocation;
+
 
     private static String streamDBUser;
     private static String streamDBPass;
@@ -100,6 +109,9 @@ public class AppConfiguration {
     private static String streamAccessUrl;
     private static String dashboardTitle;
     private static String dashboardEndpoint;
+    private static String proxyType;
+    private static String proxyWorkaroundEnabled;
+    private static String proxyLocation;
 
 
     public static String getDashboardTitle()
@@ -210,6 +222,33 @@ public class AppConfiguration {
         return adminToken;
     }
 
+    public static String getProxyType()
+    {
+        Map<String, String> env = System.getenv();
+        if(env.containsKey("PROXY_WORKAROUND_TYPE"))
+            proxyType = env.get("PROXY_WORKAROUND_TYPE");
+
+        return proxyType;
+    }
+
+    public static boolean isProxyWorkaroundEnabled()
+    {
+        Map<String, String> env = System.getenv();
+        if(env.containsKey("PROXY_WORKAROUND_ENABLE"))
+            proxyWorkaroundEnabled = env.get("PROXY_WORKAROUND_ENABLE");
+
+        return (proxyWorkaroundEnabled != null && proxyWorkaroundEnabled.equalsIgnoreCase("true")) ? true : false;
+    }
+
+    public static String getProxyLocation()
+    {
+        Map<String, String> env = System.getenv();
+        if(env.containsKey("PROXY_WORKAROUND_LOCATION"))
+            proxyLocation = env.get("PROXY_WORKAROUND_LOCATION");
+
+        return proxyLocation;
+    }
+
     public static int getSeriesFormatCacheSize()
     {
         return seriesFormatCacheSize;
@@ -277,6 +316,18 @@ public class AppConfiguration {
             adminToken = env.get("ADMIN_TOKEN");
         else
             adminToken = adminPass;
+        if(env.containsKey("PROXY_WORKAROUND_TYPE"))
+            proxyType = env.get("PROXY_WORKAROUND_TYPE");
+        else
+            proxyType = proxyworkaroundtype;
+        if(env.containsKey("PROXY_WORKAROUND_ENABLE"))
+            proxyWorkaroundEnabled = env.get("PROXY_WORKAROUND_ENABLE");
+        else
+            proxyWorkaroundEnabled = proxyworkaroundenable;
+        if(env.containsKey("PROXY_WORKAROUND_LOCATION"))
+            proxyLocation = env.get("PROXY_WORKAROUND_LOCATION");
+        else
+            proxyLocation = proxyworkaroundlocation;
 
         seriesFormatCacheSize = sFormatCSize;
         publishedApiVersion = apiV;

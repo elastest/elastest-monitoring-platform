@@ -25,6 +25,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class AppConfigurationTest {
     @Test
@@ -91,6 +92,24 @@ public class AppConfigurationTest {
     public void testgetAdminToken()
     {
         assertEquals("get admin token value", "sometoken", AppConfiguration.getAdminToken());
+    }
+
+    @Test
+    public void testgetProxyType()
+    {
+        assertEquals("get proxy type value", "nginx", AppConfiguration.getProxyType());
+    }
+
+    @Test
+    public void testgetProxyLocation()
+    {
+        assertEquals("get proxy location value", "/emp", AppConfiguration.getProxyLocation());
+    }
+
+    @Test
+    public void testIsProxyEnabled()
+    {
+        assertTrue("testing proxy enabled", AppConfiguration.isProxyWorkaroundEnabled());
     }
 
     @Test

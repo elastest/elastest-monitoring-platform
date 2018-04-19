@@ -299,7 +299,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.showLogout(response, model);
+        String value = controller.showLogout(request, response, model);
         assertEquals("redirect:/", value);
     }
 
@@ -310,7 +310,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processLogin("testuser","test", response, model, ra);
+        String value = controller.processLogin("testuser","test", request, response, model, ra);
         assertEquals("redirect:/", value);
     }
 
@@ -321,7 +321,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSpace(loggedIn,"test", response, model, ra);
+        String value = controller.processCreateSpace(loggedIn,"test", request, response, model, ra);
         assertEquals("redirect:/spaces", value);
     }
 
@@ -332,7 +332,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSpace(loggedOut,"test", response, model, ra);
+        String value = controller.processCreateSpace(loggedOut,"test", request, response, model, ra);
         assertEquals("login", value);
     }
 
@@ -343,7 +343,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSpace(loggedIn,"testspace", response, model, ra);
+        String value = controller.processCreateSpace(loggedIn,"testspace", request, response, model, ra);
         assertEquals("redirect:/spaces", value);
     }
 
@@ -354,7 +354,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", "", null, response, model, ra);
+        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", "", null, request, response, model, ra);
         assertEquals("redirect:/space/1", value);
     }
 
@@ -365,7 +365,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", null, null, response, model, ra);
+        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", null, null, request, response, model, ra);
         assertEquals("redirect:/space/1", value);
     }
 
@@ -376,7 +376,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSeries(loggedOut,"testspace", "test", "unixtime:s msgtype:json", "", "yes", response, model, ra);
+        String value = controller.processCreateSeries(loggedOut,"testspace", "test", "unixtime:s msgtype:json", "", "yes", request, response, model, ra);
         assertEquals("login", value);
     }
 
@@ -387,7 +387,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", "", "yes", response, model, ra);
+        String value = controller.processCreateSeries(loggedIn,"testspace", "test", "unixtime:s msgtype:json", "", "yes", request, response, model, ra);
         assertEquals("redirect:/space/1", value);
     }
 
@@ -398,7 +398,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateHealthCheck(loggedIn,"http://www.yahoo.com", "http://localhost:3000/", "30000", "code", "2", response, model, ra);
+        String value = controller.processCreateHealthCheck(loggedIn,"http://www.yahoo.com", "http://localhost:3000/", "30000", "code", "2", request, response, model, ra);
         assertEquals("redirect:/healthchecks", value);
     }
 
@@ -409,7 +409,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateHealthCheck(loggedOut,"http://www.yahoo.com", "http://localhost:3000/", "30000", "code", "2", response, model, ra);
+        String value = controller.processCreateHealthCheck(loggedOut,"http://www.yahoo.com", "http://localhost:3000/", "30000", "code", "2", request, response, model, ra);
         assertEquals("login", value);
     }
 
@@ -420,7 +420,7 @@ public class ControllerTest {
         HttpServletResponse response = new MockHttpServletResponse();
         HttpServletRequest request = new MockHttpServletRequest();
         Model model = new ExtendedModelMap();
-        String value = controller.processCreateHealthCheck(loggedIn,"", "http://localhost:3000/", "30000", "code", "2", response, model, ra);
+        String value = controller.processCreateHealthCheck(loggedIn,"", "http://localhost:3000/", "30000", "code", "2", request, response, model, ra);
         assertEquals("redirect:/healthchecks", value);
     }
 

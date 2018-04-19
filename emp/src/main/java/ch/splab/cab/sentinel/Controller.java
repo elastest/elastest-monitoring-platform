@@ -61,6 +61,13 @@ public class Controller {
     public String showDashboard(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /visualization");
+
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -90,6 +97,7 @@ public class Controller {
         model.addAttribute("iframesrc", src);
         model.addAttribute("dashboard", AppConfiguration.getDashboardEndpoint());
         model.addAttribute("username", userName);
+
         return "visualization";
     }
 
@@ -97,6 +105,12 @@ public class Controller {
     public String showProfileData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /profile");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -140,6 +154,12 @@ public class Controller {
     public String showSeriesDetails(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @PathVariable(value="seriesid") String seriesid, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /series/" + seriesid);
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -194,6 +214,7 @@ public class Controller {
         }
         model.addAttribute("username", userName);
         model.addAttribute("seriesname", seriesName);
+
         return "seriesdetails";
     }
 
@@ -201,6 +222,12 @@ public class Controller {
     public String showSpaceDetails(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @PathVariable(value="spaceid") String spaceid, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /space/" + spaceid);
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -262,6 +289,7 @@ public class Controller {
         }
 
         model.addAttribute("username", userName);
+
         return "spacedetails";
     }
 
@@ -269,6 +297,12 @@ public class Controller {
     public String showSpaceData(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /spaces");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -299,21 +333,30 @@ public class Controller {
         model.addAttribute("userdata", data);
         model.addAttribute("spacelist", Arrays.asList(data.spaces));
         model.addAttribute("username", userName);
+
         return "space";
     }
 
     @RequestMapping(value="/newspace", method = RequestMethod.POST)
     public String processCreateSpace(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, @RequestParam(value = "spacename", required = true) String spacename,
-                               HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+                                     HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
         logger.info("processing /newspace");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
         if (myCookie != null && myCookie.isLogged.matches("no"))
+        {
+            model.addAttribute("basepath", basePath);
             return "login";
+        }
         else
         {
             myCookie.isLogged = "yes";
@@ -323,6 +366,7 @@ public class Controller {
             foo.setMaxAge(600); //10 minutes expiery
             response.addCookie(foo);
         }
+        redirectAttributes.addFlashAttribute("basepath",basePath);
 
         String userName = myCookie.username;
         int userId = SqlDriver.getUserId(userName);
@@ -330,6 +374,7 @@ public class Controller {
         {
             return "redirect:/logout";
         }
+
         SpaceInput incomingData = new SpaceInput();
         incomingData.name = spacename;
         if(!incomingData.isValidData())
@@ -399,16 +444,24 @@ public class Controller {
                                       @RequestParam(value = "msgformat", required = false) String msgformat,
                                       @RequestParam(value = "selectvalue", required = false) String selectedformat,
                                       @RequestParam(value = "override", required = false) String override,
-                                     HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+                                      HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
         logger.info("processing /newseries");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
         if (myCookie != null && myCookie.isLogged.matches("no"))
+        {
+            model.addAttribute("basepath", basePath);
             return "login";
+        }
         else
         {
             myCookie.isLogged = "yes";
@@ -421,10 +474,14 @@ public class Controller {
 
         String userName = myCookie.username;
         int userId = SqlDriver.getUserId(userName);
+
+        redirectAttributes.addFlashAttribute("basepath",basePath);
+
         if(userId == -1)
         {
             return "redirect:/logout";
         }
+
         //decide if to use selectvalue or not
         SeriesInput incomingData = new SeriesInput();
         incomingData.name = seriesname;
@@ -472,16 +529,24 @@ public class Controller {
                                       @RequestParam(value = "periodicity", required = false) String periodicity,
                                       @RequestParam(value = "method", required = false) String method,
                                       @RequestParam(value = "tolerance", required = false) String tolerance,
-                                      HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+                                           HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
         logger.info("processing /newhealthcheck");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
         if (myCookie != null && myCookie.isLogged.matches("no"))
+        {
+            model.addAttribute("basepath", basePath);
             return "login";
+        }
         else
         {
             myCookie.isLogged = "yes";
@@ -499,6 +564,8 @@ public class Controller {
             return "redirect:/logout";
         }
         //decide if to use selectvalue or not
+        redirectAttributes.addFlashAttribute("basepath",basePath);
+
         HealthCheckInput incomingData = new HealthCheckInput();
         incomingData.method = method.trim();
         incomingData.periodicity = Long.parseLong(periodicity);
@@ -536,6 +603,12 @@ public class Controller {
     public String showOverview(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -593,6 +666,7 @@ public class Controller {
         }
         model.addAttribute("pinglist", pingList);
         model.addAttribute("activetriggerlist", activeList);
+
         return "index2";
     }
 
@@ -600,6 +674,12 @@ public class Controller {
     public String showHealthCheckOverview(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
     {
         logger.info("serving /healthchecks");
+        String basePath = (AppConfiguration.isProxyWorkaroundEnabled()
+                && AppConfiguration.getProxyType() != null
+                && AppConfiguration.getProxyType().equalsIgnoreCase("nginx")
+                && AppConfiguration.getProxyLocation() != null) ? AppConfiguration.getProxyLocation() : "";
+        model.addAttribute("basepath", basePath);
+
         byte [] barr = Base64.getDecoder().decode(loggedCookie);
         String cookievalue = new String(barr);
         Gson gson = new Gson();
@@ -654,14 +734,16 @@ public class Controller {
         }
         model.addAttribute("pinglist", pingList);
         model.addAttribute("activetriggerlist", activeList);
+
         return "healthcheck";
     }
 
     @RequestMapping(value="/login", method = RequestMethod.POST)
     public String processLogin(@RequestParam(value = "username", required = true) String username, @RequestParam(value = "password", required = true) String password,
-                               HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
+                               HttpServletRequest request, HttpServletResponse response, Model model, RedirectAttributes redirectAttributes)
     {
         logger.info("serving /login");
+
         boolean isValidLogin = SqlDriver.isValidPassword(SqlDriver.getUserId(username), password);
         if(isValidLogin)
         {
@@ -684,9 +766,10 @@ public class Controller {
     }
 
     @RequestMapping(value="/logout", method = RequestMethod.GET)
-    public String showLogout(HttpServletResponse response,Model model)
+    public String showLogout(HttpServletRequest request, HttpServletResponse response,Model model)
     {
         logger.info("processing /logout");
+
         Gson gson = new Gson();
         MyCookie myCookie = new MyCookie();
         myCookie.isLogged = "no";
