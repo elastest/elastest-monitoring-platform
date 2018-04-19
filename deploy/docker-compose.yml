@@ -62,6 +62,9 @@ services:
       - ADMIN_TOKEN=somevalue
       - DASHBOARD_TITLE=elastest
       - DASHBOARD_ENDPOINT=nightly.elastest.io:37000/grafana
+      - PROXY_WORKAROUND_ENABLE=false
+      - PROXY_WORKAROUND_TYPE=nginx
+      - PROXY_WORKAROUND_LOCATION=/emp-admin
       - ET_EDM_ALLUXIO_API=http://edm-alluxio-master:19999/
       - ET_EDM_MYSQL_HOST=edm-mysql
       - ET_EDM_MYSQL_PORT=3306
