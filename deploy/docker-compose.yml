@@ -11,6 +11,7 @@ services:
       - ADVERTISED_HOST=emp-kafka
       - ADVERTISED_LISTENERS=emp-kafka
       - LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_HEAP_OPTS="-Xmx256M -Xms128M"
     networks:
       - elastest
   emp-influxdb:
