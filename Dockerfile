@@ -18,10 +18,10 @@
 #
 # Thanks to: https://hub.docker.com/r/frolvlad/alpine-oraclejdk8/
 
-FROM frolvlad/alpine-oraclejdk8
+FROM frolvlad/alpine-oraclejdk8:8.161.12-cleaned
 
 LABEL maintainer="elastest-users@googlegroups.com"
-LABEL version="0.1"
+LABEL version="0.9"
 LABEL description="Builds the emp docker image."
 
 EXPOSE 9000

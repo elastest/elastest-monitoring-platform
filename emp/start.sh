@@ -1,5 +1,5 @@
 #!/bin/bash
 
 ./init-dashboard.sh
-java -jar emp.jar
+java -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:MaxRAMFraction=1 -XX:MaxRAM=512m -jar emp.jar
 
