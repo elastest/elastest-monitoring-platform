@@ -18,13 +18,14 @@
 #
 # Thanks to: https://hub.docker.com/r/frolvlad/alpine-oraclejdk8/
 
-FROM frolvlad/alpine-oraclejdk8:8.161.12-cleaned
+# FROM frolvlad/alpine-oraclejdk8:8.161.12-cleaned
+FROM adoptopenjdk/openjdk8-openj9:alpine
 
 LABEL maintainer="elastest-users@googlegroups.com"
-LABEL version="0.9"
-LABEL description="Builds the emp docker image."
+LABEL version="0.9.0"
+LABEL description="Builds the emp docker image using the openjdk/openj9 combo"
 
-EXPOSE 9000
+EXPOSE 9100
 RUN apk --update add sqlite curl
 RUN apk add --no-cache util-linux
 COPY emp/target/sentinel-0.9.0.jar /emp.jar

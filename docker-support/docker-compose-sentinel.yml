@@ -4,7 +4,7 @@ services:
   sentinel:
     image: elastest/emp:latest
     ports:
-      - 9000:9000
+      - 9100:9100
     environment:
       - STREAM_ADMINUSER=root
       - STREAM_ADMINPASS=pass1234
@@ -15,7 +15,7 @@ services:
       - KAFKA_ENDPOINT=kafka:9092
       - TOPIC_CHECK_INTERVAL=30000
       - INFLUX_URL=http://influxdb:8086
-      - INFLUX_URL_GRAFANA=http://localhost:8086
+      - INFLUX_URL_GRAFANA=http://influxdb:8086
       - GRAFANA_URL=http://grafana:3000
       - GRAFANA_ADMIN=admin
       - GRAFANA_PASSWORD=1ccl@b2017
@@ -24,9 +24,42 @@ services:
       - SENTINEL_DB_TYPE=sqlite
       - SENTINEL_DB_ENDPOINT=/data/sentinel.db
       - ADMIN_TOKEN=sometoken
+      - DASHBOARD_TITLE=elastest
+      - DASHBOARD_ENDPOINT=openj9.demonstrator.info:3000
+      - PROXY_WORKAROUND_ENABLE=false
+      - PROXY_WORKAROUND_TYPE=nginx
+      - PROXY_WORKAROUND_LOCATION=/emp-admin
     volumes:
       - emp:/data
-
+  sentinel-system-agent:
+    image: elastest/emp-system-agent:latest
+    links:
+      - sentinel
+    depends_on:
+      - sentinel
+    environment:
+      - KAFKA_ENDPOINT=kafka:9092
+      - KAFKA_KEY_SERIALIZER=StringSerializer
+      - KAFKA_VALUE_SERIALIZER=StringSerializer
+      - SENTINEL_TOPIC=user-1-elastest_core
+      - SENTINEL_SERIES=sys-stats
+      - PERIODICITY=30
+  sentinel-docker-agent:
+    image: elastest/emp-docker-agent:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    links:
+      - sentinel
+    depends_on:
+      - sentinel
+    environment:
+      - KAFKA_ENDPOINT=kafka:9092
+      - KAFKA_KEY_SERIALIZER=StringSerializer
+      - KAFKA_VALUE_SERIALIZER=StringSerializer
+      - SENTINEL_TOPIC=user-1-elastest_core
+      - SENTINEL_SERIES=docker-stats
+      - DOCKER_SOCKET=unix://var/run/docker.sock
+      - PERIODICITY=60
 volumes:
   emp:
 

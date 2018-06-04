@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  sentinel-system-agent:
+    image: elastest/emp-system-agent:latest
+    links:
+      - kafka
+      - sentinel
+    depends_on:
+      - kafka
+      - sentinel
+    environment:
+      - KAFKA_ENDPOINT=kafka:9092
+      - KAFKA_KEY_SERIALIZER=StringSerializer
+      - KAFKA_VALUE_SERIALIZER=StringSerializer
+      - SENTINEL_TOPIC=user-1-elastest_core
+      - SENTINEL_SERIES=sys-stats
+      - PERIODICITY=30
+  sentinel-docker-agent:
+    image: elastest/emp-docker-agent:latest
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    links:
+      - kafka
+      - sentinel
+    depends_on:
+      - kafka
+      - sentinel
+    environment:
+      - KAFKA_ENDPOINT=kafka:9092
+      - KAFKA_KEY_SERIALIZER=StringSerializer
+      - KAFKA_VALUE_SERIALIZER=StringSerializer
+      - SENTINEL_TOPIC=user-1-elastest_core
+      - SENTINEL_SERIES=docker-stats
+      - DOCKER_SOCKET=unix://var/run/docker.sock
+      - PERIODICITY=60
+networks:
+  default:
+    external:
+      name: dockersupport_frontend
