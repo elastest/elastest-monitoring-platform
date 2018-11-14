@@ -22,6 +22,8 @@
 
 package ch.splab.cab.sentinel;
 
+import ch.splab.cab.sentinel.controller.APIController;
+import ch.splab.cab.sentinel.controller.extensions.ElasTest;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -35,7 +37,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableSwagger2
 @ComponentScan(basePackageClasses = {
-        APIController.class
+        APIController.class,
+        ElasTest.class,
+        Controller.class
 })
 public class Application {
     final static Logger logger = Logger.getLogger(Application.class);

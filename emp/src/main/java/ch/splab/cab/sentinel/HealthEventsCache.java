@@ -36,7 +36,7 @@ public class HealthEventsCache {
         eventsCache = new HashMap<>(size);
     }
 
-    PingEvent[] getEventTraceHistory(String pingURL, String reportURL)
+    public PingEvent[] getEventTraceHistory(String pingURL, String reportURL)
     {
         String key = HelperMethods.generateSHA256Hash(pingURL+reportURL);
         if(eventsCache.containsKey(key)) return eventsCache.get(key).toArray(new PingEvent[eventsCache.get(key).size()]);

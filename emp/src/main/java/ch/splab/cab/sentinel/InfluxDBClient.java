@@ -22,10 +22,7 @@ package ch.splab.cab.sentinel;
  */
 
 import ch.splab.cab.sentinel.cache.ListElement;
-import ch.splab.cab.sentinel.dao.InfluxDBColumnData;
-import ch.splab.cab.sentinel.dao.SentinelDockerStatsAgent;
-import ch.splab.cab.sentinel.dao.SentinelDockerStatsAgentMetric;
-import ch.splab.cab.sentinel.dao.SentinelDockerStatsAgentValue;
+import ch.splab.cab.sentinel.dao.*;
 import com.google.gson.Gson;
 import okhttp3.*;
 import org.apache.log4j.Logger;
@@ -41,8 +38,7 @@ import org.jooq.tools.json.JSONParser;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /*
@@ -107,7 +103,7 @@ public class InfluxDBClient
         return true;
     }
 
-    static boolean addUser(String topic, String user, String password)
+    static public boolean addUser(String topic, String user, String password)
     {
         //curl "http://localhost:8086/query" --data-urlencode "q=CREATE USER root WITH PASSWORD 'root' WITH ALL PRIVILEGES"
         try
@@ -206,6 +202,210 @@ public class InfluxDBClient
             }
         }
         return null;
+    }
+
+    static public LinkedList<String> getTJobExecIds(String topic, String key, String filter)
+    {
+        LinkedList<String> execids = null;
+        if(key == null || key.trim().length() == 0) key = "default";
+        if(influxDB != null)
+        {
+            Query query = new Query("select DISTINCT(\"io.elastest.tjob.exec.id\") AS execid  FROM \"" + key + "\" WHERE " + filter, topic);
+            try {
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
+                    {
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
+                        {
+                            logger.info("retrieved data points for series: " + val.getName());
+                            List<String> columns = val.getColumns();
+                            List<List<Object>> values = val.getValues(); //gets one series
+                            logger.info("Retrieved " + values.size() + " rows.");
+                            execids = new LinkedList();
+                            for (List<Object> obj : values) {
+                                int counter = 0;
+                                for (Object objval : obj) {
+                                    if(counter == 0)
+                                    {
+                                        counter++;
+                                        continue; //not processing the timestamp value
+                                    }
+                                    execids.add(objval.toString());
+                                    logger.info("Found TJob execution with id: " + objval.toString() + " for " + filter);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return execids;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    static public HashMap<String, Object> getTJobExecData(String topic, String key, String tjobid, String execid)
+    {
+        HashMap<String, Object> response = new HashMap<>();
+        if(key == null || key.trim().length() == 0) key = "default";
+
+        if(influxDB != null)
+        {
+            Query query = new Query("select MAX(\"agent-time\") - MIN(\"agent-time\") from \"" + key + "\" WHERE \"io.elastest.tjob.id\"='" + tjobid + "' AND \"io.elastest.tjob.exec.id\"='" + execid + "'", topic);
+            try {
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
+                    {
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
+                        {
+                            logger.info("retrieved data points for series: " + val.getName());
+                            List<String> columns = val.getColumns();
+                            List<List<Object>> values = val.getValues(); //gets one series
+                            logger.info("Retrieved " + values.size() + " rows.");
+                            for (List<Object> obj : values) {
+                                int counter = 0;
+                                for (Object objval : obj) {
+                                    if(counter == 0)
+                                    {
+                                        counter++;
+                                        continue; //not processing the timestamp value
+                                    }
+                                    response.put("duration", objval);
+                                    logger.info("TJob execution duration: " + objval.toString() + " for execid: " + execid + " TJobId: " + tjobid);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+
+            query = new Query("select MEAN(\"memory_stats_usage\") from \"" + key + "\" WHERE \"io.elastest.tjob.id\"='" + tjobid + "' AND \"io.elastest.tjob.exec.id\"='" + execid + "'", topic);
+            try {
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
+                    {
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
+                        {
+                            logger.info("retrieved data points for series: " + val.getName());
+                            List<String> columns = val.getColumns();
+                            List<List<Object>> values = val.getValues(); //gets one series
+                            logger.info("Retrieved " + values.size() + " rows.");
+                            for (List<Object> obj : values) {
+                                int counter = 0;
+                                for (Object objval : obj) {
+                                    if(counter == 0)
+                                    {
+                                        counter++;
+                                        continue; //not processing the timestamp value
+                                    }
+                                    response.put("memory_mean", objval);
+                                    logger.info("TJob mean memory usage: " + objval.toString() + " for execid: " + execid + " TJobId: " + tjobid);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+
+            query = new Query("select SUM(\"networks_eth0_rx_bytes\") from \"" + key + "\" WHERE \"io.elastest.tjob.id\"='" + tjobid + "' AND \"io.elastest.tjob.exec.id\"='" + execid + "'", topic);
+            try {
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
+                    {
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
+                        {
+                            logger.info("retrieved data points for series: " + val.getName());
+                            List<String> columns = val.getColumns();
+                            List<List<Object>> values = val.getValues(); //gets one series
+                            logger.info("Retrieved " + values.size() + " rows.");
+                            for (List<Object> obj : values) {
+                                int counter = 0;
+                                for (Object objval : obj) {
+                                    if(counter == 0)
+                                    {
+                                        counter++;
+                                        continue; //not processing the timestamp value
+                                    }
+                                    response.put("network_rx_bytes", objval);
+                                    logger.info("TJob total received traffic in bytes: " + objval.toString() + " for execid: " + execid + " TJobId: " + tjobid);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+
+            query = new Query("select SUM(\"networks_eth0_tx_bytes\") from \"" + key + "\" WHERE \"io.elastest.tjob.id\"='" + tjobid + "' AND \"io.elastest.tjob.exec.id\"='" + execid + "'", topic);
+            try {
+                QueryResult result = influxDB.query(query);
+                if (result.hasError()) return null;
+                else {
+                    List<Result> dataPoints = result.getResults();
+                    for (Result point : dataPoints) //this is a single iteration loop
+                    {
+                        List<Series> series = point.getSeries();
+                        for (Series val : series) //this is a single iteration loop
+                        {
+                            logger.info("retrieved data points for series: " + val.getName());
+                            List<String> columns = val.getColumns();
+                            List<List<Object>> values = val.getValues(); //gets one series
+                            logger.info("Retrieved " + values.size() + " rows.");
+                            for (List<Object> obj : values) {
+                                int counter = 0;
+                                for (Object objval : obj) {
+                                    if(counter == 0)
+                                    {
+                                        counter++;
+                                        continue; //not processing the timestamp value
+                                    }
+                                    response.put("network_tx_bytes", objval);
+                                    logger.info("TJob total sent traffic in bytes: " + objval.toString() + " for execid: " + execid + " TJobId: " + tjobid);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+
+        }
+        response.put("exec-id", execid);
+        return response;
     }
 
     static LinkedList<InfluxDBColumnData>[] getLastPoints(String topic, String key, int count)
@@ -326,6 +526,12 @@ public class InfluxDBClient
                                 {
                                     builder.addField(metric.key, metric.value);
                                 }
+                                //processing labels as tags
+                                for(SentinelDockerStatsAgentLabel label: value.labels)
+                                {
+                                    builder.addField(label.key, label.value);
+                                }
+
                                 Point point1 = builder.build();
                                 influxDB.write(topic, "autogen", point1);
                             }

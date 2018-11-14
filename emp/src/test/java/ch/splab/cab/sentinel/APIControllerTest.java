@@ -21,6 +21,7 @@ package ch.splab.cab.sentinel;
  *       Email: piyush.harsh@zhaw.ch
  */
 
+import ch.splab.cab.sentinel.controller.APIController;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

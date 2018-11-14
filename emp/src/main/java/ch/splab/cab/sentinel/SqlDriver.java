@@ -79,7 +79,7 @@ public class SqlDriver
         return discoveredTableList;
     }
 
-    static LinkedList<SpaceOutput> getUserSpaces(int userId)
+    static public LinkedList<SpaceOutput> getUserSpaces(int userId)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -141,7 +141,7 @@ public class SqlDriver
         return series;
     }
 
-    static boolean isDuplicateUser(String login)
+    static public boolean isDuplicateUser(String login)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -166,7 +166,7 @@ public class SqlDriver
         return false;
     }
 
-    static boolean isValidApikey(String login, String apiKey)
+    static public boolean isValidApikey(String login, String apiKey)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -193,7 +193,7 @@ public class SqlDriver
         return false;
     }
 
-    static boolean isValidApikey(int userid, String apiKey)
+    static public boolean isValidApikey(int userid, String apiKey)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -220,7 +220,7 @@ public class SqlDriver
         return false;
     }
 
-    static boolean isValidPassword(int userid, String password)
+    static public boolean isValidPassword(int userid, String password)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -247,7 +247,7 @@ public class SqlDriver
         return false;
     }
 
-    static boolean isDuplicateSpace(String login, String sName)
+    static public boolean isDuplicateSpace(String login, String sName)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -275,7 +275,7 @@ public class SqlDriver
         return false;
     }
 
-    static boolean isDuplicateSeries(String login, String seriesName, String spaceName)
+    static public boolean isDuplicateSeries(String login, String seriesName, String spaceName)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -303,7 +303,7 @@ public class SqlDriver
         return false;
     }
 
-    static int addSpace(String login, String sName, String quser, String qpass)
+    static public int addSpace(String login, String sName, String quser, String qpass)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -329,7 +329,7 @@ public class SqlDriver
         return id;
     }
 
-    static int addSeries(String seriesName, String msgStructure, int spaceId)
+    static public int addSeries(String seriesName, String msgStructure, int spaceId)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -354,7 +354,7 @@ public class SqlDriver
         return id;
     }
 
-    static int addPingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String method, String login)
+    static public int addPingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String method, String login)
     {
         if(isDuplicatePing(login, pingURL, reportURL))
         {
@@ -486,7 +486,7 @@ public class SqlDriver
         return pingList;
     }
 
-    static HealthCheckOutput getPingData(int pingId, int userId)
+    static public HealthCheckOutput getPingData(int pingId, int userId)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -546,7 +546,7 @@ public class SqlDriver
         return false;
     }
 
-    static int addUser(String login, String password, String apiKey)
+    static public int addUser(String login, String password, String apiKey)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -571,7 +571,7 @@ public class SqlDriver
         return id;
     }
 
-    static int getUserId(String login)
+    static public int getUserId(String login)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -620,7 +620,7 @@ public class SqlDriver
         return id;
     }
 
-    static int getSpaceId(String login, String sName)
+    static public int getSpaceId(String login, String sName)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
@@ -794,7 +794,7 @@ public class SqlDriver
         return spaceId;
     }
 
-    static String getAPIKey(int userId)
+    static public String getAPIKey(int userId)
     {
         Connection conn = getDBConnection();
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);

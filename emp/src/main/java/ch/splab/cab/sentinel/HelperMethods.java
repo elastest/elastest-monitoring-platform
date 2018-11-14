@@ -55,7 +55,7 @@ public class HelperMethods
         return null;
     }
 
-    static String randomString( int len ){
+    static public String randomString( int len ){
         StringBuilder sb = new StringBuilder( len );
         for( int i = 0; i < len; i++ )
             sb.append( AB.charAt( rnd.nextInt(AB.length()) ) );

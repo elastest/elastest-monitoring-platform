@@ -20,9 +20,10 @@
  *       Email: piyush.harsh@zhaw.ch
  */
 
-package ch.splab.cab.sentinel;
+package ch.splab.cab.sentinel.controller;
 
 
+import ch.splab.cab.sentinel.*;
 import ch.splab.cab.sentinel.dao.*;
 import com.google.gson.Gson;
 import io.swagger.annotations.ApiOperation;

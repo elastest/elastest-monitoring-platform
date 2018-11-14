@@ -21,10 +21,7 @@ package ch.splab.cab.sentinel.dao;
  *       Email: piyush.harsh@zhaw.ch
  */
 
-public class SentinelDockerStatsAgentValue
-{
-    public String id;
-    public String name;
-    public SentinelDockerStatsAgentMetric[] metrics;
-    public SentinelDockerStatsAgentLabel[] labels;
+public class SentinelDockerStatsAgentLabel {
+    public String key;
+    public String value;
 }

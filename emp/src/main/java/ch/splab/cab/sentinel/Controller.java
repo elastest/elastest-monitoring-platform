@@ -405,7 +405,7 @@ public class Controller {
             if(status)
                 logger.info("Topic registered with kafka cluster: " + "user-" + userId + "-" + incomingData.name);
             else
-                logger.warn("Topic could not be registered with kafka cluster: " + "user" + userId + "-" + incomingData.name);
+                logger.warn("Topic could not be registered with kafka cluster: " + "user-" + userId + "-" + incomingData.name);
         }
         if(spaceId != -1)
         {
@@ -425,7 +425,7 @@ public class Controller {
             else
             {
                 outputData.dataDashboardPassword = null;
-                logger.warn("Problem creating new user for this scape: " + outputData.topicName);
+                logger.warn("Problem creating new user for this space: " + outputData.topicName);
             }
             redirectAttributes.addFlashAttribute("createmsg","space created");
             return "redirect:/spaces";
