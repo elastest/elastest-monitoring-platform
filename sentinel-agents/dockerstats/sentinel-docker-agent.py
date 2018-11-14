@@ -86,6 +86,21 @@ class SentinelElement:
         return str(self)
 
 
+class LabelElement:
+    key = ""
+    value = ""
+
+    def get_json(self):
+        value = "{\"key\":\"" + self.key + "\", \"value\":\"" + str(self.value) + "\"}"
+        return value
+
+    def __str__(self):
+        return self.get_json()
+
+    def __repr__(self):
+        return str(self)
+
+
 if __name__ == '__main__':
     print("MAIN: starting agent process ...")
     print("ENV::DOCKER_SOCKET: ", os.getenv("DOCKER_SOCKET", None))
@@ -104,9 +119,25 @@ if __name__ == '__main__':
             for container in container_collection:
                 container_data = {}
                 sample_list = []
+                label_list = []
                 container_data["id"] = container.id
                 container_data["name"] = container.name
+                labels = container.__getattribute__("labels")
+
+                for key, val in labels.items():
+                    ldata = LabelElement()
+                    ldata.key = key
+                    ldata.value = val
+                    label_list.append(ldata)
+
+                container_data["labels"] = label_list
+                # try:
+                #     print(container_label["ch.splab.sentinel.version"])
+                # except:
+                #     print("Unexpected error in trying to get relevant labels:", sys.exc_info()[0])
+
                 stat = container.stats(decode=True, stream=False)
+                #print(stat)
                 # extracting relevant stats
                 try:
                     data = SentinelElement()
