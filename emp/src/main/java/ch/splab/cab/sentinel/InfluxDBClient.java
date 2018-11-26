@@ -404,7 +404,7 @@ public class InfluxDBClient
             }
 
         }
-        response.put("exec-id", execid);
+        response.put("ExecId", execid);
         return response;
     }
 
