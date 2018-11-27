@@ -79,7 +79,13 @@
                     }
                   ]
                 ],
-                "tags": []
+                "tags": [
+                  {
+                    "key": "host",
+                    "operator": "=~",
+                    "value": "/^$host$/"
+                  }
+                ]
               },
               {
                 "alias": "cpu used %",
@@ -117,7 +123,13 @@
                     }
                   ]
                 ],
-                "tags": []
+                "tags": [
+                  {
+                    "key": "host",
+                    "operator": "=~",
+                    "value": "/^$host$/"
+                  }
+                ]
               },
               {
                 "alias": "ram used %",
@@ -155,7 +167,13 @@
                     }
                   ]
                 ],
-                "tags": []
+                "tags": [
+                  {
+                    "key": "host",
+                    "operator": "=~",
+                    "value": "/^$host$/"
+                  }
+                ]
               }
             ],
             "thresholds": [],
@@ -2925,7 +2943,7 @@
       ]
     },
     "time": {
-      "from": "now-6h",
+      "from": "now-12h",
       "to": "now"
     },
     "timepicker": {
