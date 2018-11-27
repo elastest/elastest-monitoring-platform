@@ -83,7 +83,7 @@ else
   sqlite3 ${sentineldb} "CREATE TABLE space (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(32), queryuser VARCHAR(32), querypass VARCHAR(32), userid INT);"
   sqlite3 ${sentineldb} "CREATE TABLE series (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(32), structure VARCHAR(512), spaceid INT);"
   sqlite3 ${sentineldb} "CREATE TABLE healthcheck (id INTEGER PRIMARY KEY AUTOINCREMENT, pingurl VARCHAR(256), reporturl VARCHAR(256), periodicity INTEGER, tolerance INTEGER, method VARCHAR(32), userid INT);"
-  sqlite3 ${sentineldb} "INSERT INTO user VALUES (1, 'elastest', '$(sha256 pass1234)', '$(uuidgen)')"
+  sqlite3 ${sentineldb} "INSERT INTO user VALUES (1, 'elastest', '$(sha256 pass1234)', '480f410f-f506-4b7d-ac2b-dc51758d8d15')"
   sqlite3 ${sentineldb} "INSERT INTO space VALUES (1, 'elastest_core', 'user1elastest_core', 'Tv8W4qShV2SaGNRV', 1)"
   sqlite3 ${sentineldb} "INSERT INTO series VALUES (1, 'sys-stats', 'unixtime:ms host:string cpu_user:float cpu_system:float cpu_idle:float cpu_percent:float ram_percent:float disk_percent:float', 1)"
   sqlite3 ${sentineldb} "INSERT INTO series VALUES (2, 'docker-stats', 'unixtime:s msgtype:json', 1)"
