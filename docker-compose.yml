@@ -4,7 +4,7 @@ services:
   emp:
     image: elastest/emp:latest
     ports:
-      - 9000:9000
+      - 9100:9100
     environment:
       - KAFKA_ENDPOINT=some-url:port
       - STREAM_DBENDPOINT=some-url:port
