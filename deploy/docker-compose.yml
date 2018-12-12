@@ -109,7 +109,7 @@ services:
       - KAFKA_VALUE_SERIALIZER=StringSerializer
       - SENTINEL_TOPIC=user-1-elastest_core
       - SENTINEL_SERIES=sys-stats
-      - PERIODICITY=60
+      - PERIODICITY=30
     networks:
       - elastest
     labels:
@@ -131,7 +131,7 @@ services:
       - SENTINEL_TOPIC=user-1-elastest_core
       - SENTINEL_SERIES=docker-stats
       - DOCKER_SOCKET=unix://var/run/docker.sock
-      - PERIODICITY=120
+      - PERIODICITY=30
     networks:
       - elastest
     labels:
