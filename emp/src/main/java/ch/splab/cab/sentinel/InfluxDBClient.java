@@ -557,6 +557,26 @@ public class InfluxDBClient
                             influxDB.write(topic, "autogen", point1);
                             return true;
                         }
+                        if(agentType.equalsIgnoreCase("sentinel-generic-agent"))
+                        {
+                            builder = Point.measurement(key);
+                            builder.time(System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+                            for (Object jsonKey:json.keySet())
+                            {
+                                if(((String)(jsonKey)).equalsIgnoreCase("agent")) continue;
+                                try
+                                {
+                                    builder.addField((String)(jsonKey), (String)json.get((String)(jsonKey)));
+                                }
+                                catch(ClassCastException cex)
+                                {
+                                    builder.addField((String)(jsonKey), ((Double)json.get((String)(jsonKey))).doubleValue());
+                                }
+                            }
+                            Point point1 = builder.build();
+                            influxDB.write(topic, "autogen", point1);
+                            return true;
+                        }
                     }
                     catch (Exception ex)
                     {
