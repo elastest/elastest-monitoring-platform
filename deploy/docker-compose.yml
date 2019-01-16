@@ -14,7 +14,7 @@ services:
     networks:
       - elastest
     labels:
-      - io.elastest.type=core
+      - io.elastest.type=coer
   emp-influxdb:
     image: influxdb:1.2.4-alpine
     expose:
