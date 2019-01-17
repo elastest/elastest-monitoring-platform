@@ -13,4 +13,4 @@ RUN apk --update add python3 py3-pip openssl ca-certificates git \
     && pip3 install -r /requirements.txt && rm /requirements.txt \
     && apk del build-deps
 
-CMD ["/usr/bin/python3", "/sentinel-sys-agent.py"]
+CMD ["python3", "/sentinel-sys-agent.py"]
