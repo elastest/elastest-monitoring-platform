@@ -34,5 +34,42 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class EMPElasTestInElasTestTest extends ElastestBaseTest {
+    private static final Logger logger = LogManager.getLogger(EMPElasTestInElasTestTest.class);
 
+    @Test
+    @DisplayName("Test to start EMP")
+    void check4emp()
+    {
+        String grafanaPass = "someincorrectvalue";
+        boolean hasEMPStarted = false;
+        // elastest_url = env.ET_SUT_PROTOCOL + '://elastest:3xp3r1m3nt47@' + env.ET_SUT_HOST + ':' + env.ET_SUT_PORT
+        logger.info("Torm Url: " + tormUrl);
+
+        driver.manage().window().setSize(new Dimension(1400, 1200));
+        driver.get(tormUrl);
+
+        try
+        {
+            logger.info("Page title: " + driver.getTitle());
+            logger.info("Clicking side menu link");
+            driver.findElement(By.id("nav_emp")).click();
+        }
+        catch(Exception ex)
+        {
+            logger.info("Unable to find side navigation link. Directly accessing emp");
+            driver.get(tormUrl + "/#/emp");
+        }
+
+        logger.info("EMP Page title: " + driver.getTitle());
+        logger.info("logging in grafana directly");
+        driver.get(tormUrl + "/grafana/");
+        WebElement username = driver.findElement(By.name("username"));
+        WebElement password = driver.findElement(By.name("password"));
+        username.sendKeys("admin");
+        password.sendKeys(grafanaPass);
+        driver.findElement(By.xpath("//span[text()='Password']//following::button")).click();
+        WebElement alert = driver.findElement(By.className("alert-title"));
+        logger.info("Result of login attempt: " + alert.getText() + ", expected should be: Invalid username or password");
+        assertEquals("checking alert message", "Invalid username or password", alert.getText());
+    }
 }
