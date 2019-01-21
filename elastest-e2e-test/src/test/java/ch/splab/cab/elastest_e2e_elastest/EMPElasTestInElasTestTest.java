@@ -43,7 +43,7 @@ public class EMPElasTestInElasTestTest extends ElastestBaseTest {
         String grafanaPass = "someincorrectvalue";
         boolean hasEMPStarted = false;
         // elastest_url = env.ET_SUT_PROTOCOL + '://elastest:3xp3r1m3nt47@' + env.ET_SUT_HOST + ':' + env.ET_SUT_PORT
-
+        tormUrl = "http://elastest:3xp3r1m3nt47@nightly.elastest.io:37000/";
         logger.info("Torm Url: " + tormUrl);
 
         driver.manage().window().setSize(new Dimension(1400, 1200));
@@ -69,8 +69,14 @@ public class EMPElasTestInElasTestTest extends ElastestBaseTest {
         username.sendKeys("admin");
         password.sendKeys(grafanaPass);
         driver.findElement(By.xpath("//span[text()='Password']//following::button")).click();
+        try {
+            Thread.sleep(5000);
+        } catch (Exception ex)
+        {
+
+        }
         WebElement alert = driver.findElement(By.className("alert-title"));
         logger.info("Result of login attempt: " + alert.getText() + ", expected should be: Invalid username or password");
-        assertEquals("checking alert message", "Invalid username or password", alert.getText());
+        assertEquals("Invalid username or password", alert.getText());
     }
 }

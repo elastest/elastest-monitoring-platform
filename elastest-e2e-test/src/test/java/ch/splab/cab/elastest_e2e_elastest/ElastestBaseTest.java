@@ -138,6 +138,7 @@ public class ElastestBaseTest {
 
             caps.setCapability("testName", testName);
             driver = new RemoteWebDriver(new URL(eusURL), caps);
+            //driver.manage().timeouts().implicitlyWait();
         }
 
         //driver.get(tormUrl);
