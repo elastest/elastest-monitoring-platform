@@ -43,6 +43,7 @@ public class EMPElasTestInElasTestTest extends ElastestBaseTest {
         String grafanaPass = "someincorrectvalue";
         boolean hasEMPStarted = false;
         // elastest_url = env.ET_SUT_PROTOCOL + '://elastest:3xp3r1m3nt47@' + env.ET_SUT_HOST + ':' + env.ET_SUT_PORT
+
         logger.info("Torm Url: " + tormUrl);
 
         driver.manage().window().setSize(new Dimension(1400, 1200));

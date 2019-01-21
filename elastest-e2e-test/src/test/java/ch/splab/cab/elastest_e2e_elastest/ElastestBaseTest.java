@@ -140,7 +140,7 @@ public class ElastestBaseTest {
             driver = new RemoteWebDriver(new URL(eusURL), caps);
         }
 
-        driver.get(tormUrl);
+        //driver.get(tormUrl);
     }
 
     @AfterEach
