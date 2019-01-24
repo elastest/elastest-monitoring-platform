@@ -65,6 +65,12 @@ curl -X POST \
   -H 'content-type: application/json' \
   -d "@dashboard.json"
 
+curl -X PUT \
+  ${grafanaURL}/api/org/preferences \
+  -H "$header" \
+  -H 'content-type: application/json' \
+  -d '{"theme": "", "homeDashboardId":1, "timezone":"utc"}'
+
 sha256()
 {
  echo -n "$*" | sha256sum | cut -d' ' -f1
