@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  k8s-agent:
+    image: elastest/emp-k8s-agent:latest
+    environment:
+      - host=kafka.cloudlab.zhaw.ch
+      - port=9092
+      - topic=user-1-test_space
+      - series=kubernetes
+      - clientid=sentinel-k8s-client
+      - periodicity=120
+networks:
+  default:
+    external:
+      name: sentinel
