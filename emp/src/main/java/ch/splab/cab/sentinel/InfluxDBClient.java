@@ -570,7 +570,14 @@ public class InfluxDBClient
                                 }
                                 catch(ClassCastException cex)
                                 {
-                                    builder.addField((String)(jsonKey), ((Double)json.get((String)(jsonKey))).doubleValue());
+                                    try
+                                    {
+                                        builder.addField((String) (jsonKey), ((Double) json.get((String) (jsonKey))).doubleValue());
+                                    }
+                                    catch(ClassCastException ex)
+                                    {
+                                        builder.addField((String) (jsonKey), ((Long) json.get((String) (jsonKey))).longValue());
+                                    }
                                 }
                             }
                             Point point1 = builder.build();
