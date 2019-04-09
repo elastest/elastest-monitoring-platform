@@ -30,6 +30,7 @@ import (
 	"github.com/scalingdata/gcfg"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/snappy"
+	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
@@ -50,6 +51,19 @@ type Configuration struct {
 		Series   string
 		ClientId string
 	}
+	K8s struct {
+		ClusterName           string
+		ClusterServer         string
+		ClusterCA             string
+		ContextName           string
+		ContextCluster        string
+		ContextUser           string
+		CurrentContext        string
+		UserName              string
+		UserClientCertificate string
+		UserClientKey         string
+		ConfigPath            string
+	}
 }
 
 type k8sdata struct {
@@ -58,6 +72,49 @@ type k8sdata struct {
 	Podcount       int    `json:"podcount"`
 	Servicecount   int    `json:"servicecount"`
 	Namespacecount int    `json:"namespacecount"`
+}
+
+type kubeconfig struct {
+	ApiVersion     string      `yaml:"apiVersion"`
+	Clusters       []Cluster   `yaml:"clusters"`
+	Contexts       []K8Context `yaml:"contexts"`
+	CurrentContext string      `yaml:"current-context"`
+	Kind           string      `yaml:"kind"`
+	Preferences    PrfObj      `yaml:"preferences"`
+	Users          []User      `yaml:"users"`
+}
+
+type PrfObj struct {
+}
+
+type User struct {
+	Name      string  `yaml:"name"`
+	UserInner UserObj `yaml:"user"`
+}
+
+type UserObj struct {
+	ClientCert string `yaml:"client-certificate"`
+	ClientKey  string `yaml:"client-key"`
+}
+
+type Cluster struct {
+	Name         string     `yaml:"name"`
+	ClusterInner ClusterObj `yaml:"cluster"`
+}
+
+type ClusterObj struct {
+	CertificateAuth string `yaml:"certificate-authority"`
+	Server          string `yaml:"server"`
+}
+
+type K8Context struct {
+	Name        string     `yaml:"name"`
+	ConextInner ContextObj `yaml:"context"`
+}
+
+type ContextObj struct {
+	ClusterName string `yaml:"cluster"`
+	User        string `yaml:"user"`
 }
 
 func main() {
@@ -102,6 +159,43 @@ func main() {
 	}
 	///////////////////////////////////////////////////////////////
 
+	home := homeDir()
+
+	/// trying to recreate kubeconfig file within the code
+	k8cfg := kubeconfig{}
+	k8cfg.ApiVersion = "v1"
+	k8cfg.Kind = "Config"
+	k8cfg.CurrentContext = cfg.K8s.CurrentContext
+	user := User{}
+	user.Name = cfg.K8s.UserName
+	user.UserInner.ClientCert = filepath.Join(home, ".kube", cfg.K8s.UserClientCertificate)
+	user.UserInner.ClientKey = filepath.Join(home, ".kube", cfg.K8s.UserClientKey)
+	k8cfg.Users = append(k8cfg.Users, user)
+	cluster := Cluster{}
+	cluster.Name = cfg.K8s.ClusterName
+	cluster.ClusterInner.Server = cfg.K8s.ClusterServer
+	cluster.ClusterInner.CertificateAuth = filepath.Join(home, ".kube", cfg.K8s.ClusterCA)
+	k8cfg.Clusters = append(k8cfg.Clusters, cluster)
+	k8context := K8Context{}
+	k8context.Name = cfg.K8s.ContextName
+	k8context.ConextInner.ClusterName = cfg.K8s.ContextCluster
+	k8context.ConextInner.User = cfg.K8s.ContextUser
+	k8cfg.Contexts = append(k8cfg.Contexts, k8context)
+
+	y, err := yaml.Marshal(k8cfg)
+
+	fmt.Println(string(y))
+
+	/// trying to create a temp kube_config file
+	f, err := os.Create(cfg.K8s.ConfigPath)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer f.Close()
+	_, err = f.WriteString(string(y))
+	f.Sync()
+	///////////////////////////////////////////////////////////////
+
 	//establishing kafka connection first
 	kafkaProducer, err := Configure([]string{cfg.Kafka.Host + ":" + cfg.Kafka.Port}, cfg.Kafka.ClientId, cfg.Kafka.Topic)
 	if err != nil {
@@ -111,7 +205,7 @@ func main() {
 
 	//reading from Kube config file
 	var kubeconfig *string
-	if home := homeDir(); home != "" {
+	if home != "" {
 		kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
 	} else {
 		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
