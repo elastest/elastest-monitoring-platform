@@ -38,6 +38,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
@@ -45,11 +46,12 @@ var writer *kafka.Writer
 
 type Configuration struct {
 	Kafka struct {
-		Port     string
-		Host     string
-		Topic    string
-		Series   string
-		ClientId string
+		Port        string
+		Host        string
+		Topic       string
+		Series      string
+		ClientId    string
+		Periodicity string
 	}
 	K8s struct {
 		ClusterName           string
@@ -156,6 +158,30 @@ func main() {
 
 	if len(os.Getenv("clientid")) > 0 {
 		cfg.Kafka.ClientId = os.Getenv("clientid")
+	}
+
+	if len(os.Getenv("periodicity")) > 0 {
+		cfg.Kafka.Periodicity = os.Getenv("periodicity")
+	}
+
+	if len(os.Getenv("clusterserver")) > 0 {
+		cfg.K8s.ClusterServer = os.Getenv("clusterserver")
+	}
+
+	if len(os.Getenv("clustername")) > 0 {
+		cfg.K8s.ClusterName = os.Getenv("clustername")
+	}
+
+	if len(os.Getenv("username")) > 0 {
+		cfg.K8s.UserName = os.Getenv("username")
+	}
+
+	if len(os.Getenv("configpath")) > 0 {
+		cfg.K8s.ConfigPath = os.Getenv("configpath")
+	}
+
+	if len(os.Getenv("currentcontext")) > 0 {
+		cfg.K8s.CurrentContext = os.Getenv("currentcontext")
 	}
 	///////////////////////////////////////////////////////////////
 
@@ -293,8 +319,8 @@ func main() {
 		if err != nil {
 			panic(err.Error())
 		}
-
-		time.Sleep(10 * time.Second)
+		duration, _ := strconv.Atoi(cfg.Kafka.Periodicity)
+		time.Sleep(time.Duration(duration) * time.Second)
 	}
 }
 
