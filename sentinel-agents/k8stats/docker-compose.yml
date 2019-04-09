@@ -11,7 +11,7 @@ services:
       - clientid=sentinel-k8s-client
       - periodicity=30
       - clustername=minikube
-      - clusterserver=https://192.168.99.105:8443
+      - clusterserver=https://192.168.99.106:8443
       - clusterca=ca.crt
       - contextname=minikube
       - contextcluster=minikube
