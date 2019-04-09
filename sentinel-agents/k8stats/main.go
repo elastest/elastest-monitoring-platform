@@ -34,7 +34,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
-	metrics "k8s.io/metrics/pkg/client/clientset/versioned"
 	"log"
 	"os"
 	"path/filepath"
@@ -74,6 +73,8 @@ type k8sdata struct {
 	Podcount       int    `json:"podcount"`
 	Servicecount   int    `json:"servicecount"`
 	Namespacecount int    `json:"namespacecount"`
+	Cpu            string `json:"cpu"`
+	Memory         string `json:"ram"`
 }
 
 type kubeconfig struct {
@@ -117,6 +118,25 @@ type K8Context struct {
 type ContextObj struct {
 	ClusterName string `yaml:"cluster"`
 	User        string `yaml:"user"`
+}
+
+type NodesStat struct {
+	Items []NodeData `json:"items"`
+}
+
+type NodeData struct {
+	Metadata NodeMetadata `json:"metadata"`
+	Usage    NodeUsage    `json:"usage"`
+}
+
+type NodeMetadata struct {
+	Name     string `json:"name"`
+	SelfLink string `json:"selfLink"`
+}
+
+type NodeUsage struct {
+	CPU    string `json:"cpu"`
+	Memory string `json:memory`
 }
 
 func main() {
@@ -253,7 +273,7 @@ func main() {
 		panic(err.Error())
 	}
 
-	mc, err := metrics.NewForConfig(config)
+	//mc, err := metrics.NewForConfig(config)
 
 	for {
 		//creating the sample point to send to sentinel
@@ -292,25 +312,39 @@ func main() {
 			fmt.Printf("Found namespace [%s].\n", namespace.GetName())
 		}
 
-		metrices, err := mc.MetricsV1beta1().NodeMetricses().List(metav1.ListOptions{})
 
-		if err != nil {
-			panic(err.Error())
+		///////////////// getting node stats ////////////////
+		data, err := clientset.RESTClient().Get().AbsPath("apis/metrics.k8s.io/v1beta1/nodes").DoRaw()
+		var nodesData NodesStat
+		json.Unmarshal(data, &nodesData)
+
+		for _, node := range nodesData.Items {
+			fmt.Printf("Received data on node [%s]: CPU usage: [%s], RAM: [%s]\n", node.Metadata.Name, node.Usage.CPU, node.Usage.Memory)
+			dataPoint.Node = node.Metadata.Name
+			dataPoint.Cpu = node.Usage.CPU
+			dataPoint.Memory = node.Usage.Memory
 		}
-		for _, nodeMetric := range metrices.Items {
-			fmt.Printf("Found node with name [%s].\n", nodeMetric.GetName())
 
-			dataPoint.Node = nodeMetric.GetName()
+		/////////////////////////////////////////////////////
 
-			nodeData, err := mc.MetricsV1beta1().NodeMetricses().Get(nodeMetric.GetName(), metav1.GetOptions{})
-			if err != nil {
-				panic(err.Error())
-			}
-			mapdata := nodeData.GetLabels()
-			for k := range mapdata {
-				fmt.Printf("Got a key [%s].\n", k)
-			}
-		}
+		//metrices, err := mc.MetricsV1beta1().NodeMetricses().List(metav1.ListOptions{})
+		//
+		//if err != nil {
+		//	panic(err.Error())
+		//}
+		//for _, nodeMetric := range metrices.Items {
+		//	fmt.Printf("Found node with name [%s].\n", nodeMetric.GetName())
+		//	dataPoint.Node = nodeMetric.GetName()
+		//
+		//	nodeData, err := mc.MetricsV1beta1().NodeMetricses().Get(nodeMetric.GetName(), metav1.GetOptions{})
+		//	if err != nil {
+		//		panic(err.Error())
+		//	}
+		//	mapdata := nodeData.GetLabels()
+		//	for k := range mapdata {
+		//		fmt.Printf("Got a key [%s].\n", k)
+		//	}
+		//}
 
 		msgtosend, _ := json.Marshal(dataPoint)
 		msg := string(msgtosend)
