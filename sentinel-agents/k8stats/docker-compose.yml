@@ -23,7 +23,11 @@ services:
       - configpath=/tmp/kube_config
     volumes:
       - ./keys:/root/.kube/
+    networks:
+      - dockervboxnet
 networks:
+  dockervboxnet:
+    external: true
   default:
     external:
       name: sentinel
