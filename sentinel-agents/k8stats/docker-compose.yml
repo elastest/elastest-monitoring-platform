@@ -10,6 +10,8 @@ services:
       - series=kubernetes
       - clientid=sentinel-k8s-client
       - periodicity=120
+    volumes:
+      - ./keys:/root/.kube/
 networks:
   default:
     external:
