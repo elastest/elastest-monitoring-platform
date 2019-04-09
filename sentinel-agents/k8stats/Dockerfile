@@ -8,5 +8,6 @@ COPY . .
 
 RUN go get -d -v ./...
 RUN go install -v ./...
+RUN mkdir -p /root/.kube/
 
 CMD ["k8stats","-conf=/go/src/k8stats/config.cfg"]
