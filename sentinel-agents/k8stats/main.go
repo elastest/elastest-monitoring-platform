@@ -53,6 +53,7 @@ type Configuration struct {
 		Periodicity string
 	}
 	K8s struct {
+		ApiToken              string
 		ClusterName           string
 		ClusterServer         string
 		ClusterCA             string
@@ -136,7 +137,7 @@ type NodeMetadata struct {
 
 type NodeUsage struct {
 	CPU    string `json:"cpu"`
-	Memory string `json:memory`
+	Memory string `json:"memory"`
 }
 
 func main() {
@@ -192,8 +193,32 @@ func main() {
 		cfg.K8s.ClusterName = os.Getenv("clustername")
 	}
 
+	if len(os.Getenv("clusterca")) > 0 {
+		cfg.K8s.ClusterCA = os.Getenv("clusterca")
+	}
+
+	if len(os.Getenv("contextname")) > 0 {
+		cfg.K8s.ContextName = os.Getenv("contextname")
+	}
+
+	if len(os.Getenv("contextcluster")) > 0 {
+		cfg.K8s.ContextCluster = os.Getenv("contextcluster")
+	}
+
+	if len(os.Getenv("contextuser")) > 0 {
+		cfg.K8s.ContextUser = os.Getenv("contextuser")
+	}
+
 	if len(os.Getenv("username")) > 0 {
 		cfg.K8s.UserName = os.Getenv("username")
+	}
+
+	if len(os.Getenv("userclientcertificate")) > 0 {
+		cfg.K8s.UserClientCertificate = os.Getenv("userclientcertificate")
+	}
+
+	if len(os.Getenv("userclientkey")) > 0 {
+		cfg.K8s.UserClientKey = os.Getenv("userclientkey")
 	}
 
 	if len(os.Getenv("configpath")) > 0 {
@@ -202,6 +227,10 @@ func main() {
 
 	if len(os.Getenv("currentcontext")) > 0 {
 		cfg.K8s.CurrentContext = os.Getenv("currentcontext")
+	}
+
+	if len(os.Getenv("apitoken")) > 0 {
+		cfg.K8s.ApiToken = os.Getenv("apitoken")
 	}
 	///////////////////////////////////////////////////////////////
 
@@ -230,7 +259,7 @@ func main() {
 
 	y, err := yaml.Marshal(k8cfg)
 
-	fmt.Println(string(y))
+	fmt.Printf("Kube config object generated in code. Value:\n----------------\n%s\n----------------\n", string(y))
 
 	/// trying to create a temp kube_config file
 	f, err := os.Create(cfg.K8s.ConfigPath)
@@ -239,7 +268,7 @@ func main() {
 	}
 	defer f.Close()
 	_, err = f.WriteString(string(y))
-	f.Sync()
+	err = f.Sync()
 	///////////////////////////////////////////////////////////////
 
 	//establishing kafka connection first
@@ -263,6 +292,11 @@ func main() {
 
 	// use the current context in kubeconfig
 	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+	config.BearerToken = cfg.K8s.ApiToken
+	//config.Insecure = false
+	//config.Host = cfg.K8s.ClusterServer
+
+	fmt.Printf("Verifying config data:\n\tHost: %s\n\tInsecure Mode: %t\n\tBearer Token: %s\n", config.Host, config.Insecure, config.BearerToken)
 	if err != nil {
 		panic(err.Error())
 	}
@@ -312,11 +346,10 @@ func main() {
 			fmt.Printf("Found namespace [%s].\n", namespace.GetName())
 		}
 
-
 		///////////////// getting node stats ////////////////
 		data, err := clientset.RESTClient().Get().AbsPath("apis/metrics.k8s.io/v1beta1/nodes").DoRaw()
 		var nodesData NodesStat
-		json.Unmarshal(data, &nodesData)
+		err = json.Unmarshal(data, &nodesData)
 
 		for _, node := range nodesData.Items {
 			fmt.Printf("Received data on node [%s]: CPU usage: [%s], RAM: [%s]\n", node.Metadata.Name, node.Usage.CPU, node.Usage.Memory)
