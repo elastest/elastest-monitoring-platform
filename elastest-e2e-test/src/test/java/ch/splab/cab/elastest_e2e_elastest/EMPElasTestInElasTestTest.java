@@ -63,7 +63,7 @@ public class EMPElasTestInElasTestTest extends ElastestBaseTest {
         logger.info("EMP Page title: " + driver.getTitle());
         logger.info("logging in grafana directly");
         driver.get(tormUrl + "/grafana/");
-        WebElement cpuUsagePanel = driver.findElement(By.xpath("//span[text()='Component's CPU Usage']"));
+        WebElement cpuUsagePanel = driver.findElement(By.xpath("//*[@class='panel-title-container drag-handle']//*[text()='Component's CPU Usage']"));
         assertNotNull(cpuUsagePanel);
 
         try {
