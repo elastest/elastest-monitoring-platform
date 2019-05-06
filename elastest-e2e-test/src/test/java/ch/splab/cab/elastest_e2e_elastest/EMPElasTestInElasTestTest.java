@@ -30,8 +30,7 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import static java.lang.System.getProperty;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class EMPElasTestInElasTestTest extends ElastestBaseTest {
     private static final Logger logger = LogManager.getLogger(EMPElasTestInElasTestTest.class);
@@ -64,19 +63,14 @@ public class EMPElasTestInElasTestTest extends ElastestBaseTest {
         logger.info("EMP Page title: " + driver.getTitle());
         logger.info("logging in grafana directly");
         driver.get(tormUrl + "/grafana/");
-        WebElement username = driver.findElement(By.name("username"));
-        WebElement password = driver.findElement(By.name("password"));
-        username.sendKeys("admin");
-        password.sendKeys(grafanaPass);
-        driver.findElement(By.xpath("//span[text()='Password']//following::button")).click();
+        WebElement cpuUsagePanel = driver.findElement(By.xpath("//span[text()='Component's CPU Usage']"));
+        assertNotNull(cpuUsagePanel);
+
         try {
             Thread.sleep(5000);
         } catch (Exception ex)
         {
 
         }
-        WebElement alert = driver.findElement(By.className("alert-title"));
-        logger.info("Result of login attempt: " + alert.getText() + ", expected should be: Invalid username or password");
-        assertEquals("Invalid username or password", alert.getText());
     }
 }
