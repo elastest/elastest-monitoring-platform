@@ -57,20 +57,30 @@ public class EMPElasTestInElasTestTest extends ElastestBaseTest {
         catch(Exception ex)
         {
             logger.info("Unable to find side navigation link. Directly accessing emp");
-            driver.get(tormUrl + "/#/emp");
+            driver.get(tormUrl + "#/emp");
+            WebElement empPane = driver.findElement(By.name("service-gui"));
+            assertNotNull(empPane);
+            logger.info("received iFrame src: " + empPane.getAttribute("src"));
+            assertEquals(empPane.getAttribute("src"), "http://nightly.elastest.io:37000/grafana/dashboard/db/elastest?refresh=30s&orgId=1&theme=light");
+
+            try {
+                Thread.sleep(5000);
+            } catch (Exception e)
+            {
+
+            }
         }
 
         logger.info("EMP Page title: " + driver.getTitle());
-        logger.info("logging in grafana directly");
-        driver.get(tormUrl + "/grafana/");
-        WebElement cpuUsagePanel = driver.findElement(By.xpath("//*[@class='panel-title-container drag-handle']//*[text()='Component's CPU Usage']"));
-        assertNotNull(cpuUsagePanel);
+        //logger.info("logging in grafana directly");
+        //driver.get(tormUrl + "grafana/");
 
-        try {
-            Thread.sleep(5000);
-        } catch (Exception ex)
-        {
 
-        }
+//        try {
+//            Thread.sleep(5000);
+//        } catch (Exception ex)
+//        {
+//
+//        }
     }
 }
