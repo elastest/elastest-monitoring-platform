@@ -31,3 +31,4 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 ```
 
+*Metric server* should be already enabled and running in the Kubernetes deployment for retrieval of full spectrum of data by this agent process. If not then this agent will only report back a subset of metrics.
