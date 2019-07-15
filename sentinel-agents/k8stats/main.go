@@ -33,17 +33,22 @@ import (
 	"gopkg.in/yaml.v2"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"log"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
 var writer *kafka.Writer
 
 type Configuration struct {
+	Service struct {
+		Mode 		string
+	}
 	Kafka struct {
 		Port        string
 		Host        string
@@ -161,6 +166,10 @@ func main() {
 	}
 
 	//////now overriding values from environment if available////
+	if len(os.Getenv("mode")) > 0 {
+		cfg.Service.Mode = os.Getenv("mode")
+	}
+
 	if len(os.Getenv("host")) > 0 {
 		cfg.Kafka.Host = os.Getenv("host")
 	}
@@ -233,42 +242,74 @@ func main() {
 		cfg.K8s.ApiToken = os.Getenv("apitoken")
 	}
 	///////////////////////////////////////////////////////////////
+	var config *rest.Config
 
-	home := homeDir()
+	if strings.Compare(cfg.Service.Mode, "incluster") == 0 {
+		config, err = rest.InClusterConfig()
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		home := homeDir()
 
-	/// trying to recreate kubeconfig file within the code
-	k8cfg := kubeconfig{}
-	k8cfg.ApiVersion = "v1"
-	k8cfg.Kind = "Config"
-	k8cfg.CurrentContext = cfg.K8s.CurrentContext
-	user := User{}
-	user.Name = cfg.K8s.UserName
-	user.UserInner.ClientCert = filepath.Join(home, ".kube", cfg.K8s.UserClientCertificate)
-	user.UserInner.ClientKey = filepath.Join(home, ".kube", cfg.K8s.UserClientKey)
-	k8cfg.Users = append(k8cfg.Users, user)
-	cluster := Cluster{}
-	cluster.Name = cfg.K8s.ClusterName
-	cluster.ClusterInner.Server = cfg.K8s.ClusterServer
-	cluster.ClusterInner.CertificateAuth = filepath.Join(home, ".kube", cfg.K8s.ClusterCA)
-	k8cfg.Clusters = append(k8cfg.Clusters, cluster)
-	k8context := K8Context{}
-	k8context.Name = cfg.K8s.ContextName
-	k8context.ConextInner.ClusterName = cfg.K8s.ContextCluster
-	k8context.ConextInner.User = cfg.K8s.ContextUser
-	k8cfg.Contexts = append(k8cfg.Contexts, k8context)
+		/// trying to recreate kubeconfig file within the code
+		k8cfg := kubeconfig{}
+		k8cfg.ApiVersion = "v1"
+		k8cfg.Kind = "Config"
+		k8cfg.CurrentContext = cfg.K8s.CurrentContext
+		user := User{}
+		user.Name = cfg.K8s.UserName
+		user.UserInner.ClientCert = filepath.Join(home, ".kube", cfg.K8s.UserClientCertificate)
+		user.UserInner.ClientKey = filepath.Join(home, ".kube", cfg.K8s.UserClientKey)
+		k8cfg.Users = append(k8cfg.Users, user)
+		cluster := Cluster{}
+		cluster.Name = cfg.K8s.ClusterName
+		cluster.ClusterInner.Server = cfg.K8s.ClusterServer
+		cluster.ClusterInner.CertificateAuth = filepath.Join(home, ".kube", cfg.K8s.ClusterCA)
+		k8cfg.Clusters = append(k8cfg.Clusters, cluster)
+		k8context := K8Context{}
+		k8context.Name = cfg.K8s.ContextName
+		k8context.ConextInner.ClusterName = cfg.K8s.ContextCluster
+		k8context.ConextInner.User = cfg.K8s.ContextUser
+		k8cfg.Contexts = append(k8cfg.Contexts, k8context)
 
-	y, err := yaml.Marshal(k8cfg)
+		y, err := yaml.Marshal(k8cfg)
 
-	fmt.Printf("Kube config object generated in code. Value:\n----------------\n%s\n----------------\n", string(y))
+		fmt.Printf("Kube config object generated in code. Value:\n----------------\n%s\n----------------\n", string(y))
 
-	/// trying to create a temp kube_config file
-	f, err := os.Create(cfg.K8s.ConfigPath)
-	if err != nil {
-		panic(err.Error())
+		/// trying to create a temp kube_config file
+		f, err := os.Create(cfg.K8s.ConfigPath)
+		if err != nil {
+			panic(err.Error())
+		}
+		defer f.Close()
+		_, err = f.WriteString(string(y))
+		err = f.Sync()
+
+		//reading from Kube config file
+		var kubeconfig *string
+		if home != "" {
+			//kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
+			kubeconfig = flag.String("kubeconfig", cfg.K8s.ConfigPath, "(optional) absolute path to the kubeconfig file")
+		} else {
+			kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
+		}
+		flag.Parse()
+
+		fmt.Printf("Using the Kube config file located at: %s\n", *kubeconfig)
+
+		// use the current context in kubeconfig
+		config, err = clientcmd.BuildConfigFromFlags("", *kubeconfig)
+		config.BearerToken = cfg.K8s.ApiToken
+		//config.Insecure = false
+		//config.Host = cfg.K8s.ClusterServer
+
+		fmt.Printf("Verifying config data:\n\tHost: %s\n\tInsecure Mode: %t\n\tBearer Token: %s\n", config.Host, config.Insecure, config.BearerToken)
+		if err != nil {
+			panic(err.Error())
+		}
 	}
-	defer f.Close()
-	_, err = f.WriteString(string(y))
-	err = f.Sync()
+
 	///////////////////////////////////////////////////////////////
 
 	//establishing kafka connection first
@@ -277,29 +318,6 @@ func main() {
 		panic(err.Error())
 	}
 	defer kafkaProducer.Close()
-
-	//reading from Kube config file
-	var kubeconfig *string
-	if home != "" {
-		//kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config"), "(optional) absolute path to the kubeconfig file")
-		kubeconfig = flag.String("kubeconfig", cfg.K8s.ConfigPath, "(optional) absolute path to the kubeconfig file")
-	} else {
-		kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-	}
-	flag.Parse()
-
-	fmt.Printf("Using the Kube config file located at: %s\n", *kubeconfig)
-
-	// use the current context in kubeconfig
-	config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
-	config.BearerToken = cfg.K8s.ApiToken
-	//config.Insecure = false
-	//config.Host = cfg.K8s.ClusterServer
-
-	fmt.Printf("Verifying config data:\n\tHost: %s\n\tInsecure Mode: %t\n\tBearer Token: %s\n", config.Host, config.Insecure, config.BearerToken)
-	if err != nil {
-		panic(err.Error())
-	}
 
 	// create the clientset
 	clientset, err := kubernetes.NewForConfig(config)
