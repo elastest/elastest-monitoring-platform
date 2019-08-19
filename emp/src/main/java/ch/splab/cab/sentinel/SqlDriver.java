@@ -995,7 +995,7 @@ public class SqlDriver
             logger.warn("DB connection is null.");
             return null;
         }
-        
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method")).from("healthcheck").getSQL();
         LinkedList<HealthCheckInput> pingList =  new LinkedList<>();
