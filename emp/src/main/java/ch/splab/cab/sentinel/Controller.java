@@ -58,7 +58,7 @@ public class Controller {
     }
 
     @RequestMapping(value="/visualization", method = RequestMethod.GET)
-    public String showDashboard(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model)
+    public String showDashboard(@CookieValue(value = "islogged", defaultValue = "eyJpc0xvZ2dlZCI6Im5vIn0=") String loggedCookie, HttpServletRequest request, HttpServletResponse response, Model model) throws NullPointerException
     {
         logger.info("serving /visualization");
 
@@ -73,7 +73,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
             return "login";
         else
         {
@@ -115,8 +118,10 @@ public class Controller {
         String cookievalue = new String(barr);
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
+        if (myCookie == null)
+            return "login";
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie.isLogged.matches("no"))
             return "login";
         else
         {
@@ -165,7 +170,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
             return "login";
         else
         {
@@ -233,7 +241,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
             return "login";
         else
         {
@@ -308,7 +319,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
             return "login";
         else
         {
@@ -352,7 +366,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
         {
             model.addAttribute("basepath", basePath);
             return "login";
@@ -457,7 +474,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
         {
             model.addAttribute("basepath", basePath);
             return "login";
@@ -542,7 +562,10 @@ public class Controller {
         Gson gson = new Gson();
         MyCookie myCookie = gson.fromJson(cookievalue, MyCookie.class);
 
-        if (myCookie != null && myCookie.isLogged.matches("no"))
+        if (myCookie == null)
+            return "login";
+
+        if (myCookie.isLogged.matches("no"))
         {
             model.addAttribute("basepath", basePath);
             return "login";

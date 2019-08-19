@@ -59,6 +59,11 @@ public class SqlDriver
     static ArrayList<String> getDbTablesList()
     {
         Connection con = getDBConnection();
+        if (con == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         ArrayList<String> discoveredTableList = null;
         try {
             DatabaseMetaData metaData = con.getMetaData();
@@ -82,6 +87,11 @@ public class SqlDriver
     static public LinkedList<SpaceOutput> getUserSpaces(int userId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name"), field("id"), field("queryuser"), field("querypass")).from("space").where("userid = ?").getSQL();
         LinkedList<SpaceOutput> spaces =  new LinkedList<>();
@@ -115,6 +125,11 @@ public class SqlDriver
     static LinkedList<SeriesOutput> getSpaceSeries(int spaceId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name"), field("id"), field("structure")).from("series").where("spaceid = ?").getSQL();
         LinkedList<SeriesOutput> series =  new LinkedList<>();
@@ -144,6 +159,11 @@ public class SqlDriver
     static public boolean isDuplicateUser(String login)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return true;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(DSL.count()).from("user").where("login = ?").getSQL();
         int accounts = -1;
@@ -169,6 +189,11 @@ public class SqlDriver
     static public boolean isValidApikey(String login, String apiKey)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return false;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("apikey")).from("user").where("login = ?").getSQL();
         String apikey = "";
@@ -196,6 +221,11 @@ public class SqlDriver
     static public boolean isValidApikey(int userid, String apiKey)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return false;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("apikey")).from("user").where("id = ?").getSQL();
         String apikey = "";
@@ -223,6 +253,11 @@ public class SqlDriver
     static public boolean isValidPassword(int userid, String password)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return false;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("passwordhash")).from("user").where("id = ?").getSQL();
         String hash = "";
@@ -250,6 +285,11 @@ public class SqlDriver
     static public boolean isDuplicateSpace(String login, String sName)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return true;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         int userId = getUserId(login);
         String sql = create.select(DSL.count()).from("space").where("name = ?").and("userid = ?").getSQL();
@@ -278,6 +318,11 @@ public class SqlDriver
     static public boolean isDuplicateSeries(String login, String seriesName, String spaceName)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return true;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(DSL.count()).from("series").where("name = ?").and("spaceid = ?").getSQL();
         int spaceId = getSpaceId(login, spaceName);
@@ -306,6 +351,11 @@ public class SqlDriver
     static public int addSpace(String login, String sName, String quser, String qpass)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         int userId = getUserId(login);
         String sql = create.insertInto(table("space"), field("name"), field("queryuser"), field("querypass"), field("userid")).
@@ -332,6 +382,11 @@ public class SqlDriver
     static public int addSeries(String seriesName, String msgStructure, int spaceId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
         String sql = create.insertInto(table("series"), field("name"), field("structure"), field("spaceid")).
@@ -362,6 +417,11 @@ public class SqlDriver
         }
 
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
         String sql = create.insertInto(table("healthcheck"), field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("userid")).
@@ -390,6 +450,11 @@ public class SqlDriver
     static int updatePingEntry(String pingURL, String reportURL, long periodicity, int tolerance, String method, int pingId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
 
         String sql = create.update(table("healthcheck")).set(field("pingurl"), "?").set(field("reporturl"), "?").set(field("periodicity"), "?")
@@ -422,6 +487,11 @@ public class SqlDriver
     static LinkedList<HealthCheckOutput> getPingList()
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("userid"))
                 .from("healthcheck").getSQL();
@@ -454,6 +524,11 @@ public class SqlDriver
     static LinkedList<HealthCheckOutput> getFilteredPingList(int userId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("id"))
                 .from("healthcheck").where("userid = ?").getSQL();
@@ -489,6 +564,11 @@ public class SqlDriver
     static public HealthCheckOutput getPingData(int pingId, int userId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"))
                 .from("healthcheck").where("id = ?").and("userid = ?").getSQL();
@@ -520,6 +600,11 @@ public class SqlDriver
     static boolean isDuplicatePing(String login, String pingURL, String reportURL)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return true;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(DSL.count()).from("healthcheck").where("pingurl = ?").and("reporturl = ?").and("userid = ?").getSQL();
         int userId = getUserId(login);
@@ -549,6 +634,11 @@ public class SqlDriver
     static public int addUser(String login, String password, String apiKey)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.insertInto(table("user"), field("login"), field("passwordhash"), field("apikey")).
                 values("?", "?", "?").getSQL();
@@ -574,6 +664,11 @@ public class SqlDriver
     static public int getUserId(String login)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("user").where("login = ?").getSQL();
         int id = -1;
@@ -598,6 +693,11 @@ public class SqlDriver
     static int getSpaceId(int userId, String spaceName)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("space").where("name = ?").and("userid = ?").getSQL();
         int id = -1;
@@ -623,6 +723,11 @@ public class SqlDriver
     static public int getSpaceId(String login, String sName)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         int userId = getUserId(login);
         String sql = create.select(field("id")).from("space").where("name = ?").and("userid = ?").getSQL();
@@ -649,6 +754,11 @@ public class SqlDriver
     static int getSeriesId(String seriesName, int spaceId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("series").where("name = ?").and("spaceid = ?").getSQL();
         int id = -1;
@@ -674,6 +784,11 @@ public class SqlDriver
     static int getPingId(String pingURL, String reportURL, int userId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("healthcheck").where("pingurl = ?").and("reporturl = ?").and("userid = ?").getSQL();
         int id = -1;
@@ -700,6 +815,11 @@ public class SqlDriver
     static String getSeriesMsgFormat(String seriesName, int spaceId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("structure")).from("series").where("name = ?").and("spaceid = ?").getSQL();
         String msgFormat = null;
@@ -725,6 +845,11 @@ public class SqlDriver
     static String getSeriesName(int seriesId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name")).from("series").where("id = ?").getSQL();
         String name = null;
@@ -749,6 +874,11 @@ public class SqlDriver
     static String getSpaceName(int spaceId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name")).from("space").where("id = ?").getSQL();
         String name = null;
@@ -773,6 +903,11 @@ public class SqlDriver
     static int getSpaceId(int seriesId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return -1;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("spaceid")).from("series").where("id = ?").getSQL();
         int spaceId = -1;
@@ -797,6 +932,11 @@ public class SqlDriver
     static public String getAPIKey(int userId)
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("apikey")).from("user").where("id = ?").getSQL();
         String key = null;
@@ -821,6 +961,11 @@ public class SqlDriver
     static LinkedList<String> getGlobalTopicsList()
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name"), field("userid")).from("space").getSQL();
         LinkedList<String> topics =  new LinkedList<>();
@@ -846,6 +991,11 @@ public class SqlDriver
     static LinkedList<HealthCheckInput> getGlobalPingList()
     {
         Connection conn = getDBConnection();
+        if (conn == null) {
+            logger.warn("DB connection is null.");
+            return null;
+        }
+        
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method")).from("healthcheck").getSQL();
         LinkedList<HealthCheckInput> pingList =  new LinkedList<>();
