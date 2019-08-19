@@ -3,6 +3,7 @@
 Copyright © 2017-2019 Zuercher Hochschule fuer Angewandte Wissenschaften. Licensed under [Apache 2.0 License].
 # elastest-monitoring-platform (emp)
 Monitoring service for monitoring ElasTest platform
+
 [![License badge](https://img.shields.io/badge/license-Apache2-orange.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Documentation badge](https://img.shields.io/badge/docs-latest-brightgreen.svg)](http://elastest.io/docs/)
 [![Build Status](https://travis-ci.org/elastest/elastest-monitoring-platform.svg?branch=master)](https://travis-ci.org/elastest/elastest-monitoring-platform)
