@@ -7,6 +7,7 @@ Monitoring service for monitoring ElasTest platform
 [![Documentation badge](https://img.shields.io/badge/docs-latest-brightgreen.svg)](http://elastest.io/docs/)
 [![Build Status](https://travis-ci.org/elastest/elastest-monitoring-platform.svg?branch=master)](https://travis-ci.org/elastest/elastest-monitoring-platform)
 [![codecov](https://codecov.io/gh/elastest/elastest-monitoring-platform/branch/master/graph/badge.svg)](https://codecov.io/gh/elastest/elastest-monitoring-platform)
+[![Quality Gate Status](http://kafka.cloudlab.zhaw.ch:9000/api/project_badges/measure?project=ch.splab.cab%3Asentinel&metric=alert_status)](http://kafka.cloudlab.zhaw.ch:9000/dashboard?id=ch.splab.cab%3Asentinel)
 
 # What is ElasTest
 

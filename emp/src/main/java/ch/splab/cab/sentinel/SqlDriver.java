@@ -95,10 +95,10 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name"), field("id"), field("queryuser"), field("querypass")).from("space").where("userid = ?").getSQL();
         LinkedList<SpaceOutput> spaces =  new LinkedList<>();
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 SpaceOutput temp = new SpaceOutput();
@@ -112,12 +112,21 @@ public class SqlDriver
                 temp.seriesList = getSpaceSeries(temp.id).toArray(new SeriesOutput[SqlDriver.getSpaceSeries(temp.id).size()]);
                 spaces.add(temp);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in retrieving list of registered spaces for user: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return spaces;
     }
@@ -133,10 +142,10 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name"), field("id"), field("structure")).from("series").where("spaceid = ?").getSQL();
         LinkedList<SeriesOutput> series =  new LinkedList<>();
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, spaceId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 SeriesOutput temp = new SeriesOutput();
@@ -146,12 +155,21 @@ public class SqlDriver
                 temp.accessUrl = "/api/series/" + temp.id;
                 series.add(temp);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in retrieving list of registered series for user: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return series;
     }
@@ -167,25 +185,35 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(DSL.count()).from("user").where("login = ?").getSQL();
         int accounts = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, login);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 accounts = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in duplicate user test." + sqex.getMessage());
         }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
+        }
         if(accounts > 0) return true;
         return false;
     }
 
+    // no sonarqube fix on try argument
     static public boolean isValidApikey(String login, String apiKey)
     {
         Connection conn = getDBConnection();
@@ -218,6 +246,7 @@ public class SqlDriver
         return false;
     }
 
+    // no sonarqube fix on try argument
     static public boolean isValidApikey(int userid, String apiKey)
     {
         Connection conn = getDBConnection();
@@ -250,6 +279,7 @@ public class SqlDriver
         return false;
     }
 
+    // no sonarqube fix on tru argument
     static public boolean isValidPassword(int userid, String password)
     {
         Connection conn = getDBConnection();
@@ -295,21 +325,30 @@ public class SqlDriver
         String sql = create.select(DSL.count()).from("space").where("name = ?").and("userid = ?").getSQL();
 
         int count = 0;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sName);
             stmt.setInt(2, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 count = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in duplicate space test: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         if(count > 0) return true;
         return false;
@@ -328,21 +367,30 @@ public class SqlDriver
         int spaceId = getSpaceId(login, spaceName);
 
         int count = 0;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql);) {
             stmt.setString(1, seriesName);
             stmt.setInt(2, spaceId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 count = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in duplicate series test: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         if(count > 0) return true;
         return false;
@@ -361,20 +409,27 @@ public class SqlDriver
         String sql = create.insertInto(table("space"), field("name"), field("queryuser"), field("querypass"), field("userid")).
                 values("?", "?", "?", "?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sName);
             stmt.setString(2, quser);
             stmt.setString(3, qpass);
             stmt.setInt(4, userId);
             stmt.executeUpdate();
             stmt.close();
-            conn.close();
             id = getSpaceId(login, sName);
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in adding a new space: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -392,19 +447,26 @@ public class SqlDriver
         String sql = create.insertInto(table("series"), field("name"), field("structure"), field("spaceid")).
                 values("?", "?", "?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, seriesName);
             stmt.setString(2, msgStructure);
             stmt.setInt(3, spaceId);
             stmt.executeUpdate();
             stmt.close();
-            conn.close();
             id = getSeriesId(seriesName, spaceId);
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in adding a new series: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -427,8 +489,7 @@ public class SqlDriver
         String sql = create.insertInto(table("healthcheck"), field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("userid")).
                 values("?", "?", "?", "?", "?", "?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, pingURL);
             stmt.setString(2, reportURL);
             stmt.setLong(3, periodicity);
@@ -437,12 +498,20 @@ public class SqlDriver
             stmt.setInt(6, getUserId(login));
             stmt.executeUpdate();
             stmt.close();
-            conn.close();
             id = getPingId(pingURL, reportURL, getUserId(login));
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in adding a new series: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -460,8 +529,7 @@ public class SqlDriver
         String sql = create.update(table("healthcheck")).set(field("pingurl"), "?").set(field("reporturl"), "?").set(field("periodicity"), "?")
                 .set(field("tolerance"), "?").set(field("method"), "?").where("id = ?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, pingURL);
             stmt.setString(2, reportURL);
             stmt.setLong(3, periodicity);
@@ -470,7 +538,6 @@ public class SqlDriver
             stmt.setInt(6, pingId);
             stmt.executeUpdate();
             stmt.close();
-            conn.close();
             id = pingId;
         }
         catch(SQLException sqex)
@@ -480,6 +547,15 @@ public class SqlDriver
         catch (Exception ex)
         {
             ex.printStackTrace();
+        }
+        finally
+        {
+            try {
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -496,10 +572,9 @@ public class SqlDriver
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("userid"))
                 .from("healthcheck").getSQL();
         LinkedList<HealthCheckOutput> pingList = new LinkedList<>();
-        try
-        {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 HealthCheckOutput data = new HealthCheckOutput();
@@ -511,12 +586,21 @@ public class SqlDriver
                 data.id = rs.getInt(6); //abusing slightly the id filed to store userId
                 pingList.add(data);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in compiling ping list: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return pingList;
     }
@@ -533,12 +617,10 @@ public class SqlDriver
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"), field("id"))
                 .from("healthcheck").where("userid = ?").getSQL();
         LinkedList<HealthCheckOutput> pingList = new LinkedList<>();
-        try
-        {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
-
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 HealthCheckOutput data = new HealthCheckOutput();
@@ -551,12 +633,21 @@ public class SqlDriver
                 data.accessUrl = "/api/pingback/" + data.id;
                 pingList.add(data);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in compiling filtered ping list: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return pingList;
     }
@@ -573,11 +664,11 @@ public class SqlDriver
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method"))
                 .from("healthcheck").where("id = ?").and("userid = ?").getSQL();
         HealthCheckOutput data = null;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, pingId);
             stmt.setInt(2, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 data = new HealthCheckOutput();
@@ -587,12 +678,21 @@ public class SqlDriver
                 data.toleranceFactor = rs.getInt(4);
                 data.method = rs.getString(5);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating ping record: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return data;
     }
@@ -610,22 +710,31 @@ public class SqlDriver
         int userId = getUserId(login);
 
         int count = 0;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, pingURL);
             stmt.setString(2, reportURL);
             stmt.setInt(3, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 count = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in duplicate pingback object test: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         if(count > 0) return true;
         return false;
@@ -643,20 +752,27 @@ public class SqlDriver
         String sql = create.insertInto(table("user"), field("login"), field("passwordhash"), field("apikey")).
                 values("?", "?", "?").getSQL();
         int id = -1;
-        try {
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             String hash = HelperMethods.generateSHA256Hash(password);
-            PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, login);
             stmt.setString(2, hash);
             stmt.setString(3, apiKey);
             stmt.executeUpdate();
             stmt.close();
-            conn.close();
             id = getUserId(login);
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in add user module: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -672,20 +788,29 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("user").where("login = ?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, login);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 id = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating id for user: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -701,21 +826,30 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("space").where("name = ?").and("userid = ?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, spaceName);
             stmt.setInt(2, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 id = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating id for space: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -732,21 +866,30 @@ public class SqlDriver
         int userId = getUserId(login);
         String sql = create.select(field("id")).from("space").where("name = ?").and("userid = ?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sName);
             stmt.setInt(2, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 id = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating space-id for space: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -762,21 +905,30 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("series").where("name = ?").and("spaceid = ?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, seriesName);
             stmt.setInt(2, spaceId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 id = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating series-id for space: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -792,22 +944,31 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("id")).from("healthcheck").where("pingurl = ?").and("reporturl = ?").and("userid = ?").getSQL();
         int id = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, pingURL);
             stmt.setString(2, reportURL);
             stmt.setInt(3, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 id = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating ping id for url: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return id;
     }
@@ -823,21 +984,30 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("structure")).from("series").where("name = ?").and("spaceid = ?").getSQL();
         String msgFormat = null;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, seriesName);
             stmt.setInt(2, spaceId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 msgFormat = rs.getString(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating msg-format for series: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return msgFormat;
     }
@@ -853,20 +1023,29 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name")).from("series").where("id = ?").getSQL();
         String name = null;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, seriesId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 name = rs.getString(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating series name for series: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return name;
     }
@@ -882,20 +1061,29 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name")).from("space").where("id = ?").getSQL();
         String name = null;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, spaceId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 name = rs.getString(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating name for space: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return name;
     }
@@ -911,20 +1099,29 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("spaceid")).from("series").where("id = ?").getSQL();
         int spaceId = -1;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, seriesId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 spaceId = rs.getInt(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating space id for series: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return spaceId;
     }
@@ -940,20 +1137,29 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("apikey")).from("user").where("id = ?").getSQL();
         String key = null;
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 key = rs.getString(1);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in locating api-key for user: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return key;
     }
@@ -969,21 +1175,30 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("name"), field("userid")).from("space").getSQL();
         LinkedList<String> topics =  new LinkedList<>();
-        try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 int userId = rs.getInt(2);
                 String spaceName = rs.getString(1);
                 topics.add("user-" + userId + "-" + spaceName);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in retrieving list of registered spaces: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         return topics;
     }
@@ -999,10 +1214,9 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("pingurl"), field("reporturl"), field("periodicity"), field("tolerance"), field("method")).from("healthcheck").getSQL();
         LinkedList<HealthCheckInput> pingList =  new LinkedList<>();
-        try
-        {
-            PreparedStatement stmt = conn.prepareStatement(sql);
-            ResultSet rs = stmt.executeQuery();
+        ResultSet rs = null;
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            rs = stmt.executeQuery();
             while(rs.next())
             {
                 HealthCheckInput temp = new HealthCheckInput();
@@ -1013,12 +1227,21 @@ public class SqlDriver
                 temp.method = rs.getString(5);
                 pingList.add(temp);
             }
-            rs.close();
-            conn.close();
         }
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in retrieving list of registered heartbeat endpoints: " + sqex.getMessage());
+        }
+        finally
+        {
+            try {
+                if (rs != null)
+                    rs.close();
+                conn.close();
+            } catch(SQLException ex)
+            {
+
+            }
         }
         logger.info("Returning list of registered health check endpoints: " + pingList.size());
         return pingList;
