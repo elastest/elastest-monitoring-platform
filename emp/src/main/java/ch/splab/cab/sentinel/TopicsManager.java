@@ -90,6 +90,8 @@ public class TopicsManager extends Thread {
             catch (InterruptedException e)
             {
                 e.printStackTrace();
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
             }
             logger.info("Topics manager starting another check and update run.");
         }

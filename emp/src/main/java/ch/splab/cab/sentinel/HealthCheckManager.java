@@ -52,6 +52,8 @@ public class HealthCheckManager extends Thread
             catch (InterruptedException e)
             {
                 e.printStackTrace();
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
             }
         }
 
@@ -83,6 +85,8 @@ public class HealthCheckManager extends Thread
                 catch (InterruptedException e)
                 {
                     e.printStackTrace();
+                    // Restore interrupted state...
+                    Thread.currentThread().interrupt();
                 }
             }
             isSafe = false;
@@ -106,6 +110,8 @@ public class HealthCheckManager extends Thread
             catch (InterruptedException e)
             {
                 e.printStackTrace();
+                // Restore interrupted state...
+                Thread.currentThread().interrupt();
             }
             logger.info("Health check manager starting another run.");
         }

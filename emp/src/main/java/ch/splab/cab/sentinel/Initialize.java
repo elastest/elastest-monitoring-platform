@@ -24,6 +24,7 @@ package ch.splab.cab.sentinel;
 import org.apache.log4j.Logger;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,8 +65,9 @@ public class Initialize {
     static boolean initializeDb()
     {
         Connection con = SqlDriver.getDBConnection();
+        Statement statement = null;
         try {
-            Statement statement = con.createStatement();
+            statement = con.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             for (int i=0; i < tables.length; i++)
             {
@@ -74,13 +76,22 @@ public class Initialize {
                 logger.info("(Re)Created table: " + tables[i]);
             }
             logger.info("Database (re)initialized successfully!");
-            con.close();
         }
         catch(Exception ex)
         {
             ex.printStackTrace();
             logger.error("Exception caught while initializing sentinel sql database.");
             return false;
+        }
+        finally {
+            try {
+                if(statement != null)
+                    statement.close();
+                con.close();
+            } catch (SQLException ex)
+            {
+
+            }
         }
         return true;
     }
@@ -92,21 +103,31 @@ public class Initialize {
         if(!status) return false;
 
         Connection con = SqlDriver.getDBConnection();
+        Statement statement = null;
         try {
-            Statement statement = con.createStatement();
+            statement = con.createStatement();
             statement.setQueryTimeout(30);  // set timeout to 30 sec.
             statement.executeUpdate("INSERT INTO user " + "VALUES (1, 'testuser', '9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08', '7ddbba60-8667-11e7-bb31-be2e44b06b34')");
             statement.executeUpdate("INSERT INTO space " + "VALUES (1, 'testspace', 'test', 'test', 1)");
             statement.executeUpdate("INSERT INTO series " + "VALUES (1, 'testseries', 'unixtime:s msgtype:json', 1)");
             statement.executeUpdate("INSERT INTO healthcheck " + "VALUES (1, 'https://blog.zhaw.ch/icclab/', 'https://requestb.in/1gznano1', 30000, 2, 'code', 1)");
             logger.info("Database (re)initialized with test entries successfully!");
-            con.close();
         }
         catch(Exception ex)
         {
             ex.printStackTrace();
             logger.error("Exception caught while initializing sentinel sql database.");
             return false;
+        }
+        finally {
+            try {
+                if(statement != null)
+                    statement.close();
+                con.close();
+            } catch (SQLException ex)
+            {
+
+            }
         }
         return isDbValid();
     }

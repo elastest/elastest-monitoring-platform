@@ -116,6 +116,10 @@ public class KafkaWorker implements Runnable {
         {
             logger.warn("Caught Exception inside kafka worker: " + ex.getLocalizedMessage());
         }
+        finally {
+            if (consumer != null)
+                consumer.close();
+        }
 
         logger.info(Thread.currentThread().getName() + " quitting now. Was subscribed with " + (topics.size() - 1) + " topics.");
     }

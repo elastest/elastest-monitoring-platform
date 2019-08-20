@@ -84,6 +84,7 @@ public class Controller {
             String rawValue = gson.toJson(myCookie);
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
+            foo.setHttpOnly(true);
             foo.setMaxAge(600); //10 minutes expiery
             response.addCookie(foo);
         }
@@ -130,6 +131,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -182,6 +184,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -253,6 +256,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -331,6 +335,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -381,6 +386,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
         redirectAttributes.addFlashAttribute("basepath",basePath);
@@ -489,6 +495,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -577,6 +584,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -651,6 +659,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -722,6 +731,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
         }
 
@@ -778,6 +788,7 @@ public class Controller {
             String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
             Cookie foo = new Cookie("islogged", encoded); //bake cookie
             foo.setMaxAge(600); //10 minutes expiery
+            foo.setHttpOnly(true);
             response.addCookie(foo);
             redirectAttributes.addFlashAttribute("username",username);
         }
@@ -799,6 +810,7 @@ public class Controller {
         String rawValue = gson.toJson(myCookie);
         String encoded = Base64.getEncoder().encodeToString(rawValue.getBytes());
         Cookie foo = new Cookie("islogged", encoded); //bake cookie
+        foo.setHttpOnly(true);
         response.addCookie(foo);
         return "redirect:/";
     }

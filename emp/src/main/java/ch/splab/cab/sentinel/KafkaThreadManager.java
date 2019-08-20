@@ -55,6 +55,8 @@ public class KafkaThreadManager {
                     catch(InterruptedException ex)
                     {
                         ex.printStackTrace();
+                        // Restore interrupted state...
+                        Thread.currentThread().interrupt();
                     }
                 }
                 //now we can proceed
@@ -106,6 +108,8 @@ public class KafkaThreadManager {
                     catch(InterruptedException ex)
                     {
                         ex.printStackTrace();
+                        // Restore interrupted state...
+                        Thread.currentThread().interrupt();
                     }
                 }
                 //now we can proceed

@@ -189,10 +189,15 @@ public class InfluxDBClient
                     for (Result point : dataPoints) //this is a single iteration loop
                     {
                         List<Series> series = point.getSeries();
-                        for (Series val : series) //this is a single iteration loop
+                        if (series.size() > 0)
                         {
+                            Series val = series.get(0);
                             return val.getColumns();
                         }
+//                        for (Series val : series) //this is a single iteration loop
+//                        {
+//                            return val.getColumns();
+//                        }
                     }
                 }
             }

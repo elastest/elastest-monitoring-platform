@@ -51,6 +51,8 @@ public class KafkaClient
         topics = consumer.listTopics();
         Set<String> keys = topics.keySet();
         logger.info("ListTopics: found " + keys.size() + "topic(s).");
+        if(consumer != null) consumer.close();
+
         return keys.toArray(new String[keys.size()]);
     }
 

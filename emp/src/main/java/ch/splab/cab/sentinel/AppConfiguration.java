@@ -32,64 +32,64 @@ public class AppConfiguration {
     final static Logger logger = Logger.getLogger(AppConfiguration.class);
 
     @Value("${stream.adminuser}")
-    String streamDbAdminUser;
+    String streamDbAdminUserAutoInitialized;
 
     @Value("${stream.adminpass}")
-    String streamDbAdminPass;
+    String streamDbAdminPassAutoInitialized;
 
     @Value("${stream.accessurl}")
-    String streamaccessurl;
+    String streamaccessurlAutoInitialized;
 
     @Value("${kafka.endpoint}")
-    String kafka;
+    String kafkaEndPointAutoInitialized;
 
     @Value("${zookeeper.endpoint}")
-    String zookeeper;
+    String zookeeperEndPointAutoInitialized;
 
     @Value("${stream.dbtype}")
-    String streamDbType;
+    String streamDbTypeAutoInitialized;
 
     @Value("${stream.dbendpoint}")
-    String streamDbUrl;
+    String streamDbUrlAutoInitialized;
 
     @Value("${sentinel.db.type}")
-    String sentinelDbType;
+    String sentinelDbTypeAutoInitialized;
 
     @Value("${sentinel.db.endpoint}")
-    String sentinelDbUrl;
+    String sentinelDbUrlAutoInitialized;
 
     @Value("${topic.check.interval}")
-    long topicwaitperiod;
+    long topicwaitperiodAutoInitialized;
 
     @Value("${series.format.cache.size}")
-    int sFormatCSize;
+    int sFormatCSizeAutoInitialized;
 
     @Value("${admin.token}")
-    String adminPass;
+    String adminPassAutoInitialized;
 
     @Value("${published.api.version}")
-    String apiV;
+    String apiVersionAutoInitialized;
 
     @Value("${kafka.key.serializer}")
-    String kafkakeyserializer;
+    String kafkakeyserializerAutoInitialized;
 
     @Value("${kafka.value.serializer}")
-    String kafkavalueserializer;
+    String kafkavalueserializerAutoInitialized;
 
     @Value("${dashboard.title}")
-    String dashboardtitle;
+    String dashboardtitleAutoInitialized;
 
     @Value("${dashboard.endpoint}")
-    String dashboardendpoint;
+    String dashboardendpointAutoInitialized;
 
     @Value("${proxy.workaround.enable}")
-    String proxyworkaroundenable;
+    String proxyworkaroundenableAutoInitialized;
 
     @Value("${proxy.workaround.type}")
-    String proxyworkaroundtype;
+    String proxyworkaroundtypeAutoInitialized;
 
     @Value("${proxy.workaround.location}")
-    String proxyworkaroundlocation;
+    String proxyworkaroundlocationAutoInitialized;
 
 
     private static String streamDBUser;
@@ -275,66 +275,66 @@ public class AppConfiguration {
         if(env.containsKey("STREAM_ADMINUSER"))
             streamDBUser = env.get("STREAM_ADMINUSER");
         else
-            streamDBUser = streamDbAdminUser;
+            streamDBUser = streamDbAdminUserAutoInitialized;
         if(env.containsKey("STREAM_ADMINPASS"))
             streamDBPass = env.get("STREAM_ADMINPASS");
         else
-            streamDBPass = streamDbAdminPass;
+            streamDBPass = streamDbAdminPassAutoInitialized;
         if(env.containsKey("STREAM_ACCESSURL"))
             streamAccessUrl = env.get("STREAM_ACCESSURL");
         else
-            streamAccessUrl = streamaccessurl;
+            streamAccessUrl = streamaccessurlAutoInitialized;
         if(env.containsKey("KAFKA_ENDPOINT"))
             KafkaURL = env.get("KAFKA_ENDPOINT");
         else
-            KafkaURL = kafka;
+            KafkaURL = kafkaEndPointAutoInitialized;
         if(env.containsKey("ZOOKEEPER_ENDPOINT"))
             ZookeeperURL = env.get("ZOOKEEPER_ENDPOINT");
         else
-            ZookeeperURL = zookeeper;
+            ZookeeperURL = zookeeperEndPointAutoInitialized;
         if(env.containsKey("STREAM_DBTYPE"))
             streamDBType = env.get("STREAM_DBTYPE");
         else
-            streamDBType = streamDbType;
+            streamDBType = streamDbTypeAutoInitialized;
         if(env.containsKey("STREAM_DBENDPOINT"))
             streamDBURL = env.get("STREAM_DBENDPOINT");
         else
-            streamDBURL = streamDbUrl;
+            streamDBURL = streamDbUrlAutoInitialized;
         if(env.containsKey("SENTINEL_DB_TYPE"))
             sentinelDBType = env.get("SENTINEL_DB_TYPE");
         else
-            sentinelDBType = sentinelDbType;
+            sentinelDBType = sentinelDbTypeAutoInitialized;
         if(env.containsKey("SENTINEL_DB_ENDPOINT"))
             sentinelDBURL = env.get("SENTINEL_DB_ENDPOINT");
         else
-            sentinelDBURL = sentinelDbUrl;
+            sentinelDBURL = sentinelDbUrlAutoInitialized;
         if(env.containsKey("TOPIC_CHECK_INTERVAL"))
             topicCheckWaitingPeriod = Long.parseLong(env.get("TOPIC_CHECK_INTERVAL"));
         else
-            topicCheckWaitingPeriod = topicwaitperiod;
+            topicCheckWaitingPeriod = topicwaitperiodAutoInitialized;
         if(env.containsKey("ADMIN_TOKEN"))
             adminToken = env.get("ADMIN_TOKEN");
         else
-            adminToken = adminPass;
+            adminToken = adminPassAutoInitialized;
         if(env.containsKey("PROXY_WORKAROUND_TYPE"))
             proxyType = env.get("PROXY_WORKAROUND_TYPE");
         else
-            proxyType = proxyworkaroundtype;
+            proxyType = proxyworkaroundtypeAutoInitialized;
         if(env.containsKey("PROXY_WORKAROUND_ENABLE"))
             proxyWorkaroundEnabled = env.get("PROXY_WORKAROUND_ENABLE");
         else
-            proxyWorkaroundEnabled = proxyworkaroundenable;
+            proxyWorkaroundEnabled = proxyworkaroundenableAutoInitialized;
         if(env.containsKey("PROXY_WORKAROUND_LOCATION"))
             proxyLocation = env.get("PROXY_WORKAROUND_LOCATION");
         else
-            proxyLocation = proxyworkaroundlocation;
+            proxyLocation = proxyworkaroundlocationAutoInitialized;
 
-        seriesFormatCacheSize = sFormatCSize;
-        publishedApiVersion = apiV;
-        kafkaKeySerializer = kafkakeyserializer;
-        kafkaValueSerializer = kafkavalueserializer;
-        dashboardTitle = dashboardtitle;
-        dashboardEndpoint = dashboardendpoint;
+        seriesFormatCacheSize = sFormatCSizeAutoInitialized;
+        publishedApiVersion = apiVersionAutoInitialized;
+        kafkaKeySerializer = kafkakeyserializerAutoInitialized;
+        kafkaValueSerializer = kafkavalueserializerAutoInitialized;
+        dashboardTitle = dashboardtitleAutoInitialized;
+        dashboardEndpoint = dashboardendpointAutoInitialized;
     }
 
 }

@@ -109,7 +109,13 @@ public class SqlDriver
                 temp.dataDashboardUrl = "http://" + AppConfiguration.getStreamAccessUrl() + "/";
                 temp.dataDashboardUser = rs.getString(3);
                 temp.dataDashboardPassword = rs.getString(4);
-                temp.seriesList = getSpaceSeries(temp.id).toArray(new SeriesOutput[SqlDriver.getSpaceSeries(temp.id).size()]);
+                LinkedList<SeriesOutput> sList = getSpaceSeries(temp.id);
+                if (sList != null)
+                {
+                    temp.seriesList = sList.toArray(new SeriesOutput[sList.size()]);
+                }
+
+                //temp.seriesList = getSpaceSeries(temp.id).toArray(new SeriesOutput[SqlDriver.getSpaceSeries(temp.id).size()]);
                 spaces.add(temp);
             }
         }
@@ -225,16 +231,17 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("apikey")).from("user").where("login = ?").getSQL();
         String apikey = "";
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt = conn.prepareStatement(sql);
             stmt.setString(1, login);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 apikey = rs.getString(1);
             }
             rs.close();
-            conn.close();
             if(apikey.equalsIgnoreCase(apiKey))
                 return true;
 
@@ -242,6 +249,26 @@ public class SqlDriver
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in validating apikey: " + sqex.getMessage());
+        }
+        finally {
+            try {
+                if (stmt != null)
+                    stmt.close();
+                conn.close();
+            }
+            catch (SQLException ex)
+            {
+
+            }
+            finally {
+                try {
+                    if (rs != null)
+                        rs.close();
+                }
+                catch (SQLException ex) {
+
+                }
+            }
         }
         return false;
     }
@@ -258,10 +285,12 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("apikey")).from("user").where("id = ?").getSQL();
         String apikey = "";
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userid);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 apikey = rs.getString(1);
@@ -275,6 +304,26 @@ public class SqlDriver
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in validating apikey: " + sqex.getMessage());
+        }
+        finally {
+            try {
+                if (stmt != null)
+                    stmt.close();
+                conn.close();
+            }
+            catch (SQLException ex)
+            {
+
+            }
+            finally {
+                try {
+                    if (rs != null)
+                        rs.close();
+                }
+                catch (SQLException ex) {
+
+                }
+            }
         }
         return false;
     }
@@ -291,10 +340,12 @@ public class SqlDriver
         DSLContext create = DSL.using(conn, SQLDialect.SQLITE);
         String sql = create.select(field("passwordhash")).from("user").where("id = ?").getSQL();
         String hash = "";
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
         try {
-            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt = conn.prepareStatement(sql);
             stmt.setInt(1, userid);
-            ResultSet rs = stmt.executeQuery();
+            rs = stmt.executeQuery();
             if(rs.next())
             {
                 hash = rs.getString(1);
@@ -308,6 +359,26 @@ public class SqlDriver
         catch(SQLException sqex)
         {
             logger.warn("Caught exception in validating password: " + sqex.getMessage());
+        }
+        finally {
+            try {
+                if (stmt != null)
+                    stmt.close();
+                conn.close();
+            }
+            catch (SQLException ex)
+            {
+
+            }
+            finally {
+                try {
+                    if (rs != null)
+                        rs.close();
+                }
+                catch (SQLException ex) {
+
+                }
+            }
         }
         return false;
     }
