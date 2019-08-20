@@ -6,6 +6,7 @@ RUN apk update && apk upgrade && \
 WORKDIR /go/src/k8stats
 COPY . .
 
+RUN go get k8s.io/klog && cd $GOPATH/src/k8s.io/klog && git checkout v0.4.0
 RUN go get -d -v ./...
 RUN go install -v ./...
 RUN mkdir -p /root/.kube/
