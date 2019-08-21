@@ -24,7 +24,6 @@ package ch.splab.cab.sentinel;
 import org.junit.Test;
 import org.springframework.http.ResponseEntity;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import ch.splab.cab.sentinel.controller.extensions.ElasTest;
 

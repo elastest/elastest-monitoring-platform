@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static org.jooq.impl.DSL.field;
-import static org.jooq.impl.DSL.log;
 import static org.jooq.impl.DSL.table;
 
 

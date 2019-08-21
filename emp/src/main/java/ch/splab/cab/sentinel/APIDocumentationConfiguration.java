@@ -23,7 +23,6 @@ package ch.splab.cab.sentinel;
  */
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -33,11 +32,7 @@ import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import static com.google.common.base.Predicates.*;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.swagger.web.UiConfiguration;
-
-import static springfox.documentation.builders.PathSelectors.*;
 
 @Configuration
 @EnableWebMvc
