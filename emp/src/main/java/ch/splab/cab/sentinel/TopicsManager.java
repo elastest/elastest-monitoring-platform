@@ -44,7 +44,7 @@ public class TopicsManager extends Thread {
             //now assign the topics to worker threads
             for(String topic:topics)
             {
-                if (!topic.startsWith("__")) {
+                if (!topic.startsWith("_")) {
                     if (registeredTopics.contains(topic))
                         Application.threadpool.addTopic(topic);
                     else
