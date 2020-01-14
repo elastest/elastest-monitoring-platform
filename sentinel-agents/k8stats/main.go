@@ -47,7 +47,7 @@ var writer *kafka.Writer
 
 type Configuration struct {
 	Service struct {
-		Mode 		string
+		Mode string
 	}
 	Kafka struct {
 		Port        string
@@ -79,8 +79,8 @@ type k8sdata struct {
 	Podcount       int    `json:"podcount"`
 	Servicecount   int    `json:"servicecount"`
 	Namespacecount int    `json:"namespacecount"`
-	Cpu            string `json:"cpu"`
-	Memory         string `json:"ram"`
+	Cpu            int    `json:"cpu"`
+	Memory         int    `json:"ram"`
 }
 
 type kubeconfig struct {
@@ -372,8 +372,10 @@ func main() {
 		for _, node := range nodesData.Items {
 			fmt.Printf("Received data on node [%s]: CPU usage: [%s], RAM: [%s]\n", node.Metadata.Name, node.Usage.CPU, node.Usage.Memory)
 			dataPoint.Node = node.Metadata.Name
-			dataPoint.Cpu = node.Usage.CPU
-			dataPoint.Memory = node.Usage.Memory
+			//dataPoint.Cpu = node.Usage.CPU
+			//dataPoint.Memory = node.Usage.Memory
+			dataPoint.Cpu, err = strconv.Atoi(strings.Split(node.Usage.CPU, "m")[0])
+			dataPoint.Memory, err = strconv.Atoi(strings.Split(node.Usage.Memory, "Ki")[0])
 		}
 
 		/////////////////////////////////////////////////////
