@@ -25,12 +25,14 @@ services:
       - SENTINEL_DB_ENDPOINT=/data/sentinel.db
       - ADMIN_TOKEN=sometoken
       - DASHBOARD_TITLE=elastest
-      - DASHBOARD_ENDPOINT=openj9.demonstrator.info:3000
+      - DASHBOARD_ENDPOINT=localhost:3000
       - PROXY_WORKAROUND_ENABLE=false
       - PROXY_WORKAROUND_TYPE=nginx
       - PROXY_WORKAROUND_LOCATION=/emp-admin
     volumes:
       - emp:/data
+    networks:
+      - elastest
   sentinel-system-agent:
     image: elastest/emp-system-agent:latest
     links:
@@ -44,6 +46,8 @@ services:
       - SENTINEL_TOPIC=user-1-elastest_core
       - SENTINEL_SERIES=sys-stats
       - PERIODICITY=30
+    networks:
+      - elastest
   sentinel-docker-agent:
     image: elastest/emp-docker-agent:latest
     volumes:
@@ -60,10 +64,11 @@ services:
       - SENTINEL_SERIES=docker-stats
       - DOCKER_SOCKET=unix://var/run/docker.sock
       - PERIODICITY=60
+    networks:
+      - elastest
 volumes:
   emp:
 
 networks:
-  default:
-    external:
-      name: dockersupport_frontend
+  elastest:
+    external: true
